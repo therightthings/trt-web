@@ -6,9 +6,9 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { generateHash } from '@trt-web/core';
 import { from, Observable, of } from 'rxjs';
 import { finalize, map, shareReplay, switchMap } from 'rxjs/operators';
-import { generateHash } from '../string-handler';
 import { HttpCacheService } from './http-cache.service';
 import {
   HTTP_CACHE_GROUP_TOKEN,

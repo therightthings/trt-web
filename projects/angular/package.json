@@ -1,29 +1,28 @@
 {
-  "name": "ngx-web-utils",
+  "name": "@trt-web/angular",
   "version": "0.8.1",
   "description": "Shared building blocks for cleaner Angular web apps",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/therightthings/ngx-web-utils.git"
+    "url": "git+https://github.com/therightthings/trt-web.git"
   },
   "bugs": {
-    "url": "https://github.com/therightthings/ngx-web-utils/issues"
+    "url": "https://github.com/therightthings/trt-web/issues"
   },
-  "homepage": "https://github.com/therightthings/ngx-web-utils#readme",
+  "homepage": "https://github.com/therightthings/trt-web#readme",
   "keywords": [
     "angular",
-    "angular-library",
     "ngx",
-    "web-utils",
     "rxjs",
     "store",
+    "signal",
     "directives",
     "pipes",
-    "storage",
     "http-cache"
   ],
   "license": "Apache-2.0",
   "dependencies": {
+    "@trt-web/core": "^0.8.1",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {

@@ -1,0 +1,24 @@
+{
+  "name": "@trt-web/core",
+  "version": "0.8.1",
+  "description": "Shared building blocks for cleaner Angular web apps",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/therightthings/trt-web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/therightthings/trt-web/issues"
+  },
+  "homepage": "https://github.com/therightthings/trt-web#readme",
+  "keywords": [
+    "dom-utils",
+    "web-utils",
+    "storage-helper",
+    "file-utils"
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

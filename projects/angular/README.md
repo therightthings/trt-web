@@ -1,4 +1,4 @@
-# NGX-WEB-UTILS
+# @trt-web/angular
 
 - Shared building blocks for cleaner Angular web apps
 
@@ -7,7 +7,7 @@
 - With NPM (or Yarn, Bun,...):
 
 ```bash
-npm install ngx-web-utils
+npm install @trt-web/angular
 ```
 
 ## Compatibility

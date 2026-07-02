@@ -1,18 +1,25 @@
-# NGX-WEB-UTILS
+# TRT Web Utils
 
-- Shared building blocks for cleaner Angular web apps.
+Monorepo for the `@trt-web` packages.
 
-- `Note`: This project is a collection of the knowledge and experience I've gained throughout my career. If you find it useful, please give it a ⭐ and feel free to contribute. All contributions are welcome!
+## Packages
+
+- `@trt-web/core`: shared browser and utility helpers
+- `@trt-web/angular`: Angular-specific utilities, directives, pipes, and HTTP cache helpers. Compatible with Angular 16 through Angular 22.
 
 ## Installation
 
+Choose the package set that matches your use case:
+
 ```bash
-npm install ngx-web-utils
+npm install @trt-web/core
 ```
 
-## Compatibility
+- For Angular projects, install both packages:
 
-- Angular 16 through Angular 22.
+```bash
+npm install @trt-web/core @trt-web/angular
+```
 
 ## License
 
