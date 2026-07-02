@@ -1,6 +1,28 @@
 {
   "name": "ngx-web-utils",
-  "version": "0.8.0",
+  "version": "0.8.1",
+  "description": "Shared building blocks for cleaner Angular web apps",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/therightthings/ngx-web-utils.git"
+  },
+  "bugs": {
+    "url": "https://github.com/therightthings/ngx-web-utils/issues"
+  },
+  "homepage": "https://github.com/therightthings/ngx-web-utils#readme",
+  "keywords": [
+    "angular",
+    "angular-library",
+    "ngx",
+    "web-utils",
+    "rxjs",
+    "store",
+    "directives",
+    "pipes",
+    "storage",
+    "http-cache"
+  ],
+  "license": "Apache-2.0",
   "dependencies": {
     "tslib": "^2.3.0"
   },
