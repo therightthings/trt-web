@@ -10,6 +10,10 @@
 npm install ngx-web-utils
 ```
 
+## Compatibility
+
+- Angular 16 through Angular 22.
+
 ## License
 
 - Apache-2.0
