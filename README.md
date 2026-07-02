@@ -1,4 +1,4 @@
-# NGX-WEB-UTILS
+# angular
 
 - Shared building blocks for cleaner Angular web apps.
 
@@ -7,7 +7,7 @@
 ## Installation
 
 ```bash
-npm install ngx-web-utils
+npm install angular
 ```
 
 ## Compatibility

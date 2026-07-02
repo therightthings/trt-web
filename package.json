@@ -1,12 +1,15 @@
 {
-  "name": "ngx-web-utils",
+  "name": "angular",
   "version": "0.8.0",
   "scripts": {
+    "build:core": "ng build core",
+    "publish:core": "yarn run build:core && cd dist/core && yarn publish --access public",
+
+    "build:angular": "ng build angular",
+    "publish:angular": "yarn run build:angular && cd dist/angular && yarn publish --access public",
+    
     "playground:api": "json-server projects/playground/db.json --port 3000 --delay 500",
-    "playground:ui": "ng serve playground",
-    "build:lib": "ng build ngx-web-utils",
-    "size:lib": "FILE=dist/ngx-web-utils/fesm2022/ngx-web-utils.mjs node -e \"const fs=require('fs'); const zlib=require('zlib'); const b=fs.readFileSync(process.env.FILE); console.log('raw:', b.length, 'bytes'); console.log('gzip:', zlib.gzipSync(b).length, 'bytes'); console.log('brotli:', zlib.brotliCompressSync(b).length, 'bytes');\"",
-    "publish:lib": "yarn run build:lib && cd dist/ngx-web-utils && yarn publish --access public"
+    "playground:ui": "ng serve playground"
   },
   "private": true,
   "packageManager": "yarn@1.22.22",

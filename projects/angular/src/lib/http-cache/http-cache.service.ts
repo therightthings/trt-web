@@ -84,7 +84,7 @@ export class HttpCacheService {
     }
 
     if (this.getConfig().debug) {
-      console.log('%c[ngx-web-utils] Hit', 'color: green; font-weight: bold;', key);
+      console.log('%c[angular] Hit', 'color: green; font-weight: bold;', key);
     }
 
     return item;
@@ -92,7 +92,7 @@ export class HttpCacheService {
 
   set(key: string, value: HttpCacheState) {
     if (this.getConfig().debug) {
-      console.log('%c[ngx-web-utils] Stored', 'color: blue; font-weight: bold;', key);
+      console.log('%c[angular] Stored', 'color: blue; font-weight: bold;', key);
     }
     this.caches.set(key, value);
 
@@ -100,7 +100,7 @@ export class HttpCacheService {
       if (this.caches.get(key)?.createdTime === value.createdTime) {
         this.caches.delete(key);
         if (this.getConfig().debug) {
-          console.log('%c[ngx-web-utils] Expired', 'color: orange;', key);
+          console.log('%c[angular] Expired', 'color: orange;', key);
         }
       }
     }, value.ttl);
@@ -121,7 +121,7 @@ export class HttpCacheService {
   delete(key: string) {
     this.caches.delete(key);
     if (this.getConfig().debug) {
-      console.log('%c[ngx-web-utils] Deleted', 'color: red;', key);
+      console.log('%c[angular] Deleted', 'color: red;', key);
     }
   }
 
@@ -176,7 +176,7 @@ export class HttpCacheService {
       });
 
       if (this.getConfig().debug) {
-        console.log('%c[ngx-web-utils] Updated', 'color: teal; font-weight: bold;', key);
+        console.log('%c[angular] Updated', 'color: teal; font-weight: bold;', key);
       }
     }
   }
@@ -185,7 +185,7 @@ export class HttpCacheService {
     this.caches.clear();
     this.pendingRequests.clear();
     if (this.getConfig().debug) {
-      console.log('%c[ngx-web-utils] All cache cleared', 'color: purple;');
+      console.log('%c[angular] All cache cleared', 'color: purple;');
     }
   }
 }
