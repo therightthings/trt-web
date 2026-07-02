@@ -78,9 +78,7 @@
                 "input": "projects/playground/public"
               }
             ],
-            "styles": [
-              "projects/playground/src/styles.css"
-            ]
+            "styles": ["projects/playground/src/styles.css"]
           },
           "configurations": {
             "production": {
