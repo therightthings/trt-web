@@ -16,10 +16,10 @@
           "builder": "@angular/build:ng-packagr",
           "configurations": {
             "production": {
-              "tsConfig": "projects/angular/tsconfig.lib.prod.json"
+              "tsConfig": "projects/core/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/angular/tsconfig.lib.json"
+              "tsConfig": "projects/core/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -27,7 +27,7 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "tsConfig": "projects/angular/tsconfig.spec.json"
+            "tsConfig": "projects/core/tsconfig.spec.json"
           }
         }
       }

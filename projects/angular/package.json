@@ -22,6 +22,7 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
+    "@trt-web/core": "^0.8.1",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {

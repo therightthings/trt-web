@@ -28,6 +28,12 @@
   "files": [],
   "references": [
     {
+      "path": "./projects/core/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/core/tsconfig.spec.json"
+    },
+    {
       "path": "./projects/angular/tsconfig.lib.json"
     },
     {
