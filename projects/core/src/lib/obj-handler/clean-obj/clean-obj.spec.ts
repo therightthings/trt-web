@@ -1,4 +1,4 @@
-// Run: npx vitest run projects/core/src/lib/array-handler/clean-obj/clean-obj.spec.ts
+// Run: npx vitest run projects/core/src/lib/obj-handler/clean-obj/clean-obj.spec.ts
 import { describe, expect, it } from 'vitest';
 
 import { cleanObj } from './clean-obj';

@@ -1,4 +1,4 @@
-// Run: npx vitest run projects/core/src/lib/array-handler/remove-duplicate-objects/remove-duplicate-obj.spec.ts
+// Run: npx vitest run projects/core/src/lib/obj-handler/remove-duplicate-objects/remove-duplicate-obj.spec.ts
 import { describe, expect, it } from 'vitest';
 
 import { removeDuplicateObjects } from './remove-duplicate-obj';
