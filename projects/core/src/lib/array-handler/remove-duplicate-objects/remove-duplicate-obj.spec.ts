@@ -1,6 +1,4 @@
-/**
- * npx vitest run projects/core/src/lib/array-handler/remove-duplicate-obj.spec.ts
- */
+// Run: npx vitest run projects/core/src/lib/array-handler/remove-duplicate-objects/remove-duplicate-obj.spec.ts
 import { describe, expect, it } from 'vitest';
 
 import { removeDuplicateObjects } from './remove-duplicate-obj';
@@ -108,8 +106,25 @@ describe('removeDuplicateObjects', () => {
     const one = Symbol('token');
     const two = Symbol('token');
 
-    const result = removeDuplicateObjects([one, one, two]);
+    const result = removeDuplicateObjects([one, one, two, one, two]);
 
     expect(result).toEqual([one, two]);
+  });
+
+  it('throws on circular references in object items', () => {
+    const first: { self?: unknown } = {};
+    first.self = first;
+
+    const second: { self?: unknown } = {};
+    second.self = second;
+
+    expect(() => removeDuplicateObjects([first, second])).toThrow('Circular reference detected');
+  });
+
+  it('throws on circular references in nested arrays', () => {
+    const nested: unknown[] = [];
+    nested.push(nested);
+
+    expect(() => removeDuplicateObjects([nested])).toThrow('Circular reference detected');
   });
 });

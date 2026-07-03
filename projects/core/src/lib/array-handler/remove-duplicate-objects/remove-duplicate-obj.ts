@@ -1,8 +1,6 @@
-function buildValueKey(
-  value: unknown,
-  seen = new WeakSet<object>(),
-  symbolIds = new Map<symbol, number>(),
-): string {
+import { checkCircularReferences } from '../../utils';
+
+function buildValueKey(value: unknown, symbolIds = new Map<symbol, number>()): string {
   if (value === null) {
     return 'null';
   }
@@ -38,37 +36,20 @@ function buildValueKey(
   }
 
   if (Array.isArray(value)) {
-    if (seen.has(value)) {
-      throw new Error('Circular reference detected');
-    }
-
-    seen.add(value);
-    return `array:[${value.map((item) => buildValueKey(item, seen, symbolIds)).join(',')}]`;
+    return `array:[${value.map((item) => buildValueKey(item, symbolIds)).join(',')}]`;
   }
 
   if (value instanceof Map) {
-    if (seen.has(value)) {
-      throw new Error('Circular reference detected');
-    }
-
-    seen.add(value);
-
     const entries = Array.from(value.entries())
-      .map(([key, entryValue]) => [buildValueKey(key, seen, symbolIds), buildValueKey(entryValue, seen, symbolIds)] as const)
+      .map(([key, entryValue]) => [buildValueKey(key, symbolIds), buildValueKey(entryValue, symbolIds)] as const)
       .sort(([aKey, aValue], [bKey, bValue]) => aKey.localeCompare(bKey) || aValue.localeCompare(bValue));
 
     return `map:{${entries.map(([key, entryValue]) => `${key}=>${entryValue}`).join(',')}}`;
   }
 
   if (value instanceof Set) {
-    if (seen.has(value)) {
-      throw new Error('Circular reference detected');
-    }
-
-    seen.add(value);
-
     const entries = Array.from(value.values())
-      .map((entry) => buildValueKey(entry, seen, symbolIds))
+      .map((entry) => buildValueKey(entry, symbolIds))
       .sort((a, b) => a.localeCompare(b));
 
     return `set:{${entries.join(',')}}`;
@@ -77,27 +58,21 @@ function buildValueKey(
   if (typeof value === 'object') {
     const objectValue = value as Record<string, unknown>;
 
-    if (seen.has(objectValue)) {
-      throw new Error('Circular reference detected');
-    }
-
-    seen.add(objectValue);
-
     const keys = Object.keys(objectValue).sort();
-    return `object:{${keys
-      .map((key) => `${key}:${buildValueKey(objectValue[key], seen, symbolIds)}`)
-      .join(',')}}`;
+    return `object:{${keys.map((key) => `${key}:${buildValueKey(objectValue[key], symbolIds)}`).join(',')}}`;
   }
 
   return String(value);
 }
 
 export function removeDuplicateObjects<T>(array: T[], filterFn?: (item: T) => string): T[] {
-  const map = new Map<string, T>();
+  checkCircularReferences(array);
+
   const symbolIds = new Map<symbol, number>();
+  const map = new Map<string, T>();
 
   for (const item of array) {
-    const key = filterFn ? filterFn(item) : buildValueKey(item, undefined, symbolIds);
+    const key = filterFn ? filterFn(item) : buildValueKey(item, symbolIds);
 
     if (!map.has(key)) {
       map.set(key, item);
