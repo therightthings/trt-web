@@ -2,4 +2,4 @@ export { capitalizeFirst, capitalizeTextFields, capitalizeWords } from './capita
 export { generateHash } from './generate-hash';
 export { generateId } from './generate-id';
 export { generateRandomString } from './generate-random-string';
-export { removeTones } from './remove-tones';
+export { removeTones } from './remove-tones/remove-tones';
