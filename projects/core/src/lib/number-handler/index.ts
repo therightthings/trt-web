@@ -1,2 +1,2 @@
-export { generateRandomNumber } from './generate-random-number';
-export type { GenerateRandomNumberConfig } from './generate-random-number';
+export { generateRandomNumber } from './random-number/generate-random-number';
+export type { GenerateRandomNumberConfig } from './random-number/generate-random-number';
