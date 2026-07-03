@@ -1,4 +1,4 @@
-interface GenerateRandomNumberConfig {
+export interface GenerateRandomNumberConfig {
   min: number;
   max: number;
   decimal?: boolean;
