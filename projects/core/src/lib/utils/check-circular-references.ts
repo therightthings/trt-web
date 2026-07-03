@@ -30,6 +30,23 @@ export function checkCircularReferences(value: unknown): void {
         return;
       }
 
+      if (currentValue instanceof Map) {
+        for (const [key, nestedValue] of currentValue.entries()) {
+          walk(key);
+          walk(nestedValue);
+        }
+
+        return;
+      }
+
+      if (currentValue instanceof Set) {
+        for (const nestedValue of currentValue.values()) {
+          walk(nestedValue);
+        }
+
+        return;
+      }
+
       for (const nestedValue of Object.values(currentValue)) {
         walk(nestedValue);
       }
