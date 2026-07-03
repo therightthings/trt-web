@@ -1,3 +1,5 @@
+import { loadImage } from './load-image';
+
 export async function getImageSize(
   blob: File | string,
 ): Promise<{ width: number; height: number }> {
@@ -18,18 +20,12 @@ export async function getImageSize(
   }
 
   try {
-    return await new Promise((resolve, reject) => {
-      const img = new Image();
+    const imgEl = await loadImage(url);
 
-      img.onload = () =>
-        resolve({
-          width: img.naturalWidth || img.width,
-          height: img.naturalHeight || img.height,
-        });
-      img.onerror = () => reject(new Error('Image load failed'));
-
-      img.src = url;
-    });
+    return {
+      width: imgEl.naturalWidth || imgEl.width,
+      height: imgEl.naturalHeight || imgEl.height,
+    };
   } finally {
     URL.revokeObjectURL(url);
   }
