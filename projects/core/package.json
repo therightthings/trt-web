@@ -1,6 +1,6 @@
 {
   "name": "@trt-web/core",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Shared building blocks for cleaner Angular web apps",
   "repository": {
     "type": "git",
@@ -14,7 +14,18 @@
     "dom-utils",
     "web-utils",
     "storage-helper",
-    "file-utils"
+    "file-utils",
+    "string-utils",
+    "date-utils",
+    "number-utils",
+    "object-utils",
+    "rate-limit",
+    "search-key",
+    "sort-order",
+    "sort-utils",
+    "ranking",
+    "bayesian",
+    "haversine"
   ],
   "license": "Apache-2.0",
   "dependencies": {
