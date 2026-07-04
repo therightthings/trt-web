@@ -20,6 +20,7 @@ const specialCharacterMap: Record<string, string> = {
 
 export interface RemoveTonesConfig {
   separator?: string;
+  removeNonLatinAscii?: boolean;
 }
 
 function foldAccents(value: string): string {
@@ -32,12 +33,19 @@ function foldAccents(value: string): string {
 }
 
 export function removeTones(value: string, config?: RemoveTonesConfig): string {
-  const { separator = ' ' } = config ?? {};
+  const { separator = ' ', removeNonLatinAscii = true } = config ?? {};
 
-  return foldAccents(value)
-    .replace(/[!@%^*()+=<>?/.,:;'\"&#\[\]~$_`{}\|\\-]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replace(/\s+/g, separator)
-    .toLowerCase();
+  let normalized = foldAccents(value).replace(/[!@%^*()+=<>?/.,:;'\"&#\[\]~$_`{}\|\\-]/g, ' ');
+
+  if (removeNonLatinAscii) {
+    normalized = normalized.replace(/[^\x00-\x7F]/g, ' ');
+  }
+
+  normalized = normalized.replace(/\s+/g, ' ').trim();
+
+  if (!normalized) return '';
+
+  normalized = normalized.replace(/\s+/g, separator).toLowerCase();
+
+  return normalized;
 }

@@ -20,6 +20,18 @@ describe('removeTones', () => {
     expect(removeTones('Łódź')).toBe('lodz');
   });
 
+  it('removes non-Latin and non-ASCII characters by default', () => {
+    expect(removeTones('中文 Café 😀')).toBe('cafe');
+  });
+
+  it('keeps non-Latin and non-ASCII characters when disabled', () => {
+    expect(
+      removeTones('中文 Café 😀', {
+        removeNonLatinAscii: false,
+      }),
+    ).toBe('中文 cafe 😀');
+  });
+
   it('uses the provided separator', () => {
     expect(removeTones('Crème brûlée', { separator: '|' })).toBe('creme|brulee');
   });
