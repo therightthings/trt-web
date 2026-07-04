@@ -61,7 +61,19 @@ function stubBrowserGlobals(overrides?: {
   vi.stubGlobal('document', document);
   vi.stubGlobal('Notification', notification);
 
-  return { permissions, geolocation, mediaDevices, clipboard, storage, serviceWorker, wakeLock, navigator, window, document, notification };
+  return {
+    permissions,
+    geolocation,
+    mediaDevices,
+    clipboard,
+    storage,
+    serviceWorker,
+    wakeLock,
+    navigator,
+    window,
+    document,
+    notification,
+  };
 }
 
 afterEach(() => {

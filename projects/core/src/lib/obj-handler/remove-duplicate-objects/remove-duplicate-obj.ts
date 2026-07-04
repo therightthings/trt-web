@@ -41,8 +41,14 @@ function buildValueKey(value: unknown, symbolIds = new Map<symbol, number>()): s
 
   if (value instanceof Map) {
     const entries = Array.from(value.entries())
-      .map(([key, entryValue]) => [buildValueKey(key, symbolIds), buildValueKey(entryValue, symbolIds)] as const)
-      .sort(([aKey, aValue], [bKey, bValue]) => aKey.localeCompare(bKey) || aValue.localeCompare(bValue));
+      .map(
+        ([key, entryValue]) =>
+          [buildValueKey(key, symbolIds), buildValueKey(entryValue, symbolIds)] as const,
+      )
+      .sort(
+        ([aKey, aValue], [bKey, bValue]) =>
+          aKey.localeCompare(bKey) || aValue.localeCompare(bValue),
+      );
 
     return `map:{${entries.map(([key, entryValue]) => `${key}=>${entryValue}`).join(',')}}`;
   }

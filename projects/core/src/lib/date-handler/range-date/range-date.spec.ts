@@ -60,18 +60,14 @@ describe('getDateRange', () => {
   it('uses rootDate for dynamic month and year ranges', () => {
     const now = ROOT_DATE;
 
-    expect(getDateRange({ value: 1, unit: 'month' }, now)).toEqual(
-      {
-        startDate: '2026-06-03',
-        endDate: '2026-07-03',
-      },
-    );
-    expect(getDateRange({ value: 1, unit: 'year' }, now)).toEqual(
-      {
-        startDate: '2025-07-03',
-        endDate: '2026-07-03',
-      },
-    );
+    expect(getDateRange({ value: 1, unit: 'month' }, now)).toEqual({
+      startDate: '2026-06-03',
+      endDate: '2026-07-03',
+    });
+    expect(getDateRange({ value: 1, unit: 'year' }, now)).toEqual({
+      startDate: '2025-07-03',
+      endDate: '2026-07-03',
+    });
   });
 
   it('defaults to the current time when rootDate is omitted', () => {

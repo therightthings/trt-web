@@ -26,10 +26,7 @@ export function calcHaversineDistance(from: Point, to: Point, options?: Distance
     Math.sin(deltaLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLon / 2) ** 2;
   const clampedA = Math.min(1, Math.max(0, a));
 
-  const distanceKm = earthRadiusKm * 2 * Math.atan2(
-    Math.sqrt(clampedA),
-    Math.sqrt(1 - clampedA),
-  );
+  const distanceKm = earthRadiusKm * 2 * Math.atan2(Math.sqrt(clampedA), Math.sqrt(1 - clampedA));
 
   if (unit === 'm') {
     return distanceKm * 1000;
