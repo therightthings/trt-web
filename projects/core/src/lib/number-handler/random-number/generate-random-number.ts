@@ -1,12 +1,14 @@
 export interface GenerateRandomNumberConfig {
-  min: number;
-  max: number;
   decimal?: boolean;
   decimalPlaces?: number;
 }
 
-export function generateRandomNumber(config: GenerateRandomNumberConfig): number {
-  let { min, max, decimal = false, decimalPlaces = 2 } = config;
+export function generateRandomNumber(
+  min: number,
+  max: number,
+  config?: GenerateRandomNumberConfig,
+): number {
+  let { decimal = false, decimalPlaces = 2 } = config ?? {};
 
   if (!Number.isFinite(min) || !Number.isFinite(max)) {
     throw new Error('min and max must be finite numbers');
