@@ -1,6 +1,7 @@
 {
   "name": "@trt-web/angular",
   "version": "0.8.1",
+  "private": false,
   "description": "Shared building blocks for cleaner Angular web apps",
   "repository": {
     "type": "git",
@@ -21,8 +22,9 @@
     "http-cache"
   ],
   "license": "Apache-2.0",
+  "type": "module",
   "dependencies": {
-    "@trt-web/core": "^0.8.1",
+    "@trt-web/core": "0.0.1",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {

@@ -35,10 +35,12 @@ function foldAccents(value: string): string {
 export function removeTones(value: string, config?: RemoveTonesConfig): string {
   const { separator = ' ', removeNonLatinAscii = true } = config ?? {};
 
-  let normalized = foldAccents(value).replace(/[!@%^*()+=<>?/.,:;'\"&#\[\]~$_`{}\|\\-]/g, ' ');
+  let normalized = foldAccents(value).replace(/[^\p{L}\p{N}\s]+/gu, ' ');
 
   if (removeNonLatinAscii) {
-    normalized = normalized.replace(/[^\x00-\x7F]/g, ' ');
+    normalized = Array.from(normalized, (char) =>
+      (char.codePointAt(0) ?? 0) > 0x7f ? ' ' : char,
+    ).join('');
   }
 
   normalized = normalized.replace(/\s+/g, ' ').trim();

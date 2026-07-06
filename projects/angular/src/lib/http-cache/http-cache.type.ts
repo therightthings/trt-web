@@ -1,7 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 
 export interface HttpCacheState {
-  response: HttpResponse<any>;
+  response: HttpResponse<unknown>;
   createdTime: number;
   ttl: number;
   tags?: string[];

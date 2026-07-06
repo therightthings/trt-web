@@ -1,0 +1,29 @@
+{
+  "name": "angular",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "projects/angular/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": [],
+  "implicitDependencies": ["core"],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:ng-packagr-lite",
+      "outputs": ["{workspaceRoot}/dist/angular"],
+      "dependsOn": ["^build"],
+      "options": {
+        "tsConfig": "projects/angular/tsconfig.lib.json",
+        "project": "projects/angular/ng-package.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "options": {
+        "configFile": "projects/angular/vitest.config.mts"
+      }
+    }
+  }
+}

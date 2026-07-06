@@ -24,12 +24,12 @@ describe('removeTones', () => {
     expect(removeTones('中文 Café 😀')).toBe('cafe');
   });
 
-  it('keeps non-Latin and non-ASCII characters when disabled', () => {
+  it('keeps non-Latin letters when disabled but still strips unsupported symbols', () => {
     expect(
       removeTones('中文 Café 😀', {
         removeNonLatinAscii: false,
       }),
-    ).toBe('中文 cafe 😀');
+    ).toBe('中文 cafe');
   });
 
   it('uses the provided separator', () => {

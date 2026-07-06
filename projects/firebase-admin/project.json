@@ -1,0 +1,29 @@
+{
+  "name": "firebase-admin",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "projects/firebase-admin/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/firebase-admin",
+        "tsConfig": "projects/firebase-admin/tsconfig.lib.json",
+        "packageJson": "projects/firebase-admin/package.json",
+        "main": "projects/firebase-admin/src/public-api.ts",
+        "assets": ["projects/firebase-admin/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "options": {
+        "configFile": "projects/firebase-admin/vitest.config.mts"
+      }
+    }
+  }
+}

@@ -8,7 +8,7 @@ export function generateRandomNumber(
   max: number,
   config?: GenerateRandomNumberConfig,
 ): number {
-  let { decimal = false, decimalPlaces = 2 } = config ?? {};
+  const { decimal = false, decimalPlaces = 2 } = config ?? {};
 
   if (!Number.isFinite(min) || !Number.isFinite(max)) {
     throw new Error('min and max must be finite numbers');

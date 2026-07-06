@@ -1,0 +1,29 @@
+{
+  "name": "vue",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "projects/vue/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project vue --web",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/vue",
+        "main": "projects/vue/src/public-api.ts",
+        "tsConfig": "projects/vue/tsconfig.lib.json",
+        "assets": ["projects/vue/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "options": {
+        "configFile": "projects/vue/vitest.config.mts"
+      }
+    }
+  }
+}

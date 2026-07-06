@@ -1,0 +1,5 @@
+{
+  "$schema": "./node_modules/cspell/cspell.schema.json",
+  "version": "0.2",
+  "words": ["ACMR", "deadcode"]
+}

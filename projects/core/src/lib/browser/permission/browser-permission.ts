@@ -20,7 +20,9 @@ export class BrowserPermission {
         }
 
         try {
-          const status = await navigator.permissions.query({ name } as PermissionDescriptor);
+          const status = await navigator.permissions.query({
+            name,
+          } as PermissionDescriptor);
 
           return status.state as BrowserPermissionState;
         } catch {

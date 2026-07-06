@@ -1,0 +1,13 @@
+{
+  "name": "@trt-web/firebase-admin",
+  "version": "0.0.1",
+  "private": false,
+  "description": "Shared Firebase Admin helpers for backend services",
+  "type": "commonjs",
+  "main": "./src/public-api.js",
+  "types": "./src/public-api.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "tslib": "^2.3.0"
+  }
+}
