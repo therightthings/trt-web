@@ -4,6 +4,7 @@
   "sourceRoot": "projects/firebase-admin/src",
   "projectType": "library",
   "tags": [],
+  "implicitDependencies": ["core"],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
