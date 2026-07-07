@@ -4,5 +4,5 @@
     "outDir": "../../dist/out-tsc",
     "types": ["vitest/globals", "vitest/importMeta", "vite/client", "node", "vitest"]
   },
-  "include": ["vitest.config.mts", "src/**/*.spec.*", "src/**/*.test.*"]
+  "include": ["vitest.config.mts", "src/**/*.spec.*"]
 }

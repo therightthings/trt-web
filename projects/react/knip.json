@@ -3,5 +3,5 @@
   "ignoreDependencies": ["tslib", "react", "react-dom"],
   "entry": ["src/public-api.ts"],
   "project": ["src/**/*.{ts,tsx}"],
-  "ignoreFiles": ["src/**/*.spec.*", "src/**/*.test.*"]
+  "ignoreFiles": ["src/**/*.spec.*"]
 }

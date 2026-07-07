@@ -26,7 +26,7 @@ module.exports = {
     'scope-enum': [
       2,
       'always',
-      ['angular', 'react', 'vue', 'core', 'firebase-admin', 'ci', 'deps'],
+      ['angular', 'react', 'vue', 'core', 'firebase-admin', 'ci', 'deps', 'test'],
     ],
     'header-max-length': [2, 'always', 100],
     'subject-empty': [2, 'never'],

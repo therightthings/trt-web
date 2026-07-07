@@ -12,7 +12,7 @@ export default defineConfig(() => ({
     globals: true,
     environment: 'node',
     passWithNoTests: true,
-    include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    include: ['{src,tests}/**/*.spec.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {
       reportsDirectory: '../../coverage/projects/react',

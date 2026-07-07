@@ -3,5 +3,5 @@
   "ignoreDependencies": ["tslib", "vue"],
   "entry": ["src/public-api.ts"],
   "project": ["src/**/*.{ts,vue}"],
-  "ignoreFiles": ["src/**/*.spec.*", "src/**/*.test.*", "src/**/*.d.ts"]
+  "ignoreFiles": ["src/**/*.spec.*", "src/**/*.d.ts"]
 }

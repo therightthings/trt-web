@@ -6,5 +6,5 @@
     "types": ["vite/client"]
   },
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "exclude": ["vite.config.*", "vitest.config.*", "src/**/*.spec.*", "src/**/*.test.*"]
+  "exclude": ["vite.config.*", "vitest.config.*", "src/**/*.spec.*"]
 }
