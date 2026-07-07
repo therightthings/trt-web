@@ -1,8 +1,11 @@
+import { requireBrowserEnv } from '../utils';
 import { loadImage } from './load-image';
 
 export async function getImageSize(
   blob: File | string,
 ): Promise<{ width: number; height: number }> {
+  requireBrowserEnv();
+
   if (!blob) {
     return { width: 0, height: 0 };
   }

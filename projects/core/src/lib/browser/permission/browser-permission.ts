@@ -1,8 +1,11 @@
+import { requireBrowserEnv } from '../../utils';
 import { BrowserPermissionState, ExtraBrowserPermissionName } from './browser-permission.type';
 
 export class BrowserPermission {
   static async getState(name: ExtraBrowserPermissionName): Promise<BrowserPermissionState> {
-    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    requireBrowserEnv();
+
+    if (typeof navigator === 'undefined') {
       return 'unsupported';
     }
 
@@ -33,7 +36,9 @@ export class BrowserPermission {
   }
 
   static async request(name: ExtraBrowserPermissionName): Promise<BrowserPermissionState> {
-    if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    requireBrowserEnv();
+
+    if (typeof navigator === 'undefined') {
       return 'unsupported';
     }
 

@@ -1,5 +1,5 @@
 // Run: npx vitest run projects/core/src/lib/file-handler/compress-image/compress-image-file.spec.ts
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { compressImageFile } from './compress-image-file';
 
@@ -34,6 +34,10 @@ function createFileReaderMock(result: string, fail = false) {
 }
 
 describe('compressImageFile', () => {
+  beforeEach(() => {
+    vi.stubGlobal('window', {});
+  });
+
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();

@@ -1,3 +1,4 @@
+import { requireBrowserEnv } from '../utils';
 import { CanvasImageFormat } from './canvas.type';
 
 export function canvasToBlob(
@@ -5,6 +6,8 @@ export function canvasToBlob(
   outputFormat: CanvasImageFormat,
   quality: number,
 ): Promise<Blob> {
+  requireBrowserEnv();
+
   return new Promise((resolve, reject) => {
     canvas.toBlob(
       (blob) => {

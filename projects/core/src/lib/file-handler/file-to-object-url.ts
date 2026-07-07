@@ -1,3 +1,5 @@
+import { requireBrowserEnv } from '../utils';
+
 interface FileToObjectUrlOptions {
   type?: string;
 }
@@ -21,6 +23,8 @@ function dataUrlToBlob(dataUrl: string, type?: string): Blob {
 }
 
 export function fileToObjectUrl(source: File | string, options?: FileToObjectUrlOptions): string {
+  requireBrowserEnv();
+
   if (source instanceof File) {
     return URL.createObjectURL(source);
   }

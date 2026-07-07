@@ -21,6 +21,14 @@ function createStorageMock() {
   };
 }
 
+function stubBrowserShell(overrides?: { window?: Record<string, unknown> }) {
+  vi.stubGlobal('window', {
+    document: {},
+    ...overrides?.window,
+  });
+  vi.stubGlobal('document', {});
+}
+
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
@@ -28,13 +36,17 @@ afterEach(() => {
 
 describe('LocalStorage', () => {
   it('returns undefined when storage is unavailable', () => {
+    stubBrowserShell();
+
     expect(LocalStorage.get('missing')).toBeUndefined();
     expect(LocalStorage.exists('missing')).toBe(false);
   });
 
   it('stores and reads values back', () => {
     const storage = createStorageMock();
-    vi.stubGlobal('window', { localStorage: storage });
+    stubBrowserShell({
+      window: { localStorage: storage },
+    });
     vi.stubGlobal('localStorage', storage);
 
     LocalStorage.set('profile', { id: 1, name: 'Alice' });
@@ -48,7 +60,9 @@ describe('LocalStorage', () => {
 
   it('supports exists, remove, and clear', () => {
     const storage = createStorageMock();
-    vi.stubGlobal('window', { localStorage: storage });
+    stubBrowserShell({
+      window: { localStorage: storage },
+    });
     vi.stubGlobal('localStorage', storage);
 
     LocalStorage.set('a', { ok: true });
@@ -66,7 +80,9 @@ describe('LocalStorage', () => {
   it('returns undefined for invalid JSON payloads', () => {
     const storage = createStorageMock();
     storage.store.set('broken', '{not json');
-    vi.stubGlobal('window', { localStorage: storage });
+    stubBrowserShell({
+      window: { localStorage: storage },
+    });
     vi.stubGlobal('localStorage', storage);
 
     expect(LocalStorage.get('broken')).toBeUndefined();

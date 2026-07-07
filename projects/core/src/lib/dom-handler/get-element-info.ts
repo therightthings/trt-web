@@ -1,4 +1,8 @@
+import { requireBrowserEnv } from '../utils';
+
 export function getElementInfo(el: HTMLElement) {
+  requireBrowserEnv();
+
   const rect = el.getBoundingClientRect();
   const area = {
     ox: Math.ceil(el.offsetLeft),

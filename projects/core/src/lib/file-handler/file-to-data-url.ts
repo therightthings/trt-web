@@ -1,4 +1,8 @@
+import { requireBrowserEnv } from '../utils';
+
 export function fileToDataUrl(file: File): Promise<string> {
+  requireBrowserEnv();
+
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
