@@ -12,10 +12,11 @@ import {
   publishProject,
   resolveBuildTarget,
   resolveLintTarget,
+  resolvePackageTarget,
   resolveReleaseTarget,
   resolveTestTarget,
 } from './workspace.ts';
-import { runNx } from './exec.ts';
+import { runCommand, runNx } from './exec.ts';
 
 const repoRoot = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '..');
 const projectsDir = path.join(repoRoot, 'projects');
@@ -72,6 +73,50 @@ async function runLint(
   }
 
   return runNx(repoRoot, ['lint', target.project.name]);
+}
+
+async function runCheckPackage(
+  projectArg: string | undefined,
+  options: { project?: string; all?: boolean },
+) {
+  const projects = await listProjects(projectsDir);
+  const target = await resolvePackageTarget(projects, projectArg, options);
+
+  const packProject = async (projectName: string) => {
+    const project = projects.find((item) => item.name === projectName);
+    if (!project) {
+      throw new Error(`Project not found: ${projectName}`);
+    }
+
+    const buildStatus = await runNx(repoRoot, ['build', project.name]);
+    if (buildStatus !== 0) {
+      return buildStatus;
+    }
+
+    return runCommand('npm', ['pack', '--dry-run'], path.join(repoRoot, 'dist', project.folder));
+  };
+
+  if (target.type === 'all') {
+    const buildStatus = await runNx(repoRoot, ['run-many', '-t', 'build']);
+    if (buildStatus !== 0) {
+      return buildStatus;
+    }
+
+    for (const project of projects) {
+      const packStatus = await runCommand(
+        'npm',
+        ['pack', '--dry-run'],
+        path.join(repoRoot, 'dist', project.folder),
+      );
+      if (packStatus !== 0) {
+        return packStatus;
+      }
+    }
+
+    return 0;
+  }
+
+  return packProject(target.project.name);
 }
 
 async function runTest(
@@ -175,5 +220,14 @@ program
   .description('Spell-check only changed text files.')
   .option('-a, --all', 'spell-check all workspace files')
   .action((options: { all?: boolean }) => runAction(() => runSpell(options)));
+
+program
+  .command('check:package [project]')
+  .description('Build and dry-run pack one project or prompt for selection.')
+  .option('-p, --project <project>', 'check a specific project')
+  .option('-a, --all', 'check all projects')
+  .action((projectArg: string | undefined, options: { project?: string; all?: boolean }) =>
+    runAction(() => runCheckPackage(projectArg, options)),
+  );
 
 await program.parseAsync(process.argv);

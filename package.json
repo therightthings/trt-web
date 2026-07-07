@@ -20,7 +20,7 @@
     "check:deadcode": "node --experimental-strip-types scripts/cli.ts check:deadcode",
     "check:circular": "node --experimental-strip-types scripts/cli.ts check:circular",
     "check:spell": "node --experimental-strip-types scripts/cli.ts check:spell",
-    "check:package": "npm pack --dry-run"
+    "check:package": "node --experimental-strip-types scripts/cli.ts check:package"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs,mts,cjs,cts,html}": [

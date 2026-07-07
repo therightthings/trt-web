@@ -15,6 +15,7 @@ export type WorkspaceProject = {
 
 type BuildTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
 type LintTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
+type PackageTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
 type TestTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
 
 type SelectPromptResult = {
@@ -144,6 +145,46 @@ export async function resolveBuildTarget(
   const selected = await chooseProject({
     projects,
     title: 'Chon project can build:',
+    includeAll: true,
+  });
+
+  if (selected === 'all') {
+    return { type: 'all' };
+  }
+
+  const project = findProject(projects, selected);
+  if (!project) {
+    throw new Error(`Project not found: ${selected}`);
+  }
+
+  return { type: 'project', project };
+}
+
+export async function resolvePackageTarget(
+  projects: WorkspaceProject[],
+  projectArg: string | undefined,
+  options: { project?: string; all?: boolean },
+): Promise<PackageTarget> {
+  if (options.all) {
+    return { type: 'all' };
+  }
+
+  const explicit = options.project ?? projectArg;
+  if (explicit) {
+    const project = findProject(projects, explicit);
+    if (!project) {
+      throw new Error(`Project not found: ${explicit}`);
+    }
+    return { type: 'project', project };
+  }
+
+  if (!input.isTTY || !output.isTTY) {
+    return { type: 'all' };
+  }
+
+  const selected = await chooseProject({
+    projects,
+    title: 'Chon project can check package:',
     includeAll: true,
   });
 
