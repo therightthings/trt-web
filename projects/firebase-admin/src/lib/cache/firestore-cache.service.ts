@@ -4,9 +4,6 @@ import { CacheService } from './cache.service';
 import { CacheKeyPrefix, RepositoryMethod } from './cache.type';
 
 export class FirestoreCacheService {
-  static config = {
-    debug: true,
-  };
   private readonly cacheService = CacheService.getInstance();
 
   static #instance: FirestoreCacheService;
@@ -65,7 +62,7 @@ export class FirestoreCacheService {
       this.cacheService.set(versionKey, next, { value: 30, unit: 'day' });
     }
 
-    if (FirestoreCacheService.config.debug) {
+    if (CacheService.config.debug) {
       console.log('bump repository cache version', collectionPath, options);
     }
   }
