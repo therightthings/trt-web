@@ -1,7 +1,34 @@
-# firebase-admin
+# @trt-web/firebase-admin
 
-This library was generated with [Nx](https://nx.dev).
+- Shared Firebase Admin helpers for backend services
 
-## Building
+## Installation
 
-Run `nx build firebase-admin` to build the library.
+- With NPM (or Yarn, Bun,...):
+
+```bash
+npm install @trt-web/firebase-admin
+```
+
+- If you also need the shared helpers from `@trt-web/core`, install both packages:
+
+```bash
+npm install @trt-web/core @trt-web/firebase-admin
+```
+
+## Compatibility
+
+- Firebase Admin SDK 14 and newer.
+
+## Cache
+
+- `withCache`: wrap Express GET routes with response caching.
+- `CacheService`: low-level in-memory cache wrapper.
+- `FirestoreCacheService`: versioned cache helper for Firestore repositories.
+- `NetworkCacheService`: cache key helper for network responses.
+
+## Firebase
+
+- `FireAuthService`: authentication helpers for Firebase Admin.
+- `FireStoreRepository`: base Firestore repository with query, paging, mutation, and transaction helpers.
+- `FirebaseMessagingService`: Firebase Cloud Messaging helpers.
