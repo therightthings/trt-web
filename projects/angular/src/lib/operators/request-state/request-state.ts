@@ -1,5 +1,6 @@
 import { concat, of, OperatorFunction } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+
 import { RequestState } from './request-state.type';
 
 /**

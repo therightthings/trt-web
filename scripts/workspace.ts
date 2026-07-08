@@ -1,7 +1,9 @@
-import enquirer from 'enquirer';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { stdin as input, stdout as output } from 'node:process';
+
+import enquirer from 'enquirer';
+
 import { runCommand } from './exec.ts';
 
 export type WorkspaceProject = {

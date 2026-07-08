@@ -1,10 +1,13 @@
-import baseConfig from '../../eslint.config.mjs';
+import nx from '@nx/eslint-plugin';
 
-export default [
-  ...baseConfig,
+export const coreConfig = [
+  ...nx.configs['flat/typescript'],
   {
     files: ['**/*.json'],
     ignores: ['**/package.json'],
+    plugins: {
+      '@nx': nx,
+    },
     rules: {
       '@nx/dependency-checks': [
         'error',
@@ -23,8 +26,11 @@ export default [
   {
     files: ['**/*.ts'],
     rules: {
-      '@typescript-eslint/no-this-alias': 'warn',
       '@typescript-eslint/no-inferrable-types': 'off',
+      '@typescript-eslint/no-this-alias': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 ];
+
+export default coreConfig;

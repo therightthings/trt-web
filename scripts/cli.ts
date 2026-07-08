@@ -1,12 +1,15 @@
-import { Command } from 'commander';
 import path from 'node:path';
 import url from 'node:url';
+
+import { Command } from 'commander';
+
 import {
   runAffectedCircular,
   runAffectedDeadcode,
   runAffectedSpell,
   runAffectedTypecheck,
 } from './affected.ts';
+import { runCommand, runNx } from './exec.ts';
 import {
   listProjects,
   publishProject,
@@ -16,7 +19,6 @@ import {
   resolveReleaseTarget,
   resolveTestTarget,
 } from './workspace.ts';
-import { runCommand, runNx } from './exec.ts';
 
 const repoRoot = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), '..');
 const projectsDir = path.join(repoRoot, 'projects');

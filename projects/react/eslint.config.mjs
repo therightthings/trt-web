@@ -1,3 +1,3 @@
-import baseConfig from '../../eslint.config.mjs';
+export const reactConfig = [];
 
-export default [...baseConfig];
+export default reactConfig;

@@ -1,13 +1,13 @@
 import nx from '@nx/eslint-plugin';
-import baseConfig from '../../eslint.config.mjs';
 
-export default [
+export const firebaseAdminConfig = [
   ...nx.configs['flat/typescript'],
-  ...baseConfig,
   {
-    files: ['projects/firebase-admin/**/*.ts'],
+    files: ['**/*.ts'],
     rules: {
       '@typescript-eslint/no-empty-function': 'off',
     },
   },
 ];
+
+export default firebaseAdminConfig;

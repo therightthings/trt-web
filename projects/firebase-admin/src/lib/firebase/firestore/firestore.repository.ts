@@ -6,12 +6,12 @@ import {
   FieldPath,
   Filter,
   Firestore,
+  getFirestore,
   Query,
   Timestamp,
   Transaction,
   WriteBatch,
   WriteResult,
-  getFirestore,
 } from 'firebase-admin/firestore';
 
 import { NodeCacheService } from '../../cache/node-cache.service';
@@ -19,9 +19,9 @@ import {
   CacheQueryOption,
   DocumentDataWithTimestamp,
   FirestoreFilterQuery,
+  firestoreLimit,
   PagingQuery,
   WhereQuery,
-  firestoreLimit,
 } from './firestore.type';
 
 export abstract class FireStoreRepository {

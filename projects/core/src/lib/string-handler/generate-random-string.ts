@@ -1,4 +1,4 @@
-export function generateRandomString(length: number = 16): string {
+export function generateRandomString(length = 16): string {
   const bytes = new Uint8Array(length);
   crypto.getRandomValues(bytes);
 

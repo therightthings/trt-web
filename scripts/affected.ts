@@ -1,8 +1,9 @@
-import path from 'node:path';
-import { collectChangedFiles } from './git.ts';
-import { runCommandsSequentially, runCommand } from './exec.ts';
-import type { WorkspaceProject } from './workspace.ts';
 import { existsSync } from 'node:fs';
+import path from 'node:path';
+
+import { runCommand, runCommandsSequentially } from './exec.ts';
+import { collectChangedFiles } from './git.ts';
+import type { WorkspaceProject } from './workspace.ts';
 
 const repoWideChangeFiles = new Set(['nx.json', 'tsconfig.base.json']);
 const ignoredProjectExtensions = new Set([

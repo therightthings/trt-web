@@ -1,6 +1,6 @@
 import { requireBrowserEnv } from '../../utils';
-import { canvasToBlob } from '../canvas-to-blob';
 import { CanvasImageFormat, canvasQualityByFormat } from '../canvas.type';
+import { canvasToBlob } from '../canvas-to-blob';
 import { fileToDataUrl } from '../file-to-data-url';
 import { loadImage } from '../load-image';
 

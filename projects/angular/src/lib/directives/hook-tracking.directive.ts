@@ -6,11 +6,11 @@ import {
   Directive,
   DoCheck,
   ElementRef,
+  inject,
   OnChanges,
   OnDestroy,
   OnInit,
   SimpleChanges,
-  inject,
 } from '@angular/core';
 
 enum NG_HOOK {

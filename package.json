@@ -4,6 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "prepare": "npx husky",
     "build": "node --experimental-strip-types scripts/cli.ts build",
     "lint": "node --experimental-strip-types scripts/cli.ts lint",
     "release": "node --experimental-strip-types scripts/cli.ts release",
@@ -13,9 +14,9 @@
     "commitlint": "commitlint",
     "lint:check": "eslint",
     "lint:fix": "eslint --fix",
+    "sort:imports": "eslint --fix --fix-type layout",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
-    "prepare": "npx husky",
     "typecheck": "node --experimental-strip-types scripts/cli.ts typecheck",
     "check:deadcode": "node --experimental-strip-types scripts/cli.ts check:deadcode",
     "check:circular": "node --experimental-strip-types scripts/cli.ts check:circular",
@@ -24,10 +25,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs,mts,cjs,cts,html}": [
-      "npx eslint --fix"
-    ],
-    "projects/vue/**/*.vue": [
-      "npx eslint --fix --config projects/vue/eslint.config.mjs"
+      "npx eslint --fix --no-warn-ignored"
     ],
     "*.{ts,tsx,js,jsx,mjs,mts,cjs,cts,html,scss,less,css,json,md,vue}": [
       "npx prettier --write"
@@ -73,8 +71,8 @@
     "@schematics/angular": "~21.2.0",
     "@swc/helpers": "~0.5.18",
     "@types/busboy": "^1.5.4",
-    "@types/node": "^26.1.0",
     "@types/express": "^5.0.3",
+    "@types/node": "^26.1.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@typescript-eslint/utils": "^8.40.0",
@@ -87,6 +85,7 @@
     "enquirer": "^2.4.1",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^10.0.0",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
     "eslint-plugin-vue": "^10.9.2",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",

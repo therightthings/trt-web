@@ -1,5 +1,6 @@
 import { generateHash } from '@trt-web/core';
 import NodeCache from 'node-cache';
+
 import { TimeConfig, toMs } from '../utils';
 
 export type CacheScope = 'get-list-users' | 'guest';

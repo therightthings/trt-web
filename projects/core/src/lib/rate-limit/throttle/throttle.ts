@@ -1,6 +1,6 @@
 import { toMs } from '../../utils';
 import { debounce } from '../debounce/debounce';
-import { ThrottleOptions, ThrottledFunction } from './throttle.type';
+import { ThrottledFunction, ThrottleOptions } from './throttle.type';
 
 type AnyFunction = (this: any, ...args: any[]) => any;
 

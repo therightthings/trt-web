@@ -1,12 +1,14 @@
 import nx from '@nx/eslint-plugin';
-import baseConfig from '../../eslint.config.mjs';
+import tseslint from 'typescript-eslint';
 
-export default [
+export const angularConfig = [
   ...nx.configs['flat/angular'],
   ...nx.configs['flat/angular-template'],
-  ...baseConfig,
   {
     files: ['**/*.ts'],
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+    },
     rules: {
       '@angular-eslint/directive-selector': 'off',
       '@angular-eslint/component-selector': 'off',
@@ -27,3 +29,5 @@ export default [
     rules: {},
   },
 ];
+
+export default angularConfig;
