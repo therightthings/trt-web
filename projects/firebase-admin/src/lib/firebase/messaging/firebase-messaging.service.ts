@@ -4,9 +4,7 @@ export class FirebaseMessagingService {
   private readonly messaging: Messaging = getMessaging();
 
   static #instance: FirebaseMessagingService;
-  private constructor() {
-    console.log('[firebase-messaging-service] create instance');
-  }
+  private constructor() {}
   static getInstance() {
     if (!FirebaseMessagingService.#instance) {
       FirebaseMessagingService.#instance = new FirebaseMessagingService();

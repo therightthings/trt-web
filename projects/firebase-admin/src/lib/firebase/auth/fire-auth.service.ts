@@ -4,9 +4,7 @@ export class FireAuthService {
   private readonly auth: Auth = getAuth();
 
   static #instance: FireAuthService;
-  private constructor() {
-    console.log('[fire-auth-service] create instance');
-  }
+  private constructor() {}
   static getInstance() {
     if (!FireAuthService.#instance) {
       FireAuthService.#instance = new FireAuthService();

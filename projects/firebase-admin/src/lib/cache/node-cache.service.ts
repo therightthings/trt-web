@@ -36,9 +36,7 @@ export class NodeCacheService {
   };
 
   static #instance: NodeCacheService;
-  private constructor() {
-    console.log('[node-cache-service] create instance');
-  }
+  private constructor() {}
   static getInstance() {
     if (!NodeCacheService.#instance) {
       NodeCacheService.#instance = new NodeCacheService();
