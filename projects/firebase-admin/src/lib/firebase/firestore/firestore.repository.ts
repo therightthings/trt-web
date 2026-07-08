@@ -14,7 +14,7 @@ import {
   WriteResult,
 } from 'firebase-admin/firestore';
 
-import { NodeCacheService } from '../../cache/node-cache.service';
+import { CacheService, FirestoreCacheService } from '../../cache';
 import {
   CacheQueryOption,
   DocumentDataWithTimestamp,
@@ -25,7 +25,7 @@ import {
 } from './firestore.type';
 
 export abstract class FireStoreRepository {
-  private readonly cacheService = NodeCacheService.getInstance();
+  private readonly cacheService = FirestoreCacheService.getInstance();
   protected readonly store: Firestore = getFirestore();
   protected collectionPath = '';
   protected docPath = '';
@@ -119,7 +119,7 @@ export abstract class FireStoreRepository {
     if (enabledCache) {
       const cached = this.cacheService.get<number>(cacheKey);
       if (cached != undefined && cached != null) {
-        if (NodeCacheService.config.debug) {
+        if (CacheService.config.debug) {
           console.log(`[cache-repo] get-total-count served from ${cacheKey}`);
         }
         return cached;
@@ -197,7 +197,7 @@ export abstract class FireStoreRepository {
     if (enabledCache) {
       const cached = this.cacheService.get(cacheKey);
       if (cached) {
-        if (NodeCacheService.config.debug) {
+        if (CacheService.config.debug) {
           console.log(`[cache-repo] get-many served from ${cacheKey}`);
         }
         return cached as {
@@ -322,7 +322,7 @@ export abstract class FireStoreRepository {
     if (enabledCache) {
       const cached = this.cacheService.get<T>(cacheKey);
       if (cached) {
-        if (NodeCacheService.config.debug) {
+        if (CacheService.config.debug) {
           console.log(`[cache-repo] get-one served from ${cacheKey}`);
         }
         return cached;

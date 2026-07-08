@@ -1,1 +1,2 @@
-export { NodeCacheService } from './node-cache.service';
+export { CacheService } from './cache.service';
+export { FirestoreCacheService } from './firestore-cache.service';
