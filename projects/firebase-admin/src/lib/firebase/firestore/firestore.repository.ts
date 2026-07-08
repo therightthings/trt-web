@@ -24,7 +24,7 @@ import {
   WhereQuery,
 } from './firestore.type';
 
-export abstract class FireStoreRepository {
+export abstract class FireStoreRepository<T = any> {
   private readonly cacheService = FirestoreCacheService.getInstance();
   protected readonly store: Firestore = getFirestore();
   protected collectionPath = '';
@@ -102,7 +102,7 @@ export abstract class FireStoreRepository {
   async getTotalCount(
     whereOrFilter: WhereQuery[] | FirestoreFilterQuery = [],
     options?: Omit<CacheQueryOption, 'select'>,
-  ) {
+  ): Promise<number> {
     const where = Array.isArray(whereOrFilter) ? whereOrFilter : [];
     const filter = Array.isArray(whereOrFilter) ? null : whereOrFilter;
     const enabledCollectionGroup = options?.collectionGroup ?? false;
@@ -167,11 +167,79 @@ export abstract class FireStoreRepository {
     return count;
   }
 
-  async getPagingDocuments<T = any>(
-    paging: PagingQuery<T>,
+  async getDocumentById(
+    documentPath: string,
+    options?: Omit<CacheQueryOption<T>, 'collectionGroup'>,
+  ): Promise<T | null> {
+    const debug = options?.debug ?? false;
+    const enabledCache = options?.cache ?? false;
+    const cacheTtl = options?.cacheTtl ?? { value: 10, unit: 'minute' };
+    const cacheKey = this.cacheService.getRepositoryKey(this.collectionPath, {
+      method: 'get-one',
+      id: { documentPath: documentPath, select: options?.select },
+    });
+
+    if (enabledCache) {
+      const cached = this.cacheService.get<T>(cacheKey);
+      if (cached) {
+        if (CacheService.config.debug) {
+          console.log(`[cache-repo] get-one served from ${cacheKey}`);
+        }
+        return cached;
+      }
+    }
+
+    let queryRef = this.store
+      .collection(this.collectionPath)
+      .where(FieldPath.documentId(), '==', documentPath)
+      .limit(1);
+
+    if (Array.isArray(options?.select) && options.select.length > 0) {
+      queryRef = queryRef.select(...(options.select as string[]));
+    }
+
+    if (debug) {
+      console.log(
+        '[firestore] getDocumentById',
+        JSON.stringify(
+          {
+            collection: this.collectionPath,
+            select: options?.select ? options.select : null,
+            cache: enabledCache,
+            cacheTtl: enabledCache ? cacheTtl : null,
+          },
+          null,
+          2,
+        ),
+      );
+    }
+
+    const querySnapshot = await queryRef.get();
+    if (querySnapshot.empty) {
+      return null;
+    }
+
+    const snapshot = querySnapshot.docs[0];
+    const data = snapshot.data();
+
+    const value = {
+      id: snapshot.id,
+      ...data,
+      ...this.getTimestamp(snapshot),
+    } as T;
+
+    if (enabledCache) {
+      this.cacheService.set(cacheKey, value, cacheTtl);
+    }
+
+    return value;
+  }
+
+  async getPagingDocuments<U = T>(
+    paging: PagingQuery<U>,
     options?: Omit<CacheQueryOption, 'select'>,
   ): Promise<{
-    data: T[];
+    data: U[];
     lastId: string | null;
   }> {
     paging.limit ??= 20;
@@ -201,7 +269,7 @@ export abstract class FireStoreRepository {
           console.log(`[cache-repo] get-many served from ${cacheKey}`);
         }
         return cached as {
-          data: T[];
+          data: U[];
           lastId: string | null;
         };
       }
@@ -296,7 +364,7 @@ export abstract class FireStoreRepository {
     }
 
     const value = {
-      data: documents as T[],
+      data: documents as U[],
       lastId: lastDocumentPath,
     };
 
@@ -307,78 +375,19 @@ export abstract class FireStoreRepository {
     return value;
   }
 
-  async getDocumentById<T = any>(
-    documentPath: string,
-    options?: Omit<CacheQueryOption<T>, 'collectionGroup'>,
-  ): Promise<T | null> {
-    const debug = options?.debug ?? false;
-    const enabledCache = options?.cache ?? false;
-    const cacheTtl = options?.cacheTtl ?? { value: 10, unit: 'minute' };
-    const cacheKey = this.cacheService.getRepositoryKey(this.collectionPath, {
-      method: 'get-one',
-      id: { documentPath: documentPath, select: options?.select },
-    });
+  async createDocument(value: Omit<T, 'id'>): Promise<T & { id: string }> {
+    const docRef = await this.store.collection(this.collectionPath).add(value as any);
+    const id = docRef.id;
 
-    if (enabledCache) {
-      const cached = this.cacheService.get<T>(cacheKey);
-      if (cached) {
-        if (CacheService.config.debug) {
-          console.log(`[cache-repo] get-one served from ${cacheKey}`);
-        }
-        return cached;
-      }
-    }
+    console.log(`[firestore] created document successfully: ${this.collectionPath}/${docRef.id}`);
 
-    let queryRef = this.store
-      .collection(this.collectionPath)
-      .where(FieldPath.documentId(), '==', documentPath)
-      .limit(1);
+    const docSnapshot = await docRef.get();
+    const data = docSnapshot.data() as T;
 
-    if (Array.isArray(options?.select) && options.select.length > 0) {
-      queryRef = queryRef.select(...(options.select as string[]));
-    }
-
-    if (debug) {
-      console.log(
-        '[firestore] getDocumentById',
-        JSON.stringify(
-          {
-            collection: this.collectionPath,
-            select: options?.select ? options.select : null,
-            cache: enabledCache,
-            cacheTtl: enabledCache ? cacheTtl : null,
-          },
-          null,
-          2,
-        ),
-      );
-    }
-
-    const querySnapshot = await queryRef.get();
-    if (querySnapshot.empty) {
-      return null;
-    }
-
-    const snapshot = querySnapshot.docs[0];
-    const data = snapshot.data();
-
-    const value = {
-      id: snapshot.id,
-      ...data,
-      ...this.getTimestamp(snapshot),
-    } as T;
-
-    if (enabledCache) {
-      this.cacheService.set(cacheKey, value, cacheTtl);
-    }
-
-    return value;
+    return { id, ...data };
   }
 
-  async upsertDocument<T = any>(
-    value: T | Partial<T>,
-    documentPath?: string,
-  ): Promise<T & { id: string }> {
+  async upsertDocument(value: T | Partial<T>, documentPath?: string): Promise<T & { id: string }> {
     let docRef: DocumentReference;
     let id: string;
 
@@ -401,7 +410,7 @@ export abstract class FireStoreRepository {
     return { id, ...data };
   }
 
-  async updateDocument<T = any>(documentPath: string, value: Partial<T>): Promise<WriteResult> {
+  async updateDocument(documentPath: string, value: Partial<T>): Promise<WriteResult> {
     return await this.store
       .collection(this.collectionPath)
       .doc(documentPath)
@@ -414,7 +423,7 @@ export abstract class FireStoreRepository {
       });
   }
 
-  async updateMany<T = any>(payload: { id: string; partialData: Partial<T> }[]) {
+  async updateMany(payload: { id: string; partialData: Partial<T> }[]) {
     if (!payload.length) {
       return;
     }
@@ -479,7 +488,7 @@ export abstract class FireStoreRepository {
     console.log(`[firestore] delete many document successfully: ${this.collectionPath}`);
   }
 
-  runTransaction<T>(updateFn: (tx: Transaction) => Promise<any>) {
+  runTransaction<T>(updateFn: (tx: Transaction) => Promise<T>): Promise<T> {
     return this.store.runTransaction(updateFn);
   }
 }
