@@ -1,1 +1,1 @@
-export { safePipe } from './safe.pipe';
+export { SafePipe } from './safe.pipe';

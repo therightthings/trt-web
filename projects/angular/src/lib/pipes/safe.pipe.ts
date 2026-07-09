@@ -12,7 +12,7 @@ import {
   name: 'safe',
   pure: true,
 })
-export class safePipe implements PipeTransform {
+export class SafePipe implements PipeTransform {
   private readonly sanitizer = inject(DomSanitizer);
 
   transform(
