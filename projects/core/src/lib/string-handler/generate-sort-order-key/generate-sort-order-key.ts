@@ -89,7 +89,9 @@ export function generateSortOrderKey(config?: { previous?: string; next?: string
       throw new Error('Cannot generate rank after the maximum rank');
     }
 
-    return encodeSimpleLexoRank(buildMiddleValue(previousValue, SORT_ORDER_KEY_CONFIG.maxValue + 1n));
+    return encodeSimpleLexoRank(
+      buildMiddleValue(previousValue, SORT_ORDER_KEY_CONFIG.maxValue + 1n),
+    );
   }
 
   if (next) {

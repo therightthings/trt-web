@@ -1,5 +1,5 @@
 // Run: npx vitest run projects/core/src/lib/file-handler/compress-image/compress-image-file.spec.ts
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { compressImageFile } from './compress-image-file';
 
@@ -34,6 +34,10 @@ function createFileReaderMock(result: string, fail = false) {
 }
 
 describe('compressImageFile', () => {
+  beforeEach(() => {
+    vi.stubGlobal('window', {});
+  });
+
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
@@ -68,7 +72,10 @@ describe('compressImageFile', () => {
     vi.stubGlobal('document', { createElement });
 
     const file = new File(['image-bytes'], 'photo.png', { type: 'image/png' });
-    const result = await compressImageFile(file, { maxWidth: 1000, quality: 0.8 });
+    const result = await compressImageFile(file, {
+      maxWidth: 1000,
+      quality: 0.8,
+    });
 
     expect(createElement).toHaveBeenCalledWith('canvas');
     expect(drawImage).toHaveBeenCalledWith(expect.any(Object), 0, 0, 1000, 500);
@@ -107,7 +114,10 @@ describe('compressImageFile', () => {
     vi.stubGlobal('document', { createElement });
 
     const file = new File(['image-bytes'], 'photo.png', { type: 'image/png' });
-    const result = await compressImageFile(file, { outputFormat: 'image/webp', quality: 0.6 });
+    const result = await compressImageFile(file, {
+      outputFormat: 'image/webp',
+      quality: 0.6,
+    });
 
     expect(toBlob).toHaveBeenCalledWith(expect.any(Function), 'image/webp', 0.6);
     expect(result.type).toBe('image/webp');
@@ -142,7 +152,9 @@ describe('compressImageFile', () => {
     vi.stubGlobal('document', { createElement });
 
     const file = new File(['image-bytes'], 'photo.png', { type: 'image/png' });
-    const result = await compressImageFile(file, { outputFormat: 'image/webp' });
+    const result = await compressImageFile(file, {
+      outputFormat: 'image/webp',
+    });
 
     expect(toBlob).toHaveBeenCalledWith(expect.any(Function), 'image/webp', 0.85);
     expect(result.type).toBe('image/webp');
@@ -177,7 +189,10 @@ describe('compressImageFile', () => {
     vi.stubGlobal('document', { createElement });
 
     const file = new File(['image-bytes'], 'photo.png', { type: 'image/png' });
-    const result = await compressImageFile(file, { outputFormat: 'image/webp', quality: 0.7 });
+    const result = await compressImageFile(file, {
+      outputFormat: 'image/webp',
+      quality: 0.7,
+    });
 
     expect(toBlob).toHaveBeenCalledWith(expect.any(Function), 'image/webp', 0.7);
     expect(result.type).toBe('image/webp');

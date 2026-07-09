@@ -42,5 +42,7 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 
-
-/projects/playground
+# Nx
+.nx/cache
+.nx/workspace-data/*
+.nx/migrate-runs

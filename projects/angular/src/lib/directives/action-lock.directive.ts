@@ -1,9 +1,9 @@
-import { Directive, ElementRef, inject, input } from '@angular/core';
+import { Directive, ElementRef, inject, input, OnDestroy, OnInit } from '@angular/core';
 
 @Directive({
   selector: '[actionLock]',
 })
-export class ActionLockDirective {
+export class ActionLockDirective implements OnInit, OnDestroy {
   readonly lockMs = input<number>(1000, {
     alias: 'actionLockMs',
   });

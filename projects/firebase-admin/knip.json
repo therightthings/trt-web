@@ -1,0 +1,7 @@
+{
+  "$schema": "../../node_modules/knip/schema.json",
+  "ignoreDependencies": ["tslib"],
+  "entry": ["src/public-api.ts"],
+  "project": ["src/**/*.ts"],
+  "ignoreFiles": ["src/**/*.spec.*"]
+}

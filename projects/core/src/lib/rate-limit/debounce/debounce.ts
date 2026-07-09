@@ -1,5 +1,5 @@
 import { toMs } from '../../utils';
-import { DebounceOptions, DebouncedFunction } from './debounce.type';
+import { DebouncedFunction, DebounceOptions } from './debounce.type';
 
 type AnyFunction = (this: any, ...args: any[]) => any;
 const now = () => Date.now();

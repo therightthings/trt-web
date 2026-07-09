@@ -1,6 +1,7 @@
 import { HttpContext, HttpEvent } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
+
 import { TimeConfig, toMs } from '../utils';
 import {
   HTTP_CACHE_GROUP_TOKEN,
@@ -166,7 +167,7 @@ export class HttpCacheService {
     for (const [key, cache] of this.caches.entries()) {
       if (cache.id !== normalizedId) continue;
 
-      const nextBody = updater(cache.response.body);
+      const nextBody = updater(cache.response.body as T);
       const nextResponse = cache.response.clone({ body: nextBody });
 
       this.caches.set(key, {

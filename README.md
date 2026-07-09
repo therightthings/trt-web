@@ -4,22 +4,27 @@ Monorepo for the `@trt-web` packages.
 
 ## Packages
 
-- `@trt-web/core`: shared browser and utility helpers
-- `@trt-web/angular`: Angular-specific utilities, directives, pipes, and HTTP cache helpers. Compatible with Angular 16 through Angular 22.
+- `@trt-web/core`: shared browser, date, DOM, file, number, object, rate-limit, string, and utility helpers.
+- `@trt-web/angular`: Angular-specific utilities, directives, pipes, reactive forms helpers, signal store, and HTTP cache helpers. Compatible with Angular 16 through Angular 22.
+- `@trt-web/firebase-admin`: Firebase Admin helpers for backend services, including cache, Firestore, messaging, and utility helpers.
+
+## Roadmap
+
+- `@trt-web/react` and `@trt-web/vue`: planned for future release; contributions welcome.
 
 ## Installation
 
-Choose the package set that matches your use case:
+Install the package you need:
 
-```bash
-npm install @trt-web/core
-```
+- `npm install @trt-web/core` if you want the shared helpers directly.
+- `npm install @trt-web/angular` for Angular projects.
+- `npm install @trt-web/firebase-admin` for Firebase Admin backend projects.
 
-- For Angular projects, install both packages:
+- Install `@trt-web/core` separately only when your app imports its helpers directly.
 
-```bash
-npm install @trt-web/core @trt-web/angular
-```
+## Contributing
+
+- Contributions are welcome, especially for the planned `@trt-web/react` and `@trt-web/vue` packages.
 
 ## License
 

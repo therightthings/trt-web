@@ -1,0 +1,17 @@
+{
+  "name": "@trt-web/react",
+  "version": "0.0.1",
+  "private": false,
+  "description": "Shared building blocks for cleaner React web apps",
+  "license": "Apache-2.0",
+  "main": "./src/public-api.js",
+  "types": "./src/public-api.d.ts",
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "sideEffects": false
+}

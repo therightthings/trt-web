@@ -1,16 +1,10 @@
+import { checkCircularReferences, requireBrowserEnv } from '../../utils';
+
 export class LocalStorage {
   private static stringify(value: unknown): string {
-    const seen = new WeakSet();
+    checkCircularReferences(value);
 
-    return JSON.stringify(value, (_, v) => {
-      if (typeof v === 'object' && v !== null) {
-        if (seen.has(v)) {
-          console.error('circular reference detected');
-        }
-        seen.add(v);
-      }
-      return v;
-    });
+    return JSON.stringify(value);
   }
 
   private static isQuotaError(err: unknown): boolean {
@@ -21,12 +15,14 @@ export class LocalStorage {
   }
 
   private static isAvailable(): boolean {
-    try {
-      return typeof window !== 'undefined' && !!window.localStorage;
-    } catch {
+    requireBrowserEnv();
+
+    if (!window.localStorage) {
       console.error('localStorage unsupported for this environment.');
       return false;
     }
+
+    return true;
   }
 
   static set<T = any>(key: string, data: T): void {

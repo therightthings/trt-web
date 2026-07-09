@@ -1,5 +1,6 @@
-import { canvasToBlob } from '../canvas-to-blob';
+import { requireBrowserEnv } from '../../utils';
 import { CanvasImageFormat, canvasQualityByFormat } from '../canvas.type';
+import { canvasToBlob } from '../canvas-to-blob';
 import { fileToDataUrl } from '../file-to-data-url';
 import { loadImage } from '../load-image';
 
@@ -11,6 +12,8 @@ export async function compressImageFile(
     quality?: number;
   },
 ): Promise<File> {
+  requireBrowserEnv();
+
   const { maxWidth = 1024, outputFormat = 'image/jpeg' } = config ?? {};
   const quality = config?.quality ?? canvasQualityByFormat[outputFormat];
 

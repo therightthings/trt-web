@@ -82,7 +82,10 @@ afterEach(() => {
 });
 
 describe('BrowserPermission', () => {
-  it('returns unsupported when browser globals are missing', async () => {
+  it('returns unsupported when browser APIs are missing', async () => {
+    vi.stubGlobal('window', {});
+    vi.stubGlobal('document', {});
+
     await expect(BrowserPermission.getState('geolocation')).resolves.toBe('unsupported');
     await expect(BrowserPermission.request('geolocation')).resolves.toBe('unsupported');
   });

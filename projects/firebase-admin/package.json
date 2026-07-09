@@ -1,0 +1,38 @@
+{
+  "name": "@trt-web/firebase-admin",
+  "version": "1.0.0",
+  "private": false,
+  "description": "Shared Firebase Admin helpers for backend services",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/therightthings/trt-web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/therightthings/trt-web/issues"
+  },
+  "homepage": "https://github.com/therightthings/trt-web#readme",
+  "keywords": [
+    "firebase-admin",
+    "firebase-authentication",
+    "firestore",
+    "messaging",
+    "cache",
+    "backend",
+    "express"
+  ],
+  "type": "module",
+  "main": "./src/public-api.js",
+  "types": "./src/public-api.d.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@trt-web/core": "1.0.0",
+    "firebase-admin": "^14.1.0",
+    "busboy": "^1.6.0",
+    "node-cache": "^5.1.2",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/busboy": "^1.5.4",
+    "@types/express": "^5.0.3"
+  }
+}

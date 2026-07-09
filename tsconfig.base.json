@@ -1,0 +1,22 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "ignoreDeprecations": "6.0",
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "paths": {
+      "@trt-web/core": ["./projects/core/src/public-api.ts"],
+      "@trt-web/angular": ["./projects/angular/src/public-api.ts"],
+      "@trt-web/react": ["./projects/react/src/public-api.ts"],
+      "@trt-web/vue": ["./projects/vue/src/public-api.ts"],
+      "@trt-web/firebase-admin": ["./projects/firebase-admin/src/public-api.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}
