@@ -42,6 +42,7 @@ npm install @trt-web/core
 - `calcHaversineDistance`: calculate distance between two latitude/longitude points.
 - `calcSimpleBayesianRating`: calculate a weighted rating without a prior.
 - `generateRandomNumber`: generate integer or decimal numbers in a range.
+- `formatViewCount`: format a view count into compact notation like `1.2k`.
 
 ### Object
 
