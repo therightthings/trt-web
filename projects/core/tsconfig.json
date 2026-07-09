@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.lib.base.json",
   "compilerOptions": {
-    "module": "commonjs",
     "lib": ["es2020", "dom"]
   },
   "files": [],

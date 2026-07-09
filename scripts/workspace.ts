@@ -4,8 +4,6 @@ import { stdin as input, stdout as output } from 'node:process';
 
 import enquirer from 'enquirer';
 
-import { runCommand } from './exec.ts';
-
 export type WorkspaceProject = {
   name: string;
   folder: string;
@@ -248,38 +246,6 @@ export async function resolveLintTarget(
   return { type: 'project', project };
 }
 
-export async function resolveReleaseTarget(
-  projects: WorkspaceProject[],
-  projectArg: string | undefined,
-  options: { project?: string },
-): Promise<WorkspaceProject> {
-  const explicit = options.project ?? projectArg;
-  if (explicit) {
-    const project = findProject(projects, explicit);
-    if (!project) {
-      throw new Error(`Project not found: ${explicit}`);
-    }
-    return project;
-  }
-
-  if (!input.isTTY || !output.isTTY) {
-    throw new Error('Release script requires an interactive TTY or an explicit project.');
-  }
-
-  const selected = await chooseProject({
-    projects,
-    title: 'Chon project can release:',
-    publishableOnly: false,
-  });
-
-  const project = findProject(projects, selected);
-  if (!project) {
-    throw new Error(`Project not found: ${selected}`);
-  }
-
-  return project;
-}
-
 export async function resolveTestTarget(
   projects: WorkspaceProject[],
   projectArg: string | undefined,
@@ -325,25 +291,4 @@ export async function resolveTestTarget(
   }
 
   return { type: 'project', project };
-}
-
-export async function publishProject(repoRoot: string, project: WorkspaceProject): Promise<number> {
-  const distPackageJsonPath = path.join(repoRoot, 'dist', project.folder, 'package.json');
-  const raw = await readFile(distPackageJsonPath, 'utf8');
-  const packageJson = JSON.parse(raw);
-
-  if (packageJson.private) {
-    throw new Error(`Project ${project.name} is marked private, so it will not be published.`);
-  }
-
-  if (packageJson.scripts?.prepublishOnly) {
-    throw new Error(
-      [
-        `Project ${project.name} has a prepublishOnly guard in dist/${project.folder}/package.json.`,
-        'This package is currently not publishable as-is.',
-      ].join('\n'),
-    );
-  }
-
-  return runCommand('npm', ['publish'], path.join(repoRoot, 'dist', project.folder));
 }

@@ -1,6 +1,6 @@
 {
   "name": "@trt-web/firebase-admin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "description": "Shared Firebase Admin helpers for backend services",
   "repository": {
@@ -22,10 +22,18 @@
   ],
   "type": "module",
   "main": "./src/public-api.js",
+  "module": "./src/public-api.js",
   "types": "./src/public-api.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/public-api.d.ts",
+      "default": "./src/public-api.js"
+    },
+    "./package.json": "./package.json"
+  },
   "license": "Apache-2.0",
   "dependencies": {
-    "@trt-web/core": "1.0.0",
+    "@trt-web/core": "1.0.1",
     "firebase-admin": "^14.1.0",
     "busboy": "^1.6.0",
     "node-cache": "^5.1.2",

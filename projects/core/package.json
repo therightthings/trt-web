@@ -1,9 +1,17 @@
 {
   "name": "@trt-web/core",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "main": "./src/public-api.js",
+  "module": "./src/public-api.js",
   "types": "./src/public-api.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/public-api.d.ts",
+      "default": "./src/public-api.js"
+    },
+    "./package.json": "./package.json"
+  },
   "description": "Shared building blocks for cleaner Angular web apps",
   "repository": {
     "type": "git",

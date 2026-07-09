@@ -12,11 +12,9 @@ import {
 import { runCommand, runNx } from './exec.ts';
 import {
   listProjects,
-  publishProject,
   resolveBuildTarget,
   resolveLintTarget,
   resolvePackageTarget,
-  resolveReleaseTarget,
   resolveTestTarget,
 } from './workspace.ts';
 
@@ -45,22 +43,6 @@ async function runBuild(
   }
 
   return runNx(repoRoot, ['build', target.project.name]);
-}
-
-async function runRelease(projectArg: string | undefined, options: { project?: string }) {
-  const projects = await listProjects(projectsDir);
-  const target = await resolveReleaseTarget(projects, projectArg, options);
-
-  if (!target.publishable) {
-    throw new Error(`Project ${target.name} is private, so it cannot be published.`);
-  }
-
-  const buildStatus = await runNx(repoRoot, ['build', target.name]);
-  if (buildStatus !== 0) {
-    return buildStatus;
-  }
-
-  return publishProject(repoRoot, target);
 }
 
 async function runLint(
@@ -157,9 +139,9 @@ async function runSpell(options: { all?: boolean }) {
 const program = new Command();
 
 program
-  .name('mono-repo')
+  .name('trt-web')
   .description(
-    'Interactive helpers for building, linting, releasing, and testing workspace projects.',
+    'Interactive helpers for building, linting, packaging, and testing workspace projects.',
   )
   .showHelpAfterError()
   .helpCommand(true);
@@ -171,14 +153,6 @@ program
   .option('-a, --all', 'build all projects')
   .action((projectArg: string | undefined, options: { project?: string; all?: boolean }) =>
     runAction(() => runBuild(projectArg, options)),
-  );
-
-program
-  .command('release [project]')
-  .description('Build and publish one project or prompt for selection.')
-  .option('-p, --project <project>', 'publish a specific project')
-  .action((projectArg: string | undefined, options: { project?: string }) =>
-    runAction(() => runRelease(projectArg, options)),
   );
 
 program

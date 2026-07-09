@@ -1,8 +1,5 @@
 {
   "extends": "../../tsconfig.lib.base.json",
-  "compilerOptions": {
-    "module": "commonjs"
-  },
   "files": [],
   "include": [],
   "references": [
