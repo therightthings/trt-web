@@ -10,12 +10,6 @@
 npm install @trt-web/firebase-admin
 ```
 
-- If you also need the shared helpers from `@trt-web/core`, install both packages:
-
-```bash
-npm install @trt-web/core @trt-web/firebase-admin
-```
-
 ## Compatibility
 
 - Firebase Admin SDK 14 and newer.

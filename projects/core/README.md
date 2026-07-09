@@ -17,6 +17,8 @@ npm install @trt-web/core
 - `BrowserPermission`: browser permission helper for checking and requesting permissions.
 - `LocalStorage`: typed wrapper around `localStorage`.
 - `SessionStorage`: typed wrapper around `sessionStorage`.
+- `createWorker`: create a Web Worker from a function.
+- `runWorker`: run a function in a Web Worker and resolve its result.
 
 ### Date
 

@@ -10,12 +10,6 @@
 npm install @trt-web/angular
 ```
 
-- If you also need the shared helpers from `@trt-web/core`, install both packages:
-
-```bash
-npm install @trt-web/core @trt-web/angular
-```
-
 ## Compatibility
 
 - Angular 16 through Angular 22.
