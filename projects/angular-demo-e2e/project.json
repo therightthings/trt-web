@@ -1,0 +1,19 @@
+{
+  "name": "angular-demo-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "projects/angular-demo-e2e/src",
+  "implicitDependencies": ["angular-demo"],
+  "// targets": "to see all targets run: nx show project angular-demo-e2e --web",
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/playwright:playwright",
+      "options": {
+        "config": "projects/angular-demo-e2e/playwright.config.mts"
+      }
+    }
+  }
+}
