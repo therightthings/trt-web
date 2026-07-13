@@ -1,4 +1,4 @@
-import { readdir, readFile } from 'node:fs/promises';
+import { access, readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { stdin as input, stdout as output } from 'node:process';
 
@@ -9,10 +9,12 @@ export type WorkspaceProject = {
   folder: string;
   private: boolean;
   publishable: boolean;
+  hasServeTarget: boolean;
   hasLintTarget: boolean;
   testable: boolean;
 };
 
+type ServeTarget = { type: 'project'; project: WorkspaceProject };
 type BuildTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
 type LintTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
 type PackageTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
@@ -33,19 +35,31 @@ export async function listProjects(projectsDir: string): Promise<WorkspaceProjec
     const packageJsonPath = path.join(projectsDir, entry.name, 'package.json');
 
     try {
-      const [projectRaw, packageRaw] = await Promise.all([
-        readFile(projectJsonPath, 'utf8'),
-        readFile(packageJsonPath, 'utf8'),
-      ]);
+      const projectRaw = await readFile(projectJsonPath, 'utf8');
+      let packageJson: { private?: boolean } | undefined;
+
+      try {
+        packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8')) as {
+          private?: boolean;
+        };
+      } catch {
+        packageJson = undefined;
+      }
 
       const projectJson = JSON.parse(projectRaw);
-      const packageJson = JSON.parse(packageRaw);
+      const hasServeTarget =
+        Boolean(projectJson.targets?.serve) ||
+        Boolean(projectJson.targets?.preview) ||
+        (projectJson.projectType === 'application' &&
+          (await hasViteConfig(path.join(projectsDir, entry.name))));
+      const privateProject = packageJson?.private ?? projectJson.projectType === 'application';
 
       projects.push({
         name: projectJson.name ?? entry.name,
         folder: entry.name,
-        private: Boolean(packageJson.private),
-        publishable: !packageJson.private,
+        private: privateProject,
+        publishable: !privateProject,
+        hasServeTarget,
         hasLintTarget: Boolean(projectJson.targets?.lint),
         testable: Boolean(projectJson.targets?.test),
       });
@@ -55,6 +69,21 @@ export async function listProjects(projectsDir: string): Promise<WorkspaceProjec
   }
 
   return projects.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+async function hasViteConfig(projectDir: string): Promise<boolean> {
+  const viteConfigs = ['vite.config.ts', 'vite.config.mts', 'vite.config.js', 'vite.config.mjs'];
+
+  for (const configFile of viteConfigs) {
+    try {
+      await access(path.join(projectDir, configFile));
+      return true;
+    } catch {
+      // Try next candidate.
+    }
+  }
+
+  return false;
 }
 
 export function findProject(
@@ -76,12 +105,14 @@ export async function chooseProject({
   includeAll = false,
   publishableOnly = false,
   testableOnly = false,
+  disablePrivatePackages = true,
 }: {
   projects: WorkspaceProject[];
   title: string;
   includeAll?: boolean;
   publishableOnly?: boolean;
   testableOnly?: boolean;
+  disablePrivatePackages?: boolean;
 }): Promise<string> {
   const choices = [];
 
@@ -98,7 +129,7 @@ export async function chooseProject({
       name: project.name,
       message: project.private ? `${project.name} [private]` : project.name,
       value: project.name,
-      disabled: project.publishable ? false : 'private package',
+      disabled: disablePrivatePackages && !project.publishable ? 'private package' : false,
     });
   }
 
@@ -114,6 +145,7 @@ export async function chooseProject({
     type: 'select',
     name: 'selected',
     message: title,
+    footer: 'Press Esc to cancel.',
     choices,
   });
 
@@ -144,7 +176,7 @@ export async function resolveBuildTarget(
 
   const selected = await chooseProject({
     projects,
-    title: 'Chon project can build:',
+    title: 'Select a project to build:',
     includeAll: true,
   });
 
@@ -155,6 +187,44 @@ export async function resolveBuildTarget(
   const project = findProject(projects, selected);
   if (!project) {
     throw new Error(`Project not found: ${selected}`);
+  }
+
+  return { type: 'project', project };
+}
+
+export async function resolveServeTarget(
+  projects: WorkspaceProject[],
+  projectArg: string | undefined,
+): Promise<ServeTarget> {
+  const serveableProjects = projects.filter((project) => project.hasServeTarget);
+
+  if (serveableProjects.length === 0) {
+    throw new Error('No projects have a serve target.');
+  }
+
+  const explicit = projectArg?.trim();
+  if (explicit) {
+    const project = findProject(serveableProjects, explicit);
+    if (!project) {
+      throw new Error(`No project with a serve target was found: ${explicit}`);
+    }
+    return { type: 'project', project };
+  }
+
+  if (!input.isTTY || !output.isTTY) {
+    throw new Error('No project specified and no interactive terminal is available.');
+  }
+
+  const selected = await chooseProject({
+    projects: serveableProjects,
+    title: 'Select a project to serve:',
+    includeAll: false,
+    disablePrivatePackages: false,
+  });
+
+  const project = findProject(serveableProjects, selected);
+  if (!project) {
+    throw new Error(`No project with a serve target was found: ${selected}`);
   }
 
   return { type: 'project', project };
@@ -184,7 +254,7 @@ export async function resolvePackageTarget(
 
   const selected = await chooseProject({
     projects,
-    title: 'Chon project can check package:',
+    title: 'Select a project to check package:',
     includeAll: true,
   });
 
@@ -230,8 +300,9 @@ export async function resolveLintTarget(
 
   const selected = await chooseProject({
     projects: projectsWithLintTarget,
-    title: 'Chon project can lint:',
+    title: 'Select a project to lint:',
     includeAll: true,
+    disablePrivatePackages: false,
   });
 
   if (selected === 'all') {
@@ -276,9 +347,10 @@ export async function resolveTestTarget(
 
   const selected = await chooseProject({
     projects: testableProjects,
-    title: 'Chon project can test:',
+    title: 'Select a project to test:',
     includeAll: true,
     testableOnly: true,
+    disablePrivatePackages: false,
   });
 
   if (selected === 'all') {

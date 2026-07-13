@@ -1,6 +1,6 @@
 {
   "name": "@trt-web/angular",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": false,
   "description": "Shared building blocks for cleaner Angular web apps",
   "repository": {

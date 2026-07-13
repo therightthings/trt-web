@@ -15,6 +15,7 @@ import {
   resolveBuildTarget,
   resolveLintTarget,
   resolvePackageTarget,
+  resolveServeTarget,
   resolveTestTarget,
 } from './workspace.ts';
 
@@ -57,6 +58,13 @@ async function runLint(
   }
 
   return runNx(repoRoot, ['lint', target.project.name]);
+}
+
+async function runServe(projectArg: string | undefined) {
+  const projects = await listProjects(projectsDir);
+  const target = await resolveServeTarget(projects, projectArg);
+
+  return runNx(repoRoot, ['serve', target.project.name]);
 }
 
 async function runCheckPackage(
@@ -141,7 +149,7 @@ const program = new Command();
 program
   .name('trt-web')
   .description(
-    'Interactive helpers for building, linting, packaging, and testing workspace projects.',
+    'Interactive helpers for building, serving, linting, packaging, and testing workspace projects.',
   )
   .showHelpAfterError()
   .helpCommand(true);
@@ -162,6 +170,14 @@ program
   .option('-a, --all', 'lint all projects that have a lint target')
   .action((projectArg: string | undefined, options: { project?: string; all?: boolean }) =>
     runAction(() => runLint(projectArg, options)),
+  );
+
+program
+  .command('serve [project]')
+  .description('Run the dev server for one project or prompt for selection.')
+  .option('-p, --project <project>', 'serve a specific project')
+  .action((projectArg: string | undefined, options: { project?: string }) =>
+    runAction(() => runServe(options.project ?? projectArg)),
   );
 
 program

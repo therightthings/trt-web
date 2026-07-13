@@ -1,4 +1,5 @@
 export { ActionLockDirective } from './action-lock.directive';
+export { AutoFocusDirective } from './auto-focus.directive';
 export { FreeDraggingDirective } from './free-dragging.directive';
 export { HooksTracking } from './hook-tracking.directive';
 export { PreventWhitespaceDirective } from './prevent-whitespace.directive';

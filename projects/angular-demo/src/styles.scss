@@ -1,0 +1,137 @@
+@use 'tailwindcss';
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  color: #0f172a;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+[ngTabPanel][inert] {
+  display: none;
+}
+
+[ngMenu][data-visible='false'] {
+  display: none;
+}
+
+@layer components {
+  :where([ngAccordionGroup], [ngMenuBar], [ngTabs], [ngToolbar], [ngTree], [ngListbox], [ngGrid]) {
+    width: 100%;
+  }
+
+  :where([ngAccordionGroup], [ngMenuBar], [ngToolbar], [ngListbox], [ngTree]) {
+    display: block;
+  }
+
+  :where([ngTabList], [ngMenuBar], [ngToolbar]) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  :where([ngTab]) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: 0.625rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-bottom-color: #94a3b8;
+    border-radius: 0.75rem 0.75rem 0 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  :where(
+    [ngTab]:focus-visible,
+    [ngAccordionTrigger]:focus-visible,
+    [ngMenuItem]:focus-visible,
+    [ngOption]:focus-visible,
+    [ngToolbarWidget]:focus-visible,
+    [ngTreeItem]:focus-visible,
+    [ngGridCellWidget]:focus-visible,
+    [ngCombobox]:focus-visible
+  ) {
+    outline: 2px solid #94a3b8;
+    outline-offset: 2px;
+  }
+
+  :where([ngTabPanel]) {
+    border: 1px solid #cbd5e1;
+    border-radius: 0.75rem;
+    padding: 1rem;
+  }
+
+  :where([ngAccordionPanel]) {
+    border-top: 1px solid #e2e8f0;
+  }
+
+  :where([ngAccordionTrigger], [ngMenuItem], [ngOption], [ngToolbarWidget], [ngTreeItem]) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 2.5rem;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.75rem;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  :where([ngMenu], [ngListbox], [ngToolbarWidgetGroup]) {
+    border: 1px solid #cbd5e1;
+    border-radius: 0.75rem;
+    padding: 0.5rem;
+  }
+
+  :where([ngGrid]) {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  :where([ngGridRow]) {
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  :where([ngGridCell]) {
+    vertical-align: middle;
+  }
+
+  :where([ngTreeItemGroup]) {
+    display: block;
+    margin-top: 0.5rem;
+  }
+
+  :where([ngCombobox]) {
+    width: 100%;
+  }
+}

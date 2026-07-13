@@ -46,3 +46,7 @@ Thumbs.db
 .nx/cache
 .nx/workspace-data/*
 .nx/migrate-runs
+.angular
+
+vite.config.*.timestamp*
+vitest.config.*.timestamp*
