@@ -49,8 +49,7 @@ export function getDateRange(range: RangeDate | DynamicRangeDate, rootDate?: Dat
       case 'yesterday':
         start = new Date(today);
         start.setDate(start.getDate() - 1);
-        end = new Date(today);
-        end.setMilliseconds(-1);
+        end = new Date(now);
         break;
 
       case 'last_30_days':
