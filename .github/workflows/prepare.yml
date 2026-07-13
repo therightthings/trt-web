@@ -203,8 +203,8 @@ jobs:
       - name: Install Dependencies
         run: yarn install --frozen-lockfile --non-interactive
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
 
       - name: E2E Test
         run: yarn test-e2e --all
