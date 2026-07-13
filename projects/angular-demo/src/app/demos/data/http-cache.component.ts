@@ -1,109 +1,110 @@
 import { JsonPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { HttpCacheService } from '@trt-web/angular';
 
+import { ApiPreferencesComponent } from '../../shared/components/api-preferences.component';
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
 import { HttpCacheQuote, MockHttpCacheService } from './mock-http-cache.service';
 
 @Component({
   selector: 'app-http-cache',
-  imports: [FormsModule, JsonPipe],
+  imports: [ApiPreferencesComponent, JsonPipe, CodeSampleComponent],
   template: `
-    <article class="">
-      <header class="space-y-2">
-        <p class="text-xs tracking-[0.2em] text-slate-500">http-cache</p>
-        <h3 class="text-lg font-medium text-slate-950">Cache HTTP responses by context</h3>
-        <p class="text-sm leading-6 text-slate-600">
-          The demo uses a mock backend interceptor and the library cache interceptor together.
-        </p>
-      </header>
+    <article class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body gap-6">
+        <header class="space-y-2">
+          <div class="badge badge-outline badge-sm">http-cache</div>
+          <h3 class="card-title text-lg">Cache HTTP responses by context</h3>
+          <p class="text-sm leading-6 text-base-content/70">
+            The demo uses a mock backend interceptor and the library cache interceptor together.
+          </p>
+        </header>
 
-      <div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_18rem]">
-        <div class="space-y-3">
-          <label class="space-y-2 block text-sm text-slate-700">
-            <span>Topic</span>
-            <select class="w-full rounded border border-slate-300 px-3 py-2" [(ngModel)]="topic">
-              <option value="utils">utils</option>
-              <option value="forms">forms</option>
-              <option value="data">data</option>
-            </select>
-          </label>
+        <div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_18rem]">
+          <div class="space-y-3">
+            <label class="form-control gap-2 text-sm">
+              <span>Topic</span>
+              <select
+                class="select select-bordered w-full"
+                [value]="topic()"
+                (change)="topic.set($any($event.target).value)"
+              >
+                <option value="utils">utils</option>
+                <option value="forms">forms</option>
+                <option value="data">data</option>
+              </select>
+            </label>
 
-          <label class="space-y-2 block text-sm text-slate-700">
-            <span>TTL: {{ ttlMs }}ms</span>
-            <input
-              class="w-full"
-              type="range"
-              min="1000"
-              max="20000"
-              step="500"
-              [(ngModel)]="ttlMs"
-            />
-          </label>
+            <label class="form-control gap-2 text-sm">
+              <span>TTL: {{ ttlMs() }}ms</span>
+              <input
+                class="range range-primary"
+                type="range"
+                min="1000"
+                max="20000"
+                step="500"
+                [value]="ttlMs()"
+                (input)="ttlMs.set($any($event.target).valueAsNumber)"
+              />
+            </label>
 
-          <div class="flex flex-wrap gap-2">
-            <button
-              class="rounded border border-slate-200 px-3 py-2 text-sm text-slate-700"
-              type="button"
-              (click)="load()"
-            >
-              Load cached quote
-            </button>
-            <button
-              class="rounded border border-slate-200 px-3 py-2 text-sm text-slate-700"
-              type="button"
-              (click)="load(true)"
-            >
-              Force overwrite
-            </button>
-            <button
-              class="rounded border border-slate-200 px-3 py-2 text-sm text-slate-700"
-              type="button"
-              (click)="clear()"
-            >
-              Clear cache
-            </button>
+            <div class="flex flex-wrap gap-2">
+              <button class="btn btn-primary btn-sm" type="button" (click)="load()">
+                Load cached quote
+              </button>
+              <button class="btn btn-outline btn-sm" type="button" (click)="load(true)">
+                Force overwrite
+              </button>
+              <button class="btn btn-outline btn-sm" type="button" (click)="clear()">
+                Clear cache
+              </button>
+            </div>
+
+            @if (loading()) {
+              <div class="alert alert-info">
+                <span>Loading...</span>
+              </div>
+            }
+
+            @if (error()) {
+              <div class="alert alert-error">
+                <span>{{ error() }}</span>
+              </div>
+            }
+
+            @if (response()) {
+              <pre
+                class="overflow-auto rounded-box border border-base-300 bg-base-200 p-3 text-xs text-base-content"
+                >{{ response() | json }}</pre
+              >
+            }
           </div>
 
-          @if (loading()) {
-            <p class="text-sm text-slate-600">Loading...</p>
-          }
-
-          @if (error()) {
-            <p class="rounded border border-slate-200 px-3 py-2 text-sm text-slate-700">
-              {{ error() }}
-            </p>
-          }
-
-          @if (response()) {
-            <pre class="overflow-auto rounded border border-slate-200 p-3 text-xs text-slate-700">{{
-              response() | json
-            }}</pre>
-          }
+          <section class="card card-compact bg-base-200 border border-base-300 shadow-sm">
+            <div class="card-body gap-3 text-sm text-base-content/70">
+              <p class="font-medium text-base-content">Cache signals</p>
+              <p>
+                Backend hits:
+                <span class="font-medium text-base-content">{{ demo.backendHitCount() }}</span>
+              </p>
+              <p>
+                Current topic: <span class="font-medium text-base-content">{{ topic() }}</span>
+              </p>
+              <p>
+                The first request reaches the mock backend. Repeating the same request hits the
+                cache until the TTL expires.
+              </p>
+              <button class="btn btn-outline btn-sm" type="button" (click)="demo.reset()">
+                Reset backend counter
+              </button>
+            </div>
+          </section>
         </div>
 
-        <section class="space-y-3 rounded border border-slate-200 p-4 text-sm text-slate-600">
-          <p class="font-medium text-slate-900">Cache signals</p>
-          <p>
-            Backend hits:
-            <span class="font-medium text-slate-950">{{ demo.backendHitCount() }}</span>
-          </p>
-          <p>
-            Current topic: <span class="font-medium text-slate-950">{{ topic }}</span>
-          </p>
-          <p>
-            The first request reaches the mock backend. Repeating the same request hits the cache
-            until the TTL expires.
-          </p>
-          <button
-            class="rounded border border-slate-200 px-3 py-2 text-sm text-slate-700"
-            type="button"
-            (click)="demo.reset()"
-          >
-            Reset backend counter
-          </button>
-        </section>
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
+
+        <app-api-preferences [preferences]="preferences" />
       </div>
     </article>
   `,
@@ -112,9 +113,96 @@ export class HttpCacheComponent {
   readonly demo = inject(MockHttpCacheService);
   private readonly http = inject(HttpClient);
   private readonly cache = inject(HttpCacheService);
+  protected readonly preferences = [
+    {
+      name: 'provideHttpCache.ttl',
+      description: 'Sets the default lifetime for cached HTTP responses.',
+      optional: true,
+      default: '5m',
+      unit: 'time',
+    },
+    {
+      name: 'provideHttpCache.debug',
+      description: 'Logs cache hits, stores, deletions, and expirations in the console.',
+      optional: true,
+      default: false,
+      unit: 'boolean',
+    },
+    {
+      name: 'createContext.tag',
+      description: 'Associates a request with one or more tags for bulk invalidation.',
+      optional: true,
+      default: ['utils'],
+      unit: 'tag',
+    },
+    {
+      name: 'createContext.group',
+      description: 'Groups cache entries that should be invalidated together.',
+      optional: true,
+      default: 'quote-demo',
+      unit: 'group',
+    },
+    {
+      name: 'createContext.id',
+      description: 'Assigns a stable ID so a single cache entry can be removed or updated.',
+      optional: true,
+      default: 'quote-utils',
+      unit: 'id',
+    },
+  ];
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { HttpClient } from '@angular/common/http';
+import { Component, inject } from '@angular/core';
+import { HttpCacheService, provideHttpCache } from '@trt-web/angular';
 
-  protected topic = 'utils';
-  protected ttlMs = 10_000;
+export const appConfig = {
+  providers: [provideHttpCache({ ttl: 5 * 60 * 1000, debug: false })],
+};
+
+@Component({
+  template: \`<button (click)="load()">Load quote</button>\`,
+})
+export class DemoComponent {
+  private readonly http = inject(HttpClient);
+
+  load() {
+    return this.http.get('/api/demo/quote', {
+      context: HttpCacheService.createContext({
+        ttl: 10_000,
+        tag: ['utils'],
+        group: 'quote-demo',
+        id: 'quote-utils',
+      }),
+    });
+  }
+}`,
+    },
+    {
+      fileExt: 'html',
+      code: `<button class="btn btn-primary btn-sm" (click)="load()">
+  Load cached quote
+</button>
+
+@if (response()) {
+  <pre>{{ response() | json }}</pre>
+}`,
+    },
+    {
+      fileExt: 'scss',
+      code: `:host {
+  display: block;
+}
+
+.quote-panel {
+  border-radius: 1rem;
+}`,
+    },
+  ];
+
+  protected topic = signal('utils');
+  protected ttlMs = signal(10_000);
   protected loading = signal(false);
   protected error = signal<string | null>(null);
   protected response = signal<HttpCacheQuote | null>(null);
@@ -125,12 +213,12 @@ export class HttpCacheComponent {
 
     this.http
       .get<HttpCacheQuote>('/api/demo/quote', {
-        params: { topic: this.topic },
+        params: { topic: this.topic() },
         context: HttpCacheService.createContext({
-          ttl: this.ttlMs,
-          tag: [this.topic],
+          ttl: this.ttlMs(),
+          tag: [this.topic()],
           group: 'quote-demo',
-          id: `quote-${this.topic}`,
+          id: `quote-${this.topic()}`,
           overwrite,
         }),
       })

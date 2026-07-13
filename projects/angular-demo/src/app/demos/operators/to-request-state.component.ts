@@ -1,73 +1,90 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { RequestState, toRequestState } from '@trt-web/angular';
-import { BehaviorSubject, Observable, switchMap } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
+
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
 
 type RequestPayload = { title: string; at: string };
 
 @Component({
   selector: 'app-to-request-state',
-  imports: [AsyncPipe, JsonPipe],
+  imports: [AsyncPipe, JsonPipe, CodeSampleComponent],
   template: `
-    <article class="">
-      <header class="space-y-2">
-        <p class="text-xs tracking-[0.2em] text-slate-500">toRequestState</p>
-        <h3 class="text-lg font-medium text-slate-950">Map loading / success / error states</h3>
-        <p class="text-sm leading-6 text-slate-600">
-          The operator wraps a source observable and emits a state object that templates can render
-          directly.
-        </p>
-      </header>
-
-      <div class="flex flex-wrap gap-2">
-        <button
-          class="rounded border border-slate-200 px-3 py-2 text-sm text-slate-700"
-          type="button"
-          (click)="request('success')"
-        >
-          Load success
-        </button>
-        <button
-          class="rounded border border-slate-200 px-3 py-2 text-sm text-slate-700"
-          type="button"
-          (click)="request('error')"
-        >
-          Load error
-        </button>
-      </div>
-
-      @if (requestState$ | async; as requestState) {
-        <section class="space-y-3 rounded border border-slate-200 p-4 text-sm text-slate-600">
-          <p>
-            Current state:
-            <span class="font-medium text-slate-950">{{ requestState.state }}</span>
+    <article class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body gap-6">
+        <header class="space-y-2">
+          <div class="badge badge-outline badge-sm">toRequestState</div>
+          <h3 class="card-title text-lg">Map loading / success / error states</h3>
+          <p class="text-sm leading-6 text-base-content/70">
+            The operator wraps a source observable and emits a state object that templates can
+            render directly.
           </p>
+        </header>
 
-          @if (requestState.state === 'done') {
-            <pre class="overflow-auto rounded border border-slate-200 p-3 text-xs text-slate-700">{{
-              requestState.data | json
-            }}</pre>
-          }
+        <div class="flex flex-wrap gap-2">
+          <button class="btn btn-primary btn-sm" type="button" (click)="request('success')">
+            Load success
+          </button>
+          <button class="btn btn-outline btn-sm" type="button" (click)="request('error')">
+            Load error
+          </button>
+        </div>
 
-          @if (requestState.state === 'error') {
-            <p class="rounded border border-slate-200 px-3 py-2 text-slate-700">
-              {{ requestState.error }}
-            </p>
-          }
-        </section>
-      }
+        @if (requestState$ | async; as requestState) {
+          <section class="card card-compact bg-base-200 border border-base-300 shadow-sm">
+            <div class="card-body gap-3 text-sm text-base-content/70">
+              <p>
+                Current state:
+                <span class="font-medium text-base-content">{{ requestState.state }}</span>
+              </p>
+
+              @if (requestState.state === 'done') {
+                <pre
+                  class="overflow-auto rounded-box border border-base-300 bg-base-100 p-3 text-xs text-base-content"
+                  >{{ requestState.data | json }}</pre
+                >
+              }
+
+              @if (requestState.state === 'error') {
+                <div class="alert alert-error">
+                  <span>{{ requestState.error }}</span>
+                </div>
+              }
+            </div>
+          </section>
+        }
+
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
+      </div>
     </article>
   `,
 })
 export class ToRequestStateComponent {
-  private readonly action$ = new BehaviorSubject<'success' | 'error'>('success');
+  private readonly mode = signal<'success' | 'error'>('success');
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { Component, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { toRequestState } from '@trt-web/angular';
+import { switchMap } from 'rxjs';
 
-  readonly requestState$: Observable<RequestState<RequestPayload>> = this.action$.pipe(
+const mode = signal<'success' | 'error'>('success');
+
+const requestState$ = toObservable(mode).pipe(
+  switchMap((value) => fetchDemo(value).pipe(toRequestState())),
+);`,
+    },
+  ];
+
+  readonly requestState$: Observable<RequestState<RequestPayload>> = toObservable(this.mode).pipe(
     switchMap((mode) => this.fetchDemo(mode).pipe(toRequestState())),
   );
 
   request(mode: 'success' | 'error'): void {
-    this.action$.next(mode);
+    this.mode.set(mode);
   }
 
   private fetchDemo(mode: 'success' | 'error') {

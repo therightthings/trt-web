@@ -1,103 +1,143 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, signal } from '@angular/core';
 import { SafePipe } from '@trt-web/angular';
+
+import { ApiPreferencesComponent } from '../../shared/components/api-preferences.component';
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
 
 @Component({
   selector: 'app-safe-pipe',
-  imports: [FormsModule, SafePipe],
+  imports: [ApiPreferencesComponent, SafePipe, CodeSampleComponent],
   template: `
-    <article class="">
-      <header class="space-y-2">
-        <p class="text-xs tracking-[0.2em] text-slate-500">safe pipe</p>
-        <h3 class="text-lg font-medium text-slate-950">
-          Bypass Angular sanitization intentionally
-        </h3>
-        <p class="text-sm leading-6 text-slate-600">
-          Use this carefully. The demo shows HTML, style, and URL bindings with a controlled
-          preview.
-        </p>
-      </header>
+    <article class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body gap-6">
+        <header class="space-y-2">
+          <div class="badge badge-outline badge-sm">safe pipe</div>
+          <h3 class="card-title text-lg">Bypass Angular sanitization intentionally</h3>
+          <p class="text-sm leading-6 text-base-content/70">
+            Use this carefully. The demo shows HTML, style, and URL bindings with a controlled
+            preview.
+          </p>
+        </header>
 
-      <div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_18rem]">
-        <div class="space-y-3">
-          <label class="space-y-2 block text-sm text-slate-700">
-            <span>Mode</span>
-            <select class="w-full rounded border border-slate-300 px-3 py-2" [(ngModel)]="mode">
-              <option value="html">html</option>
-              <option value="style">style</option>
-              <option value="url">url</option>
-              <option value="resourceUrl">resourceUrl</option>
-            </select>
-          </label>
+        <div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_18rem]">
+          <div class="space-y-3">
+            <label class="form-control gap-2 text-sm">
+              <span>Mode</span>
+              <select
+                class="select select-bordered w-full"
+                [value]="mode()"
+                (change)="mode.set($any($event.target).value)"
+              >
+                <option value="html">html</option>
+                <option value="style">style</option>
+                <option value="url">url</option>
+                <option value="resourceUrl">resourceUrl</option>
+              </select>
+            </label>
 
-          <label class="space-y-2 block text-sm text-slate-700">
-            <span>Content</span>
-            <textarea
-              class="min-h-32 w-full rounded border border-slate-300 px-3 py-2 font-mono text-xs"
-              [(ngModel)]="content"
-            ></textarea>
-          </label>
+            <label class="form-control gap-2 text-sm">
+              <span>Content</span>
+              <textarea
+                class="textarea textarea-bordered min-h-32 w-full font-mono text-xs"
+                [value]="content()"
+                (input)="content.set($any($event.target).value)"
+              ></textarea>
+            </label>
 
-          @switch (mode) {
-            @case ('html') {
-              <section class="rounded border border-slate-200 p-4 text-sm text-slate-700">
-                <div [innerHTML]="content | safe: 'html'"></div>
-              </section>
+            @switch (mode()) {
+              @case ('html') {
+                <section class="card card-compact bg-base-200 border border-base-300 shadow-sm">
+                  <div class="card-body gap-3 text-sm text-base-content/80">
+                    <div [innerHTML]="content() | safe: 'html'"></div>
+                  </div>
+                </section>
+              }
+              @case ('style') {
+                <section class="card card-compact bg-base-200 border border-base-300 shadow-sm">
+                  <div class="card-body gap-3 text-sm text-base-content/80">
+                    <div
+                      class="inline-block rounded-box border border-base-300 bg-base-100 px-4 py-3"
+                      [style]="content() | safe: 'style'"
+                    >
+                      Styled preview
+                    </div>
+                  </div>
+                </section>
+              }
+              @case ('url') {
+                <section class="card card-compact bg-base-200 border border-base-300 shadow-sm">
+                  <div class="card-body gap-3 text-sm text-base-content/80">
+                    <a
+                      class="link link-primary"
+                      [href]="content() | safe: 'url'"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open safe URL
+                    </a>
+                  </div>
+                </section>
+              }
+              @case ('resourceUrl') {
+                <section class="card card-compact bg-base-200 border border-base-300 shadow-sm">
+                  <div class="card-body gap-3 text-sm text-base-content/80">
+                    <p>
+                      resourceUrl is supported, but the demo keeps it as text to avoid loading
+                      remote resources.
+                    </p>
+                    <pre
+                      class="overflow-auto rounded-box border border-base-300 bg-base-100 p-3 text-xs text-base-content"
+                      >{{ content() }}</pre
+                    >
+                  </div>
+                </section>
+              }
             }
-            @case ('style') {
-              <section class="rounded border border-slate-200 p-4 text-sm text-slate-700">
-                <div
-                  class="inline-block rounded border border-slate-200 px-4 py-3"
-                  [style]="content | safe: 'style'"
-                >
-                  Styled preview
-                </div>
-              </section>
-            }
-            @case ('url') {
-              <section class="rounded border border-slate-200 p-4 text-sm text-slate-700">
-                <a
-                  class="underline underline-offset-4"
-                  [href]="content | safe: 'url'"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open safe URL
-                </a>
-              </section>
-            }
-            @case ('resourceUrl') {
-              <section class="rounded border border-slate-200 p-4 text-sm text-slate-700">
-                <p class="mb-2">
-                  resourceUrl is supported, but the demo keeps it as text to avoid loading remote
-                  resources.
-                </p>
-                <pre
-                  class="overflow-auto rounded border border-slate-200 p-3 text-xs text-slate-700"
-                  >{{ content }}</pre
-                >
-              </section>
-            }
-          }
+          </div>
+
+          <section class="card card-compact bg-base-200 border border-base-300 shadow-sm">
+            <div class="card-body gap-3 text-sm text-base-content/70">
+              <p class="font-medium text-base-content">Safe pipe notes</p>
+              <p>
+                The pipe supports <code>html</code>, <code>style</code>, <code>script</code>,
+                <code>url</code>, and <code>resourceUrl</code>.
+              </p>
+              <p>This demo only renders the safer preview paths directly in the page.</p>
+            </div>
+          </section>
         </div>
 
-        <section class="space-y-3 rounded border border-slate-200 p-4 text-sm text-slate-600">
-          <p class="font-medium text-slate-900">Safe pipe notes</p>
-          <p>
-            The pipe supports <code>html</code>, <code>style</code>, <code>script</code>,
-            <code>url</code>, and <code>resourceUrl</code>.
-          </p>
-          <p>This demo only renders the safer preview paths directly in the page.</p>
-        </section>
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
+
+        <app-api-preferences [preferences]="preferences" />
       </div>
     </article>
   `,
 })
 export class SafePipeComponent {
-  protected mode: 'html' | 'style' | 'url' | 'resourceUrl' = 'html';
-  protected content = '<strong>Hello from safe pipe</strong>';
+  protected mode = signal<'html' | 'style' | 'url' | 'resourceUrl'>('html');
+  protected content = signal('<strong>Hello from safe pipe</strong>');
+  protected readonly preferences = [
+    {
+      name: 'safe',
+      description: 'Pipe mode used to tell Angular which sanitizer bypass to apply.',
+      optional: false,
+      default: 'html',
+      unit: 'mode',
+    },
+  ];
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { SafePipe } from '@trt-web/angular';
 
-  constructor() {
-    this.content = '<strong>Hello from safe pipe</strong>';
-  }
+@Component({
+  imports: [SafePipe],
+  template: \`<div [innerHTML]="html | safe: 'html'"></div>\`,
+})
+export class SafePipeComponent {
+  html = '<strong>Hello</strong>';
+}`,
+    },
+  ];
 }

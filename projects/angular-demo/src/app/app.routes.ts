@@ -1,9 +1,5 @@
 import { Route } from '@angular/router';
 
-import { FeatureShellComponent } from './shared/components/feature-shell.component';
-import { HomeComponent } from './shared/components/home.component';
-import { DEMO_GROUPS } from './shared/contants/app-nav';
-
 export const appRoutes: Route[] = [
   {
     path: '',
@@ -11,20 +7,10 @@ export const appRoutes: Route[] = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'home',
-      },
-      {
-        path: 'home',
-        component: HomeComponent,
+        redirectTo: 'directives',
       },
       {
         path: 'directives',
-        component: FeatureShellComponent,
-        data: {
-          eyebrow: 'Feature module',
-          title: 'Directives',
-          description: DEMO_GROUPS[0].description,
-        },
         children: [
           {
             path: '',
@@ -73,12 +59,6 @@ export const appRoutes: Route[] = [
       },
       {
         path: 'operators',
-        component: FeatureShellComponent,
-        data: {
-          eyebrow: 'Feature module',
-          title: 'Operators',
-          description: DEMO_GROUPS[1].description,
-        },
         children: [
           {
             path: '',
@@ -110,12 +90,6 @@ export const appRoutes: Route[] = [
       },
       {
         path: 'forms',
-        component: FeatureShellComponent,
-        data: {
-          eyebrow: 'Feature module',
-          title: 'Reactive forms',
-          description: DEMO_GROUPS[2].description,
-        },
         children: [
           {
             path: '',
@@ -154,12 +128,6 @@ export const appRoutes: Route[] = [
       },
       {
         path: 'data',
-        component: FeatureShellComponent,
-        data: {
-          eyebrow: 'Feature module',
-          title: 'Data & UI helpers',
-          description: DEMO_GROUPS[3].description,
-        },
         children: [
           {
             path: '',
@@ -185,7 +153,7 @@ export const appRoutes: Route[] = [
       },
       {
         path: '**',
-        redirectTo: 'home',
+        redirectTo: 'directives',
       },
     ],
   },
