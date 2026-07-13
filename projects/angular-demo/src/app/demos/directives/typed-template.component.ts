@@ -17,39 +17,43 @@ type PersonTemplateContext = {
   selector: 'app-typed-template',
   imports: [NgTemplateOutlet, TypedTemplateDirective],
   template: `
-    <article class="">
-      <header class="space-y-2">
-        <p class="text-xs tracking-[0.2em] text-slate-500">ng-template[typedTemplate]</p>
-        <h3 class="text-lg font-medium text-slate-950">Typed template context</h3>
-        <p class="text-sm leading-6 text-slate-600">
-          The directive only exists for type inference, so <code>let-</code> variables stay fully
-          typed.
-        </p>
-      </header>
+    <article class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body gap-6">
+        <header class="space-y-2">
+          <div class="badge badge-outline badge-sm">ng-template[typedTemplate]</div>
+          <h3 class="card-title text-lg">Typed template context</h3>
+          <p class="text-sm leading-6 text-base-content/70">
+            The directive only exists for type inference, so <code>let-</code> variables stay fully
+            typed.
+          </p>
+        </header>
 
-      <div class="space-y-3">
-        @for (person of people; track person.name) {
-          <ng-container
-            *ngTemplateOutlet="personCard; context: { $implicit: person, index: $index }"
-          />
-        }
-      </div>
+        <div class="space-y-3">
+          @for (person of people; track person.name) {
+            <ng-container
+              *ngTemplateOutlet="personCard; context: { $implicit: person, index: $index }"
+            />
+          }
+        </div>
 
-      <ng-template #personCard [typedTemplate]="typedContext" let-person let-index="index">
-        <article class="rounded border border-slate-200 p-4">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p class="text-sm font-medium text-slate-950">{{ index + 1 }}. {{ person.name }}</p>
-              <p class="text-sm text-slate-600">{{ person.role }}</p>
+        <ng-template #personCard [typedTemplate]="typedContext" let-person let-index="index">
+          <article class="card card-compact bg-base-200 border border-base-300 shadow-sm">
+            <div class="card-body gap-3">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p class="text-sm font-medium text-base-content">
+                    {{ index + 1 }}. {{ person.name }}
+                  </p>
+                  <p class="text-sm text-base-content/70">{{ person.role }}</p>
+                </div>
+                <span class="badge badge-outline">
+                  {{ person.active ? 'Active' : 'Idle' }}
+                </span>
+              </div>
             </div>
-            <span
-              class="rounded-full border border-slate-200 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-600"
-            >
-              {{ person.active ? 'Active' : 'Idle' }}
-            </span>
-          </div>
-        </article>
-      </ng-template>
+          </article>
+        </ng-template>
+      </div>
     </article>
   `,
 })

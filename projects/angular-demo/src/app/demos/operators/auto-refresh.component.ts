@@ -12,52 +12,50 @@ type RefreshEvent = {
 @Component({
   selector: 'app-auto-refresh',
   template: `
-    <article class="">
-      <header class="space-y-2">
-        <p class="text-xs tracking-[0.2em] text-slate-500">autoRefresh</p>
-        <h3 class="text-lg font-medium text-slate-950">Poll with a bounded refresh loop</h3>
-        <p class="text-sm leading-6 text-slate-600">
-          The operator re-sources the observable after a delay and exposes the refresh context.
-        </p>
-      </header>
+    <article class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body gap-6">
+        <header class="space-y-2">
+          <div class="badge badge-outline badge-sm">autoRefresh</div>
+          <h3 class="card-title text-lg">Poll with a bounded refresh loop</h3>
+          <p class="text-sm leading-6 text-base-content/70">
+            The operator re-sources the observable after a delay and exposes the refresh context.
+          </p>
+        </header>
 
-      <div class="flex flex-wrap gap-2">
-        <button
-          class="rounded border border-slate-200 px-3 py-2 text-sm text-slate-700"
-          type="button"
-          (click)="start()"
-        >
-          Start polling
-        </button>
-        <button
-          class="rounded border border-slate-200 px-3 py-2 text-sm text-slate-700"
-          type="button"
-          (click)="stop()"
-        >
-          Stop polling
-        </button>
-      </div>
-
-      <section class="space-y-3 rounded border border-slate-200 p-4 text-sm text-slate-600">
-        <p>
-          State:
-          <span class="font-medium text-slate-950">{{ running ? 'running' : 'idle' }}</span>
-        </p>
-        <p>
-          Emissions:
-          <span class="font-medium text-slate-950">{{ events.length }}</span>
-        </p>
-
-        <div class="space-y-2">
-          @for (event of events; track event.timestamp) {
-            <div class="rounded border border-slate-200 px-3 py-2 text-slate-700">
-              {{ event.timestamp }} | refreshCount={{ event.refreshCount }} | auto={{
-                event.isAutoRefresh
-              }}
-            </div>
-          }
+        <div class="flex flex-wrap gap-2">
+          <button class="btn btn-primary btn-sm" type="button" (click)="start()">
+            Start polling
+          </button>
+          <button class="btn btn-outline btn-sm" type="button" (click)="stop()">
+            Stop polling
+          </button>
         </div>
-      </section>
+
+        <section class="card card-compact bg-base-200 border border-base-300 shadow-sm">
+          <div class="card-body gap-3 text-sm text-base-content/70">
+            <p>
+              State:
+              <span class="font-medium text-base-content">{{ running ? 'running' : 'idle' }}</span>
+            </p>
+            <p>
+              Emissions:
+              <span class="font-medium text-base-content">{{ events.length }}</span>
+            </p>
+
+            <div class="space-y-2">
+              @for (event of events; track event.timestamp) {
+                <div
+                  class="rounded-box border border-base-300 bg-base-100 px-3 py-2 text-base-content/80"
+                >
+                  {{ event.timestamp }} | refreshCount={{ event.refreshCount }} | auto={{
+                    event.isAutoRefresh
+                  }}
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+      </div>
     </article>
   `,
 })

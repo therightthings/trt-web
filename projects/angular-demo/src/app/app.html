@@ -1,42 +1,54 @@
-<div class="min-h-screen text-slate-900">
-  <header class="border-b border-slate-200">
+<div class="min-h-screen bg-base-200 text-base-content">
+  <header class="sticky top-0 z-20 border-b border-base-300 bg-base-100/95 backdrop-blur">
     <div class="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-5">
       <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="space-y-1">
-          <p class="text-xs uppercase tracking-[0.3em] text-slate-500">@trt-web/angular</p>
+          <p class="text-xs uppercase tracking-[0.3em] text-base-content/60">@trt-web/angular</p>
           <h1
-            class="text-2xl font-semibold text-slate-950 cursor-pointer"
+            class="link link-hover text-2xl font-semibold text-base-content"
             routerLink="/"
-            routerLinkActive="border-slate-500 text-slate-950"
+            routerLinkActive="link-primary"
             [routerLinkActiveOptions]="{ exact: true }"
-            value="home"
           >
             Angular utilities playground
           </h1>
         </div>
       </div>
 
-      <nav ngMenuBar class="">
+      <nav class="flex flex-wrap gap-3">
         @for (group of groups; track group.path) {
-        <div class="relative flex-none">
-          <button ngMenuTrigger class="menu-bar-item" type="button" [menu]="groupMenu">
+        <div
+          class="dropdown dropdown-bottom flex-none"
+          [class.dropdown-open]="openGroupPath === group.path"
+        >
+          <button
+            class="btn btn-outline btn-sm"
+            type="button"
+            (click)="toggleGroup(group.path)"
+            [attr.aria-expanded]="openGroupPath === group.path"
+            [attr.aria-haspopup]="'menu'"
+          >
             {{ group.label }}
           </button>
 
-          <div
-            ngMenu
-            #groupMenu="ngMenu"
-            class="menu-panel"
-            (itemSelected)="navigateToGroup(group.path, $event)"
+          @if (openGroupPath === group.path) {
+          <ul
+            tabindex="-1"
+            class="dropdown-content menu z-50 mt-2 w-64 rounded-box bg-base-100 p-2 shadow"
           >
-            <ng-template ngMenuContent>
-              @for (link of group.links; track link.path) {
-              <button ngMenuItem type="button" class="menu-panel-item" [value]="link.path">
+            @for (link of group.links; track link.path) {
+            <li>
+              <button
+                type="button"
+                class="w-full text-left"
+                (click)="navigateToGroup(group.path, link.path)"
+              >
                 {{ link.label }}
               </button>
-              }
-            </ng-template>
-          </div>
+            </li>
+            }
+          </ul>
+          }
         </div>
         }
       </nav>

@@ -13,108 +13,97 @@ type TodoItem = {
   selector: 'app-signal-store',
   imports: [FormsModule, JsonPipe],
   template: `
-    <article class="">
-      <header class="space-y-2">
-        <p class="text-xs tracking-[0.2em] text-slate-500">SignalStore</p>
-        <h3 class="text-lg font-medium text-slate-950">Persist a small todo list with signals</h3>
-        <p class="text-sm leading-6 text-slate-600">
-          The store handles list CRUD, expiry, and local/session storage sync.
-        </p>
-      </header>
+    <article class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body gap-6">
+        <header class="space-y-2">
+          <div class="badge badge-outline badge-sm">SignalStore</div>
+          <h3 class="card-title text-lg">Persist a small todo list with signals</h3>
+          <p class="text-sm leading-6 text-base-content/70">
+            The store handles list CRUD, expiry, and local/session storage sync.
+          </p>
+        </header>
 
-      <div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_18rem]">
-        <div class="space-y-3">
-          <form class="flex flex-wrap gap-2" (submit)="add($event)">
-            <input
-              class="min-w-0 flex-1 rounded border border-slate-300 px-3 py-2 text-sm"
-              [(ngModel)]="title"
-              name="title"
-              placeholder="Add a todo item"
-            />
-            <button
-              class="rounded border border-slate-200 px-3 py-2 text-sm text-slate-700"
-              type="submit"
-            >
-              Add
-            </button>
-          </form>
+        <div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_18rem]">
+          <div class="space-y-3">
+            <form class="flex flex-wrap gap-2" (submit)="add($event)">
+              <input
+                class="input input-bordered min-w-0 flex-1 text-sm"
+                [(ngModel)]="title"
+                name="title"
+                placeholder="Add a todo item"
+              />
+              <button class="btn btn-primary btn-sm" type="submit">Add</button>
+            </form>
 
-          <div class="space-y-2">
-            @for (item of store.state().data; track item.id) {
-              <div
-                class="flex items-center justify-between gap-3 rounded border border-slate-200 px-3 py-2 text-sm"
-              >
-                <button class="text-left text-slate-700" type="button" (click)="toggle(item.id)">
-                  <span class="font-medium text-slate-950">{{ item.title }}</span>
-                  <span class="ml-2 text-xs tracking-[0.2em] text-slate-500">
-                    {{ item.done ? 'done' : 'open' }}
-                  </span>
-                </button>
-                <button
-                  class="rounded border border-slate-200 px-2 py-1 text-xs text-slate-700"
-                  type="button"
-                  (click)="remove(item.id)"
+            <div class="space-y-2">
+              @for (item of store.state().data; track item.id) {
+                <div class="card card-compact bg-base-200 border border-base-300 shadow-sm">
+                  <div class="card-body flex-row items-center justify-between gap-3 py-3">
+                    <button class="text-left" type="button" (click)="toggle(item.id)">
+                      <span class="font-medium text-base-content">{{ item.title }}</span>
+                      <span class="badge badge-outline badge-sm ml-2">
+                        {{ item.done ? 'done' : 'open' }}
+                      </span>
+                    </button>
+                    <button class="btn btn-outline btn-xs" type="button" (click)="remove(item.id)">
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <section class="card card-compact bg-base-200 border border-base-300 shadow-sm">
+            <div class="card-body gap-3 text-sm text-base-content/70">
+              <p class="font-medium text-base-content">Store controls</p>
+              <label class="form-control gap-2">
+                <span>Storage type</span>
+                <select
+                  class="select select-bordered w-full"
+                  [(ngModel)]="storageType"
+                  name="storageType"
                 >
-                  Remove
-                </button>
+                  <option value="local">local</option>
+                  <option value="session">session</option>
+                </select>
+              </label>
+              <label class="form-control gap-2">
+                <span>Expiry: {{ expiredMinutes }} minute(s)</span>
+                <input
+                  class="range range-primary"
+                  type="range"
+                  min="1"
+                  max="30"
+                  step="1"
+                  [(ngModel)]="expiredMinutes"
+                  name="expiredMinutes"
+                />
+              </label>
+              <button class="btn btn-outline btn-sm" type="button" (click)="applyConfig()">
+                Apply config
+              </button>
+              <button class="btn btn-outline btn-sm" type="button" (click)="reset()">
+                Reset store
+              </button>
+
+              <div class="space-y-2">
+                <p>
+                  Total count:
+                  <span class="font-medium text-base-content">{{ store.state().totalCount }}</span>
+                </p>
+                <p>
+                  Expired:
+                  <span class="font-medium text-base-content">{{ store.isExpired() }}</span>
+                </p>
+                <pre
+                  class="overflow-auto rounded-box border border-base-300 bg-base-100 p-3 text-xs text-base-content"
+                  >{{ store.state() | json }}</pre
+                >
               </div>
-            }
-          </div>
+            </div>
+          </section>
         </div>
-
-        <section class="space-y-3 rounded border border-slate-200 p-4 text-sm text-slate-600">
-          <p class="font-medium text-slate-900">Store controls</p>
-          <label class="space-y-2 block">
-            <span>Storage type</span>
-            <select
-              class="w-full rounded border border-slate-300 px-3 py-2"
-              [(ngModel)]="storageType"
-              name="storageType"
-            >
-              <option value="local">local</option>
-              <option value="session">session</option>
-            </select>
-          </label>
-          <label class="space-y-2 block">
-            <span>Expiry: {{ expiredMinutes }} minute(s)</span>
-            <input
-              class="w-full"
-              type="range"
-              min="1"
-              max="30"
-              step="1"
-              [(ngModel)]="expiredMinutes"
-              name="expiredMinutes"
-            />
-          </label>
-          <button
-            class="rounded border border-slate-200 px-3 py-2 text-sm text-slate-700"
-            type="button"
-            (click)="applyConfig()"
-          >
-            Apply config
-          </button>
-          <button
-            class="rounded border border-slate-200 px-3 py-2 text-sm text-slate-700"
-            type="button"
-            (click)="reset()"
-          >
-            Reset store
-          </button>
-
-          <div class="space-y-2">
-            <p>
-              Total count:
-              <span class="font-medium text-slate-950">{{ store.state().totalCount }}</span>
-            </p>
-            <p>
-              Expired: <span class="font-medium text-slate-950">{{ store.isExpired() }}</span>
-            </p>
-            <pre class="overflow-auto rounded border border-slate-200 p-3 text-xs text-slate-700">{{
-              store.state() | json
-            }}</pre>
-          </div>
-        </section>
       </div>
     </article>
   `,

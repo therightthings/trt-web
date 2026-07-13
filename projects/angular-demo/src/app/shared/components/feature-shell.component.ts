@@ -5,8 +5,10 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-feature-shell',
   imports: [RouterOutlet],
   template: `
-    <section class="space-y-5">
-      <router-outlet />
+    <section class="card bg-base-100 border border-base-300 shadow-sm">
+      <div class="card-body gap-5">
+        <router-outlet />
+      </div>
     </section>
   `,
 })
