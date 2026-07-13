@@ -190,7 +190,7 @@ jobs:
       issues: write
     steps:
       - name: Comment PR preview
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const marker = "<!-- pr-preview-status -->";
