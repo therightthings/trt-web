@@ -1,4 +1,4 @@
-import { Component, Input, signal } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { injectDestroy } from '@trt-web/angular';
 import { interval, takeUntil } from 'rxjs';
 
@@ -9,7 +9,7 @@ import { interval, takeUntil } from 'rxjs';
       <p class="text-xs tracking-[0.2em] text-slate-500">Child component</p>
       <div class="mt-3 space-y-2 text-sm text-slate-600">
         <p>
-          Label: <span class="font-medium text-slate-950">{{ label }}</span>
+          Label: <span class="font-medium text-slate-950">{{ label() }}</span>
         </p>
         <p>
           Ticks: <span class="font-medium text-slate-950">{{ ticks() }}</span>
@@ -19,7 +19,7 @@ import { interval, takeUntil } from 'rxjs';
   `,
 })
 export class DestroyTickerComponent {
-  @Input() label = 'Active while mounted';
+  readonly label = input('Active while mounted');
   readonly ticks = signal(0);
 
   constructor() {

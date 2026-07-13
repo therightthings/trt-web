@@ -1,4 +1,4 @@
-import { Component, Input, signal } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { HooksTracking } from '@trt-web/angular';
 
 @Component({
@@ -8,22 +8,22 @@ import { HooksTracking } from '@trt-web/angular';
       <p class="text-xs tracking-[0.2em] text-slate-500">Hook tracking preview</p>
       <div class="mt-3 space-y-2 text-sm text-slate-600">
         <p>
-          Label: <span class="font-medium text-slate-950">{{ label }}</span>
+          Label: <span class="font-medium text-slate-950">{{ label() }}</span>
         </p>
         <p>
-          Counter: <span class="font-medium text-slate-950">{{ count }}</span>
+          Counter: <span class="font-medium text-slate-950">{{ count() }}</span>
         </p>
         <p>
-          Pulse: <span class="font-medium text-slate-950">{{ pulse }}</span>
+          Pulse: <span class="font-medium text-slate-950">{{ pulse() }}</span>
         </p>
       </div>
     </article>
   `,
 })
 export class HookTrackerPreviewComponent extends HooksTracking {
-  @Input() label = 'Hook tracking';
-  @Input() count = 0;
-  @Input() pulse = false;
+  readonly label = input('Hook tracking');
+  readonly count = input(0);
+  readonly pulse = input(false);
 }
 
 @Component({

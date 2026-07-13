@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -11,7 +11,7 @@ import { RouterOutlet } from '@angular/router';
   `,
 })
 export class FeatureShellComponent {
-  @Input() eyebrow = '';
-  @Input() title = '';
-  @Input() description = '';
+  readonly eyebrow = input('');
+  readonly title = input('');
+  readonly description = input('');
 }

@@ -57,20 +57,4 @@ export const DEMO_GROUPS: DemoGroup[] = [
       { label: 'toMs utility', path: 'to-ms', note: 'Normalize time values' },
     ],
   },
-  {
-    label: 'Angular Aria',
-    path: '/aria',
-    description:
-      'Directive-first accessibility demos for accordion, combobox, grid, listbox, menu, tabs, toolbar, and tree.',
-    links: [
-      { label: 'Accordion', path: 'accordion', note: 'ngAccordionGroup / Trigger / Panel' },
-      { label: 'Combobox', path: 'combobox', note: 'ngCombobox + popup widget' },
-      { label: 'Grid', path: 'grid', note: 'ngGrid / Row / Cell / Widget' },
-      { label: 'Listbox', path: 'listbox', note: 'ngListbox / ngOption' },
-      { label: 'Menu', path: 'menu', note: 'ngMenuBar / Menu / Trigger' },
-      { label: 'Tabs', path: 'tabs', note: 'ngTabs / TabList / TabPanel' },
-      { label: 'Toolbar', path: 'toolbar', note: 'ngToolbar / Widget / Group' },
-      { label: 'Tree', path: 'tree', note: 'ngTree / TreeItem / Group' },
-    ],
-  },
 ];
