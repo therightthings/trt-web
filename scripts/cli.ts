@@ -3,16 +3,12 @@ import url from 'node:url';
 
 import { Command } from 'commander';
 
-import {
-  runAffectedCircular,
-  runAffectedDeadcode,
-  runAffectedSpell,
-  runAffectedTypecheck,
-} from './affected.ts';
+import { runAffectedCircular, runAffectedSpell, runDeadcodeForProjects } from './affected.ts';
 import { runCommand, runNx } from './exec.ts';
 import {
   listProjects,
   resolveBuildTarget,
+  resolveDeadcodeTarget,
   resolveLintTarget,
   resolvePackageTarget,
   resolveServeTarget,
@@ -116,23 +112,54 @@ async function runTest(
   options: { project?: string; all?: boolean },
 ) {
   const projects = await listProjects(projectsDir);
-  const target = await resolveTestTarget(projects, projectArg, options);
+  const target = await resolveTestTarget(projects, projectArg, options, false);
 
   if (target.type === 'all') {
-    return runNx(repoRoot, ['run-many', '-t', 'test']);
+    return runNx(repoRoot, [
+      'run-many',
+      '-t',
+      'test',
+      '--projects',
+      target.projects.map((project) => project.name).join(','),
+    ]);
   }
 
   return runNx(repoRoot, ['test', target.project.name]);
 }
 
-async function runTypecheck(options: { all?: boolean }) {
+async function runTestE2E(
+  projectArg: string | undefined,
+  options: { project?: string; all?: boolean },
+) {
   const projects = await listProjects(projectsDir);
-  return runAffectedTypecheck(repoRoot, projects, options);
+  const target = await resolveTestTarget(projects, projectArg, options, true);
+
+  if (target.type === 'all') {
+    return runNx(repoRoot, [
+      'run-many',
+      '-t',
+      'test',
+      '--projects',
+      target.projects.map((project) => project.name).join(','),
+    ]);
+  }
+
+  return runNx(repoRoot, ['test', target.project.name]);
 }
 
-async function runDeadcode(options: { all?: boolean }) {
+async function runDeadcode(
+  projectArg: string | undefined,
+  options: { project?: string; all?: boolean },
+) {
   const projects = await listProjects(projectsDir);
-  return runAffectedDeadcode(repoRoot, projects, options);
+  const target = await resolveDeadcodeTarget(projects, projectArg, options);
+  const deadcodeProjects = projects.filter((project) => project.hasPackageJson);
+
+  if (target.type === 'all') {
+    return runDeadcodeForProjects(repoRoot, deadcodeProjects);
+  }
+
+  return runDeadcodeForProjects(repoRoot, [target.project]);
 }
 
 async function runCircular(options: { all?: boolean }) {
@@ -182,24 +209,30 @@ program
 
 program
   .command('test [project]')
-  .description('Run tests for one project or prompt for selection.')
+  .description('Run non-e2e tests for one project or prompt for selection.')
   .option('-p, --project <project>', 'test a specific project')
-  .option('-a, --all', 'test all projects that have a test target')
+  .option('-a, --all', 'test all non-e2e projects that have a test target')
   .action((projectArg: string | undefined, options: { project?: string; all?: boolean }) =>
     runAction(() => runTest(projectArg, options)),
   );
 
 program
-  .command('typecheck')
-  .description('Typecheck only projects affected by changed files.')
-  .option('-a, --all', 'typecheck all workspace projects')
-  .action((options: { all?: boolean }) => runAction(() => runTypecheck(options)));
+  .command('test-e2e [project]')
+  .description('Run e2e tests for one project or prompt for selection.')
+  .option('-p, --project <project>', 'test a specific e2e project')
+  .option('-a, --all', 'test all e2e projects that have a test target')
+  .action((projectArg: string | undefined, options: { project?: string; all?: boolean }) =>
+    runAction(() => runTestE2E(projectArg, options)),
+  );
 
 program
-  .command('check:deadcode')
-  .description('Run knip only for projects affected by changed files.')
+  .command('check:deadcode [project]')
+  .description('Run knip on one project or prompt for selection.')
+  .option('-p, --project <project>', 'check dead code for a specific project')
   .option('-a, --all', 'check dead code in all workspace projects')
-  .action((options: { all?: boolean }) => runAction(() => runDeadcode(options)));
+  .action((projectArg: string | undefined, options: { project?: string; all?: boolean }) =>
+    runAction(() => runDeadcode(projectArg, options)),
+  );
 
 program
   .command('check:circular')

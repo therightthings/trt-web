@@ -7,7 +7,13 @@ function createStorageMock() {
   const store = new Map<string, string>();
 
   return {
-    getItem: vi.fn((key: string) => (store.has(key) ? store.get(key)! : null)),
+    getItem: vi.fn((key: string) => {
+      if (!store.has(key)) {
+        return null;
+      }
+
+      return store.get(key) ?? null;
+    }),
     setItem: vi.fn((key: string, value: string) => {
       store.set(key, String(value));
     }),

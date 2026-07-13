@@ -9,6 +9,7 @@ export type WorkspaceProject = {
   folder: string;
   private: boolean;
   publishable: boolean;
+  hasPackageJson: boolean;
   hasServeTarget: boolean;
   hasLintTarget: boolean;
   testable: boolean;
@@ -18,7 +19,10 @@ type ServeTarget = { type: 'project'; project: WorkspaceProject };
 type BuildTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
 type LintTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
 type PackageTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
-type TestTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
+type TestTarget =
+  | { type: 'all'; projects: WorkspaceProject[] }
+  | { type: 'project'; project: WorkspaceProject };
+type DeadcodeTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
 
 type SelectPromptResult = {
   selected: string;
@@ -36,12 +40,14 @@ export async function listProjects(projectsDir: string): Promise<WorkspaceProjec
 
     try {
       const projectRaw = await readFile(projectJsonPath, 'utf8');
+      let hasPackageJson = false;
       let packageJson: { private?: boolean } | undefined;
 
       try {
         packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8')) as {
           private?: boolean;
         };
+        hasPackageJson = true;
       } catch {
         packageJson = undefined;
       }
@@ -59,6 +65,7 @@ export async function listProjects(projectsDir: string): Promise<WorkspaceProjec
         folder: entry.name,
         private: privateProject,
         publishable: !privateProject,
+        hasPackageJson,
         hasServeTarget,
         hasLintTarget: Boolean(projectJson.targets?.lint),
         testable: Boolean(projectJson.targets?.test),
@@ -145,7 +152,6 @@ export async function chooseProject({
     type: 'select',
     name: 'selected',
     message: title,
-    footer: 'Press Esc to cancel.',
     choices,
   });
 
@@ -321,11 +327,76 @@ export async function resolveTestTarget(
   projects: WorkspaceProject[],
   projectArg: string | undefined,
   options: { project?: string; all?: boolean },
+  includeE2E = false,
 ): Promise<TestTarget> {
-  const testableProjects = projects.filter((project) => project.testable);
+  const testableProjects = projects.filter(
+    (project) => project.testable && (includeE2E ? isE2EProject(project) : !isE2EProject(project)),
+  );
 
   if (testableProjects.length === 0) {
-    throw new Error('No projects have a test target.');
+    throw new Error(
+      includeE2E ? 'No e2e projects have a test target.' : 'No projects have a test target.',
+    );
+  }
+
+  if (options.all) {
+    return { type: 'all', projects: testableProjects };
+  }
+
+  const explicit = options.project ?? projectArg;
+  if (explicit) {
+    const project = findProject(testableProjects, explicit);
+    if (!project) {
+      throw new Error(
+        includeE2E
+          ? `No e2e project with a test target was found: ${explicit}`
+          : `No project with a test target was found: ${explicit}`,
+      );
+    }
+    return { type: 'project', project };
+  }
+
+  if (!input.isTTY || !output.isTTY) {
+    return { type: 'all', projects: testableProjects };
+  }
+
+  const selected = await chooseProject({
+    projects: testableProjects,
+    title: includeE2E ? 'Select an e2e project to test:' : 'Select a project to test:',
+    includeAll: true,
+    testableOnly: true,
+    disablePrivatePackages: false,
+  });
+
+  if (selected === 'all') {
+    return { type: 'all', projects: testableProjects };
+  }
+
+  const project = findProject(testableProjects, selected);
+  if (!project) {
+    throw new Error(
+      includeE2E
+        ? `No e2e project with a test target was found: ${selected}`
+        : `No project with a test target was found: ${selected}`,
+    );
+  }
+
+  return { type: 'project', project };
+}
+
+function isE2EProject(project: WorkspaceProject): boolean {
+  return project.name.endsWith('-e2e') || project.folder.endsWith('-e2e');
+}
+
+export async function resolveDeadcodeTarget(
+  projects: WorkspaceProject[],
+  projectArg: string | undefined,
+  options: { project?: string; all?: boolean },
+): Promise<DeadcodeTarget> {
+  const deadcodeProjects = projects.filter((project) => project.hasPackageJson);
+
+  if (deadcodeProjects.length === 0) {
+    throw new Error('No projects have a package.json for dead code checks.');
   }
 
   if (options.all) {
@@ -334,9 +405,9 @@ export async function resolveTestTarget(
 
   const explicit = options.project ?? projectArg;
   if (explicit) {
-    const project = findProject(testableProjects, explicit);
+    const project = findProject(deadcodeProjects, explicit);
     if (!project) {
-      throw new Error(`No project with a test target was found: ${explicit}`);
+      throw new Error(`No project with a package.json was found: ${explicit}`);
     }
     return { type: 'project', project };
   }
@@ -346,10 +417,9 @@ export async function resolveTestTarget(
   }
 
   const selected = await chooseProject({
-    projects: testableProjects,
-    title: 'Select a project to test:',
+    projects: deadcodeProjects,
+    title: 'Select a project to check dead code:',
     includeAll: true,
-    testableOnly: true,
     disablePrivatePackages: false,
   });
 
@@ -357,9 +427,9 @@ export async function resolveTestTarget(
     return { type: 'all' };
   }
 
-  const project = findProject(testableProjects, selected);
+  const project = findProject(deadcodeProjects, selected);
   if (!project) {
-    throw new Error(`No project with a test target was found: ${selected}`);
+    throw new Error(`No project with a package.json was found: ${selected}`);
   }
 
   return { type: 'project', project };

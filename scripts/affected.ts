@@ -1,4 +1,3 @@
-import { existsSync } from 'node:fs';
 import path from 'node:path';
 
 import { runCommand, runCommandsSequentially } from './exec.ts';
@@ -80,69 +79,38 @@ export function getSpellFiles(changedFiles: string[]): string[] {
   return changedFiles.filter(isSpellableFile);
 }
 
-function getTypecheckRunner(project: WorkspaceProject): string {
-  return project.folder === 'vue' ? 'vue-tsc' : 'tsc';
-}
-
-function getTypecheckConfigs(repoRoot: string, project: WorkspaceProject): string[] {
-  const configs = [
-    path.join(repoRoot, 'projects', project.folder, 'tsconfig.lib.json'),
-    path.join(repoRoot, 'projects', project.folder, 'tsconfig.spec.json'),
-  ];
-
-  return configs.filter((configPath) => existsSync(configPath));
-}
-
-export async function runAffectedTypecheck(
+export async function runDeadcodeForProjects(
   repoRoot: string,
   projects: WorkspaceProject[],
-  options: { all?: boolean },
 ): Promise<number> {
-  const changedFiles = options.all ? [] : collectChangedFiles(repoRoot);
-  const targetProjects = options.all ? projects : getAffectedProjects(projects, changedFiles);
-
-  if (targetProjects.length === 0) {
-    console.log('No affected projects for typecheck.');
+  if (projects.length === 0) {
+    console.log('No projects selected for dead code checks.');
     return 0;
   }
 
-  const commands = targetProjects.flatMap((project) =>
-    getTypecheckConfigs(repoRoot, project).map((configPath) => ({
-      command: 'npx',
-      args: [getTypecheckRunner(project), '-p', configPath, '--noEmit'],
-      cwd: repoRoot,
-    })),
-  );
+  let firstFailure = 0;
 
-  return runCommandsSequentially(commands);
-}
+  for (const project of projects) {
+    console.log(`Checking dead code in ${project.name}...`);
 
-export async function runAffectedDeadcode(
-  repoRoot: string,
-  projects: WorkspaceProject[],
-  options: { all?: boolean },
-): Promise<number> {
-  const changedFiles = options.all ? [] : collectChangedFiles(repoRoot);
-  const targetProjects = options.all ? projects : getAffectedProjects(projects, changedFiles);
+    const status = await runCommand(
+      'npx',
+      [
+        'knip',
+        '--directory',
+        path.join(repoRoot, 'projects', project.folder),
+        '--no-progress',
+        '--no-config-hints',
+      ],
+      repoRoot,
+    );
 
-  if (targetProjects.length === 0) {
-    console.log('No affected projects for dead code checks.');
-    return 0;
+    if (status !== 0 && firstFailure === 0) {
+      firstFailure = status;
+    }
   }
 
-  const commands = targetProjects.map((project) => ({
-    command: 'npx',
-    args: [
-      'knip',
-      '--directory',
-      path.join(repoRoot, 'projects', project.folder),
-      '--no-progress',
-      '--no-config-hints',
-    ],
-    cwd: repoRoot,
-  }));
-
-  return runCommandsSequentially(commands);
+  return firstFailure;
 }
 
 export async function runAffectedCircular(

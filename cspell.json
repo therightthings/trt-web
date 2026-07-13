@@ -3,5 +3,5 @@
   "language": "en",
   "words": ["ACMR", "deadcode"],
   "ignoreWords": [],
-  "ignorePaths": ["node_modules/**"]
+  "ignorePaths": ["node_modules/**", "dist/**", "**/dist/**"]
 }

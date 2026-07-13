@@ -30,15 +30,15 @@ describe('getDateRange', () => {
       endDate: '2026-07-03',
     });
     expect(getDateRange('this_week', ROOT_DATE)).toEqual({
-      startDate: '2026-06-28',
+      startDate: '2026-06-29',
       endDate: '2026-07-03',
     });
     expect(getDateRange('this_month', ROOT_DATE)).toEqual({
-      startDate: '2026-06-30',
+      startDate: '2026-07-01',
       endDate: '2026-07-03',
     });
     expect(getDateRange('this_year', ROOT_DATE)).toEqual({
-      startDate: '2025-12-31',
+      startDate: '2026-01-01',
       endDate: '2026-07-03',
     });
   });
