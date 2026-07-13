@@ -1,8 +1,8 @@
 import { Component, ElementRef, HostListener, inject, signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 
 @Component({
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [RouterOutlet],
   selector: 'app-root',
   templateUrl: './app.html',
 })
