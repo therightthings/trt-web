@@ -3,11 +3,12 @@ import url from 'node:url';
 
 import { Command } from 'commander';
 
-import { runAffectedCircular, runAffectedDeadcode, runAffectedSpell } from './affected.ts';
+import { runAffectedCircular, runAffectedSpell, runDeadcodeForProjects } from './affected.ts';
 import { runCommand, runNx } from './exec.ts';
 import {
   listProjects,
   resolveBuildTarget,
+  resolveDeadcodeTarget,
   resolveLintTarget,
   resolvePackageTarget,
   resolveServeTarget,
@@ -120,9 +121,19 @@ async function runTest(
   return runNx(repoRoot, ['test', target.project.name]);
 }
 
-async function runDeadcode(options: { all?: boolean }) {
+async function runDeadcode(
+  projectArg: string | undefined,
+  options: { project?: string; all?: boolean },
+) {
   const projects = await listProjects(projectsDir);
-  return runAffectedDeadcode(repoRoot, projects, options);
+  const target = await resolveDeadcodeTarget(projects, projectArg, options);
+  const deadcodeProjects = projects.filter((project) => project.hasPackageJson);
+
+  if (target.type === 'all') {
+    return runDeadcodeForProjects(repoRoot, deadcodeProjects);
+  }
+
+  return runDeadcodeForProjects(repoRoot, [target.project]);
 }
 
 async function runCircular(options: { all?: boolean }) {
@@ -180,10 +191,13 @@ program
   );
 
 program
-  .command('check:deadcode')
-  .description('Run knip only for projects affected by changed files.')
+  .command('check:deadcode [project]')
+  .description('Run knip on one project or prompt for selection.')
+  .option('-p, --project <project>', 'check dead code for a specific project')
   .option('-a, --all', 'check dead code in all workspace projects')
-  .action((options: { all?: boolean }) => runAction(() => runDeadcode(options)));
+  .action((projectArg: string | undefined, options: { project?: string; all?: boolean }) =>
+    runAction(() => runDeadcode(projectArg, options)),
+  );
 
 program
   .command('check:circular')

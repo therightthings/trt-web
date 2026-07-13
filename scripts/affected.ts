@@ -79,32 +79,38 @@ export function getSpellFiles(changedFiles: string[]): string[] {
   return changedFiles.filter(isSpellableFile);
 }
 
-export async function runAffectedDeadcode(
+export async function runDeadcodeForProjects(
   repoRoot: string,
   projects: WorkspaceProject[],
-  options: { all?: boolean },
 ): Promise<number> {
-  const changedFiles = options.all ? [] : collectChangedFiles(repoRoot);
-  const targetProjects = options.all ? projects : getAffectedProjects(projects, changedFiles);
-
-  if (targetProjects.length === 0) {
-    console.log('No affected projects for dead code checks.');
+  if (projects.length === 0) {
+    console.log('No projects selected for dead code checks.');
     return 0;
   }
 
-  const commands = targetProjects.map((project) => ({
-    command: 'npx',
-    args: [
-      'knip',
-      '--directory',
-      path.join(repoRoot, 'projects', project.folder),
-      '--no-progress',
-      '--no-config-hints',
-    ],
-    cwd: repoRoot,
-  }));
+  let firstFailure = 0;
 
-  return runCommandsSequentially(commands);
+  for (const project of projects) {
+    console.log(`Checking dead code in ${project.name}...`);
+
+    const status = await runCommand(
+      'npx',
+      [
+        'knip',
+        '--directory',
+        path.join(repoRoot, 'projects', project.folder),
+        '--no-progress',
+        '--no-config-hints',
+      ],
+      repoRoot,
+    );
+
+    if (status !== 0 && firstFailure === 0) {
+      firstFailure = status;
+    }
+  }
+
+  return firstFailure;
 }
 
 export async function runAffectedCircular(
