@@ -14,6 +14,7 @@
     "release:react": "yarn build react && cd dist/react && yarn publish --access public",
     "release:vue": "yarn build vue && cd dist/vue && yarn publish --access public",
     "test": "node --experimental-strip-types scripts/cli.ts test",
+    "test-e2e": "node --experimental-strip-types scripts/cli.ts test-e2e",
     "build:all": "nx reset && nx run-many -t build",
     "reset": "nx reset",
     "commitlint": "commitlint",

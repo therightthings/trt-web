@@ -112,10 +112,36 @@ async function runTest(
   options: { project?: string; all?: boolean },
 ) {
   const projects = await listProjects(projectsDir);
-  const target = await resolveTestTarget(projects, projectArg, options);
+  const target = await resolveTestTarget(projects, projectArg, options, false);
 
   if (target.type === 'all') {
-    return runNx(repoRoot, ['run-many', '-t', 'test']);
+    return runNx(repoRoot, [
+      'run-many',
+      '-t',
+      'test',
+      '--projects',
+      target.projects.map((project) => project.name).join(','),
+    ]);
+  }
+
+  return runNx(repoRoot, ['test', target.project.name]);
+}
+
+async function runTestE2E(
+  projectArg: string | undefined,
+  options: { project?: string; all?: boolean },
+) {
+  const projects = await listProjects(projectsDir);
+  const target = await resolveTestTarget(projects, projectArg, options, true);
+
+  if (target.type === 'all') {
+    return runNx(repoRoot, [
+      'run-many',
+      '-t',
+      'test',
+      '--projects',
+      target.projects.map((project) => project.name).join(','),
+    ]);
   }
 
   return runNx(repoRoot, ['test', target.project.name]);
@@ -183,11 +209,20 @@ program
 
 program
   .command('test [project]')
-  .description('Run tests for one project or prompt for selection.')
+  .description('Run non-e2e tests for one project or prompt for selection.')
   .option('-p, --project <project>', 'test a specific project')
-  .option('-a, --all', 'test all projects that have a test target')
+  .option('-a, --all', 'test all non-e2e projects that have a test target')
   .action((projectArg: string | undefined, options: { project?: string; all?: boolean }) =>
     runAction(() => runTest(projectArg, options)),
+  );
+
+program
+  .command('test-e2e [project]')
+  .description('Run e2e tests for one project or prompt for selection.')
+  .option('-p, --project <project>', 'test a specific e2e project')
+  .option('-a, --all', 'test all e2e projects that have a test target')
+  .action((projectArg: string | undefined, options: { project?: string; all?: boolean }) =>
+    runAction(() => runTestE2E(projectArg, options)),
   );
 
 program

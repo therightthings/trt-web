@@ -149,9 +149,24 @@ jobs:
       - run: yarn install --frozen-lockfile --non-interactive
       - run: yarn test --all
 
+  e2e-test:
+    runs-on: ubuntu-latest
+    needs: validate-branch
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - name: Enable Yarn
+        run: corepack prepare yarn@1.22.22 --activate
+      - run: yarn install --frozen-lockfile --non-interactive
+      - run: yarn test-e2e --all
+
   build:
     runs-on: ubuntu-latest
-    needs: [lint, circular, format, test]
+    needs: [lint, circular, format, test, e2e-test]
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
@@ -166,7 +181,7 @@ jobs:
 
   preview:
     runs-on: ubuntu-latest
-    needs: [validate-branch, lint, deadcode, circular, spell, format, test, build]
+    needs: [validate-branch, lint, deadcode, circular, spell, format, test, e2e-test, build]
     if: always()
     permissions:
       pull-requests: write
@@ -193,6 +208,7 @@ jobs:
             | Spell | **${{ needs.spell.outputs.report }}** |
             | Format | **${{ needs.format.result }}** |
             | Test | **${{ needs.test.result }}** |
+            | E2E test | **${{ needs['e2e-test'].result }}** |
             | Build | **${{ needs.build.result }}** |
 
             _Updated: ${new Date().toISOString()}_

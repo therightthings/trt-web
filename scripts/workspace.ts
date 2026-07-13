@@ -19,7 +19,9 @@ type ServeTarget = { type: 'project'; project: WorkspaceProject };
 type BuildTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
 type LintTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
 type PackageTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
-type TestTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
+type TestTarget =
+  | { type: 'all'; projects: WorkspaceProject[] }
+  | { type: 'project'; project: WorkspaceProject };
 type DeadcodeTarget = { type: 'all' } | { type: 'project'; project: WorkspaceProject };
 
 type SelectPromptResult = {
@@ -325,48 +327,65 @@ export async function resolveTestTarget(
   projects: WorkspaceProject[],
   projectArg: string | undefined,
   options: { project?: string; all?: boolean },
+  includeE2E = false,
 ): Promise<TestTarget> {
-  const testableProjects = projects.filter((project) => project.testable);
+  const testableProjects = projects.filter(
+    (project) => project.testable && (includeE2E ? isE2EProject(project) : !isE2EProject(project)),
+  );
 
   if (testableProjects.length === 0) {
-    throw new Error('No projects have a test target.');
+    throw new Error(
+      includeE2E ? 'No e2e projects have a test target.' : 'No projects have a test target.',
+    );
   }
 
   if (options.all) {
-    return { type: 'all' };
+    return { type: 'all', projects: testableProjects };
   }
 
   const explicit = options.project ?? projectArg;
   if (explicit) {
     const project = findProject(testableProjects, explicit);
     if (!project) {
-      throw new Error(`No project with a test target was found: ${explicit}`);
+      throw new Error(
+        includeE2E
+          ? `No e2e project with a test target was found: ${explicit}`
+          : `No project with a test target was found: ${explicit}`,
+      );
     }
     return { type: 'project', project };
   }
 
   if (!input.isTTY || !output.isTTY) {
-    return { type: 'all' };
+    return { type: 'all', projects: testableProjects };
   }
 
   const selected = await chooseProject({
     projects: testableProjects,
-    title: 'Select a project to test:',
+    title: includeE2E ? 'Select an e2e project to test:' : 'Select a project to test:',
     includeAll: true,
     testableOnly: true,
     disablePrivatePackages: false,
   });
 
   if (selected === 'all') {
-    return { type: 'all' };
+    return { type: 'all', projects: testableProjects };
   }
 
   const project = findProject(testableProjects, selected);
   if (!project) {
-    throw new Error(`No project with a test target was found: ${selected}`);
+    throw new Error(
+      includeE2E
+        ? `No e2e project with a test target was found: ${selected}`
+        : `No project with a test target was found: ${selected}`,
+    );
   }
 
   return { type: 'project', project };
+}
+
+function isE2EProject(project: WorkspaceProject): boolean {
+  return project.name.endsWith('-e2e') || project.folder.endsWith('-e2e');
 }
 
 export async function resolveDeadcodeTarget(
