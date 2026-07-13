@@ -16,22 +16,22 @@
       </div>
 
       <nav class="flex flex-wrap gap-3">
-        @for (group of groups; track group.path) {
+        @for (group of groups(); track group.path) {
         <div
           class="dropdown dropdown-bottom flex-none"
-          [class.dropdown-open]="openGroupPath === group.path"
+          [class.dropdown-open]="openGroupPath() === group.path"
         >
           <button
             class="btn btn-outline btn-sm"
             type="button"
             (click)="toggleGroup(group.path)"
-            [attr.aria-expanded]="openGroupPath === group.path"
+            [attr.aria-expanded]="openGroupPath() === group.path"
             [attr.aria-haspopup]="'menu'"
           >
             {{ group.label }}
           </button>
 
-          @if (openGroupPath === group.path) {
+          @if (openGroupPath() === group.path) {
           <ul
             tabindex="-1"
             class="dropdown-content menu z-50 mt-2 w-64 rounded-box bg-base-100 p-2 shadow"
