@@ -3,12 +3,7 @@ import url from 'node:url';
 
 import { Command } from 'commander';
 
-import {
-  runAffectedCircular,
-  runAffectedDeadcode,
-  runAffectedSpell,
-  runAffectedTypecheck,
-} from './affected.ts';
+import { runAffectedCircular, runAffectedDeadcode, runAffectedSpell } from './affected.ts';
 import { runCommand, runNx } from './exec.ts';
 import {
   listProjects,
@@ -125,11 +120,6 @@ async function runTest(
   return runNx(repoRoot, ['test', target.project.name]);
 }
 
-async function runTypecheck(options: { all?: boolean }) {
-  const projects = await listProjects(projectsDir);
-  return runAffectedTypecheck(repoRoot, projects, options);
-}
-
 async function runDeadcode(options: { all?: boolean }) {
   const projects = await listProjects(projectsDir);
   return runAffectedDeadcode(repoRoot, projects, options);
@@ -188,12 +178,6 @@ program
   .action((projectArg: string | undefined, options: { project?: string; all?: boolean }) =>
     runAction(() => runTest(projectArg, options)),
   );
-
-program
-  .command('typecheck')
-  .description('Typecheck only projects affected by changed files.')
-  .option('-a, --all', 'typecheck all workspace projects')
-  .action((options: { all?: boolean }) => runAction(() => runTypecheck(options)));
 
 program
   .command('check:deadcode')

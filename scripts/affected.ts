@@ -1,4 +1,3 @@
-import { existsSync } from 'node:fs';
 import path from 'node:path';
 
 import { runCommand, runCommandsSequentially } from './exec.ts';
@@ -78,43 +77,6 @@ function isSpellableFile(filePath: string): boolean {
 
 export function getSpellFiles(changedFiles: string[]): string[] {
   return changedFiles.filter(isSpellableFile);
-}
-
-function getTypecheckRunner(project: WorkspaceProject): string {
-  return project.folder === 'vue' ? 'vue-tsc' : 'tsc';
-}
-
-function getTypecheckConfigs(repoRoot: string, project: WorkspaceProject): string[] {
-  const configs = [
-    path.join(repoRoot, 'projects', project.folder, 'tsconfig.lib.json'),
-    path.join(repoRoot, 'projects', project.folder, 'tsconfig.spec.json'),
-  ];
-
-  return configs.filter((configPath) => existsSync(configPath));
-}
-
-export async function runAffectedTypecheck(
-  repoRoot: string,
-  projects: WorkspaceProject[],
-  options: { all?: boolean },
-): Promise<number> {
-  const changedFiles = options.all ? [] : collectChangedFiles(repoRoot);
-  const targetProjects = options.all ? projects : getAffectedProjects(projects, changedFiles);
-
-  if (targetProjects.length === 0) {
-    console.log('No affected projects for typecheck.');
-    return 0;
-  }
-
-  const commands = targetProjects.flatMap((project) =>
-    getTypecheckConfigs(repoRoot, project).map((configPath) => ({
-      command: 'npx',
-      args: [getTypecheckRunner(project), '-p', configPath, '--noEmit'],
-      cwd: repoRoot,
-    })),
-  );
-
-  return runCommandsSequentially(commands);
 }
 
 export async function runAffectedDeadcode(
