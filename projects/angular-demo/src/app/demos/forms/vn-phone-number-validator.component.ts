@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, signal } from '@angular/core';
 import { vnPhoneNumberValidator } from '@trt-web/angular';
+
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
 
 @Component({
   selector: 'app-vn-phone-number-validator',
-  imports: [FormsModule],
+  imports: [CodeSampleComponent],
   template: `
     <article class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body gap-6">
@@ -22,7 +23,8 @@ import { vnPhoneNumberValidator } from '@trt-web/angular';
             <span>Phone number</span>
             <input
               class="input input-bordered w-full"
-              [(ngModel)]="phone"
+              [value]="phone()"
+              (input)="phone.set($any($event.target).value)"
               placeholder="Example: 0912345678"
             />
           </label>
@@ -32,7 +34,7 @@ import { vnPhoneNumberValidator } from '@trt-web/angular';
               <p>
                 Valid:
                 <span class="font-medium text-base-content">{{
-                  vnPhoneNumberValidator(phone)
+                  vnPhoneNumberValidator(phone())
                 }}</span>
               </p>
 
@@ -51,12 +53,14 @@ import { vnPhoneNumberValidator } from '@trt-web/angular';
             </div>
           </section>
         </div>
+
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
       </div>
     </article>
   `,
 })
 export class VnPhoneNumberValidatorComponent {
-  protected phone = '0912345678';
+  protected phone = signal('0912345678');
   protected readonly samples = [
     { value: '0912345678' },
     { value: '+84912345678' },
@@ -65,4 +69,12 @@ export class VnPhoneNumberValidatorComponent {
   ];
 
   protected readonly vnPhoneNumberValidator = vnPhoneNumberValidator;
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { vnPhoneNumberValidator } from '@trt-web/angular';
+
+const isValid = vnPhoneNumberValidator('0912345678');`,
+    },
+  ];
 }

@@ -1,13 +1,16 @@
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { RequestState, toRequestState } from '@trt-web/angular';
-import { BehaviorSubject, Observable, switchMap } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
+
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
 
 type RequestPayload = { title: string; at: string };
 
 @Component({
   selector: 'app-to-request-state',
-  imports: [AsyncPipe, JsonPipe],
+  imports: [AsyncPipe, JsonPipe, CodeSampleComponent],
   template: `
     <article class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body gap-6">
@@ -52,19 +55,36 @@ type RequestPayload = { title: string; at: string };
             </div>
           </section>
         }
+
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
       </div>
     </article>
   `,
 })
 export class ToRequestStateComponent {
-  private readonly action$ = new BehaviorSubject<'success' | 'error'>('success');
+  private readonly mode = signal<'success' | 'error'>('success');
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { Component, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { toRequestState } from '@trt-web/angular';
+import { switchMap } from 'rxjs';
 
-  readonly requestState$: Observable<RequestState<RequestPayload>> = this.action$.pipe(
+const mode = signal<'success' | 'error'>('success');
+
+const requestState$ = toObservable(mode).pipe(
+  switchMap((value) => fetchDemo(value).pipe(toRequestState())),
+);`,
+    },
+  ];
+
+  readonly requestState$: Observable<RequestState<RequestPayload>> = toObservable(this.mode).pipe(
     switchMap((mode) => this.fetchDemo(mode).pipe(toRequestState())),
   );
 
   request(mode: 'success' | 'error'): void {
-    this.action$.next(mode);
+    this.mode.set(mode);
   }
 
   private fetchDemo(mode: 'success' | 'error') {

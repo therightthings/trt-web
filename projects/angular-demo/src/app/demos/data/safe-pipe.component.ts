@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, signal } from '@angular/core';
 import { SafePipe } from '@trt-web/angular';
+
+import { ApiPreferencesComponent } from '../../shared/components/api-preferences.component';
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
 
 @Component({
   selector: 'app-safe-pipe',
-  imports: [FormsModule, SafePipe],
+  imports: [ApiPreferencesComponent, SafePipe, CodeSampleComponent],
   template: `
     <article class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body gap-6">
@@ -21,7 +23,11 @@ import { SafePipe } from '@trt-web/angular';
           <div class="space-y-3">
             <label class="form-control gap-2 text-sm">
               <span>Mode</span>
-              <select class="select select-bordered w-full" [(ngModel)]="mode">
+              <select
+                class="select select-bordered w-full"
+                [value]="mode()"
+                (change)="mode.set($any($event.target).value)"
+              >
                 <option value="html">html</option>
                 <option value="style">style</option>
                 <option value="url">url</option>
@@ -33,15 +39,16 @@ import { SafePipe } from '@trt-web/angular';
               <span>Content</span>
               <textarea
                 class="textarea textarea-bordered min-h-32 w-full font-mono text-xs"
-                [(ngModel)]="content"
+                [value]="content()"
+                (input)="content.set($any($event.target).value)"
               ></textarea>
             </label>
 
-            @switch (mode) {
+            @switch (mode()) {
               @case ('html') {
                 <section class="card card-compact bg-base-200 border border-base-300 shadow-sm">
                   <div class="card-body gap-3 text-sm text-base-content/80">
-                    <div [innerHTML]="content | safe: 'html'"></div>
+                    <div [innerHTML]="content() | safe: 'html'"></div>
                   </div>
                 </section>
               }
@@ -50,7 +57,7 @@ import { SafePipe } from '@trt-web/angular';
                   <div class="card-body gap-3 text-sm text-base-content/80">
                     <div
                       class="inline-block rounded-box border border-base-300 bg-base-100 px-4 py-3"
-                      [style]="content | safe: 'style'"
+                      [style]="content() | safe: 'style'"
                     >
                       Styled preview
                     </div>
@@ -62,7 +69,7 @@ import { SafePipe } from '@trt-web/angular';
                   <div class="card-body gap-3 text-sm text-base-content/80">
                     <a
                       class="link link-primary"
-                      [href]="content | safe: 'url'"
+                      [href]="content() | safe: 'url'"
                       target="_blank"
                       rel="noreferrer"
                     >
@@ -80,7 +87,7 @@ import { SafePipe } from '@trt-web/angular';
                     </p>
                     <pre
                       class="overflow-auto rounded-box border border-base-300 bg-base-100 p-3 text-xs text-base-content"
-                      >{{ content }}</pre
+                      >{{ content() }}</pre
                     >
                   </div>
                 </section>
@@ -99,15 +106,38 @@ import { SafePipe } from '@trt-web/angular';
             </div>
           </section>
         </div>
+
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
+
+        <app-api-preferences [preferences]="preferences" />
       </div>
     </article>
   `,
 })
 export class SafePipeComponent {
-  protected mode: 'html' | 'style' | 'url' | 'resourceUrl' = 'html';
-  protected content = '<strong>Hello from safe pipe</strong>';
+  protected mode = signal<'html' | 'style' | 'url' | 'resourceUrl'>('html');
+  protected content = signal('<strong>Hello from safe pipe</strong>');
+  protected readonly preferences = [
+    {
+      name: 'safe',
+      description: 'Pipe mode used to tell Angular which sanitizer bypass to apply.',
+      optional: false,
+      default: 'html',
+      unit: 'mode',
+    },
+  ];
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { SafePipe } from '@trt-web/angular';
 
-  constructor() {
-    this.content = '<strong>Hello from safe pipe</strong>';
-  }
+@Component({
+  imports: [SafePipe],
+  template: \`<div [innerHTML]="html | safe: 'html'"></div>\`,
+})
+export class SafePipeComponent {
+  html = '<strong>Hello</strong>';
+}`,
+    },
+  ];
 }

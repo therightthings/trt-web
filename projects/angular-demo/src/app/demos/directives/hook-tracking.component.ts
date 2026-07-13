@@ -1,6 +1,9 @@
 import { Component, input, signal } from '@angular/core';
 import { HooksTracking } from '@trt-web/angular';
 
+import { ApiPreferencesComponent } from '../../shared/components/api-preferences.component';
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
+
 @Component({
   selector: 'app-hook-tracker-preview',
   template: `
@@ -30,7 +33,7 @@ export class HookTrackerPreviewComponent extends HooksTracking {
 
 @Component({
   selector: 'app-hook-tracking',
-  imports: [HookTrackerPreviewComponent],
+  imports: [ApiPreferencesComponent, HookTrackerPreviewComponent, CodeSampleComponent],
   template: `
     <article class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body gap-6">
@@ -44,7 +47,7 @@ export class HookTrackerPreviewComponent extends HooksTracking {
 
         <div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_18rem]">
           @if (visible()) {
-            <app-hook-tracker-preview [label]="label" [count]="count()" [pulse]="pulse()" />
+            <app-hook-tracker-preview [label]="label()" [count]="count()" [pulse]="pulse()" />
           }
 
           <section class="card card-compact bg-base-200 border border-base-300 shadow-sm">
@@ -53,8 +56,8 @@ export class HookTrackerPreviewComponent extends HooksTracking {
                 <span>Label</span>
                 <input
                   class="input input-bordered w-full"
-                  [value]="label"
-                  (input)="label = $any($event.target).value"
+                  [value]="label()"
+                  (input)="label.set($any($event.target).value)"
                 />
               </label>
 
@@ -91,6 +94,10 @@ export class HookTrackerPreviewComponent extends HooksTracking {
             </div>
           </section>
         </div>
+
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
+
+        <app-api-preferences [preferences]="preferences" />
       </div>
     </article>
   `,
@@ -99,5 +106,43 @@ export class HookTrackingComponent {
   protected readonly visible = signal(true);
   protected readonly count = signal(0);
   protected readonly pulse = signal(false);
-  protected label = 'Hook tracking';
+  protected readonly label = signal('Hook tracking');
+  protected readonly preferences = [
+    {
+      name: 'label',
+      description: 'Text displayed in the preview card for the tracked component.',
+      optional: true,
+      default: 'Hook tracking',
+      unit: 'text',
+    },
+    {
+      name: 'count',
+      description: 'Initial counter value shown in the preview card.',
+      optional: true,
+      default: 0,
+      unit: 'count',
+    },
+    {
+      name: 'pulse',
+      description: 'Boolean flag that flips to demonstrate reactive updates.',
+      optional: true,
+      default: false,
+      unit: 'boolean',
+    },
+  ];
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { Component, signal } from '@angular/core';
+import { HooksTracking } from '@trt-web/angular';
+
+@Component({
+  selector: 'app-hook-tracking',
+  template: \`<p>{{ label() }}</p>\`,
+})
+export class HookTrackingComponent extends HooksTracking {
+  readonly label = signal('Hook tracking');
+}`,
+    },
+  ];
 }

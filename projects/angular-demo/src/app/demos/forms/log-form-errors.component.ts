@@ -3,9 +3,11 @@ import { Component, inject } from '@angular/core';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { logFormErrors } from '@trt-web/angular';
 
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
+
 @Component({
   selector: 'app-log-form-errors',
-  imports: [JsonPipe, ReactiveFormsModule],
+  imports: [JsonPipe, ReactiveFormsModule, CodeSampleComponent],
   template: `
     <article class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body gap-6">
@@ -72,6 +74,8 @@ import { logFormErrors } from '@trt-web/angular';
             </div>
           </section>
         </form>
+
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
       </div>
     </article>
   `,
@@ -115,4 +119,15 @@ export class LogFormErrorsComponent {
     });
     this.tags.at(0)?.setValue('');
   }
+
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { logFormErrors } from '@trt-web/angular';
+
+if (form.invalid) {
+  logFormErrors(form);
+}`,
+    },
+  ];
 }

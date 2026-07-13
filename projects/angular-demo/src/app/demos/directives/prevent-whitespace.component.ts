@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, signal } from '@angular/core';
 import { PreventWhitespaceDirective } from '@trt-web/angular';
+
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
 
 @Component({
   selector: 'app-prevent-whitespace',
-  imports: [FormsModule, PreventWhitespaceDirective],
+  imports: [PreventWhitespaceDirective, CodeSampleComponent],
   template: `
     <article class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body gap-6">
@@ -22,7 +23,8 @@ import { PreventWhitespaceDirective } from '@trt-web/angular';
             <input
               class="input input-bordered w-full"
               preventWhitespace
-              [(ngModel)]="value"
+              [value]="value()"
+              (input)="value.set($any($event.target).value)"
               placeholder="Try typing spaces first"
             />
             <p class="text-xs text-base-content/60">Leading whitespace-only input is blocked.</p>
@@ -34,7 +36,7 @@ import { PreventWhitespaceDirective } from '@trt-web/angular';
               <div
                 class="rounded-box border border-base-300 bg-base-100 px-3 py-2 text-base-content"
               >
-                {{ value || 'empty' }}
+                {{ value() || 'empty' }}
               </div>
               <p>
                 Use this for search boxes, slugs, and other fields where a blank-looking value
@@ -43,10 +45,28 @@ import { PreventWhitespaceDirective } from '@trt-web/angular';
             </div>
           </section>
         </div>
+
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
       </div>
     </article>
   `,
 })
 export class PreventWhitespaceComponent {
-  protected value = '';
+  protected readonly value = signal('');
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { Component, signal } from '@angular/core';
+import { PreventWhitespaceDirective } from '@trt-web/angular';
+
+@Component({
+  selector: 'app-prevent-whitespace',
+  imports: [PreventWhitespaceDirective],
+  template: \`<input preventWhitespace [value]="value()" />\`,
+})
+export class PreventWhitespaceComponent {
+  readonly value = signal('');
+}`,
+    },
+  ];
 }

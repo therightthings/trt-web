@@ -2,6 +2,9 @@ import { Component, input, signal } from '@angular/core';
 import { injectDestroy } from '@trt-web/angular';
 import { interval, takeUntil } from 'rxjs';
 
+import { ApiPreferencesComponent } from '../../shared/components/api-preferences.component';
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
+
 @Component({
   selector: 'app-destroy-ticker',
   template: `
@@ -35,7 +38,7 @@ export class DestroyTickerComponent {
 
 @Component({
   selector: 'app-inject-destroy',
-  imports: [DestroyTickerComponent],
+  imports: [ApiPreferencesComponent, DestroyTickerComponent, CodeSampleComponent],
   template: `
     <article class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body gap-6">
@@ -69,10 +72,41 @@ export class DestroyTickerComponent {
           Current visible state:
           <span class="font-medium text-base-content">{{ visible() }}</span>
         </p>
+
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
+
+        <app-api-preferences [preferences]="preferences" />
       </div>
     </article>
   `,
 })
 export class InjectDestroyComponent {
   readonly visible = signal(true);
+  readonly preferences = [
+    {
+      name: 'label',
+      description: 'Text shown in the child ticker while it is mounted.',
+      optional: true,
+      default: 'Active while mounted',
+      unit: 'text',
+    },
+  ];
+  readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { Component } from '@angular/core';
+import { injectDestroy } from '@trt-web/angular';
+import { interval, takeUntil } from 'rxjs';
+
+@Component({
+  selector: 'app-inject-destroy',
+  template: \`<p>Timer runs until the component is removed.</p>\`,
+})
+export class InjectDestroyComponent {
+  constructor() {
+    interval(1000).pipe(takeUntil(injectDestroy())).subscribe();
+  }
+}`,
+    },
+  ];
 }

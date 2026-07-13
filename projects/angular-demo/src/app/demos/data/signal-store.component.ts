@@ -1,7 +1,9 @@
 import { JsonPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
 import { SignalStore } from '@trt-web/angular';
+
+import { ApiPreferencesComponent } from '../../shared/components/api-preferences.component';
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
 
 type TodoItem = {
   id: number;
@@ -11,7 +13,7 @@ type TodoItem = {
 
 @Component({
   selector: 'app-signal-store',
-  imports: [FormsModule, JsonPipe],
+  imports: [ApiPreferencesComponent, JsonPipe, CodeSampleComponent],
   template: `
     <article class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body gap-6">
@@ -28,8 +30,8 @@ type TodoItem = {
             <form class="flex flex-wrap gap-2" (submit)="add($event)">
               <input
                 class="input input-bordered min-w-0 flex-1 text-sm"
-                [(ngModel)]="title"
-                name="title"
+                [value]="title()"
+                (input)="title.set($any($event.target).value)"
                 placeholder="Add a todo item"
               />
               <button class="btn btn-primary btn-sm" type="submit">Add</button>
@@ -61,23 +63,23 @@ type TodoItem = {
                 <span>Storage type</span>
                 <select
                   class="select select-bordered w-full"
-                  [(ngModel)]="storageType"
-                  name="storageType"
+                  [value]="storageType()"
+                  (change)="storageType.set($any($event.target).value)"
                 >
                   <option value="local">local</option>
                   <option value="session">session</option>
                 </select>
               </label>
               <label class="form-control gap-2">
-                <span>Expiry: {{ expiredMinutes }} minute(s)</span>
+                <span>Expiry: {{ expiredMinutes() }} minute(s)</span>
                 <input
                   class="range range-primary"
                   type="range"
                   min="1"
                   max="30"
                   step="1"
-                  [(ngModel)]="expiredMinutes"
-                  name="expiredMinutes"
+                  [value]="expiredMinutes()"
+                  (input)="expiredMinutes.set($any($event.target).valueAsNumber)"
                 />
               </label>
               <button class="btn btn-outline btn-sm" type="button" (click)="applyConfig()">
@@ -104,15 +106,53 @@ type TodoItem = {
             </div>
           </section>
         </div>
+
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
+
+        <app-api-preferences [preferences]="preferences" />
       </div>
     </article>
   `,
 })
 export class SignalStoreComponent {
   readonly store = inject(SignalStore) as SignalStore<TodoItem>;
-  protected title = '';
-  protected storageType: 'local' | 'session' = 'local';
-  protected expiredMinutes = 10;
+  protected readonly preferences = [
+    {
+      name: 'storage.type',
+      description: 'Chooses whether persistence uses local storage or session storage.',
+      optional: true,
+      default: 'local',
+      unit: 'storage',
+    },
+    {
+      name: 'expiredIn',
+      description: 'How long the cached store state remains valid before refresh.',
+      optional: true,
+      default: 10,
+      unit: 'minute',
+    },
+  ];
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { SignalStore } from '@trt-web/angular';
+
+const store = inject(SignalStore);
+
+store.configure({
+  storage: {
+    storageSync: true,
+    type: 'local',
+    key: 'angular-demo.todos',
+  },
+});
+
+store.addNewData({ id: 1, title: 'Learn SignalStore', done: false });`,
+    },
+  ];
+  protected title = signal('');
+  protected storageType = signal<'local' | 'session'>('local');
+  protected expiredMinutes = signal(10);
 
   private nextId = 1;
 
@@ -131,7 +171,7 @@ export class SignalStoreComponent {
 
   add(event: SubmitEvent): void {
     event.preventDefault();
-    const title = this.title.trim();
+    const title = this.title().trim();
     if (!title) return;
 
     this.store.addNewData({
@@ -139,7 +179,7 @@ export class SignalStoreComponent {
       title,
       done: false,
     });
-    this.title = '';
+    this.title.set('');
   }
 
   toggle(id: number): void {
@@ -154,10 +194,10 @@ export class SignalStoreComponent {
 
   applyConfig(): void {
     this.store.configure({
-      expiredIn: this.expiredMinutes,
+      expiredIn: this.expiredMinutes(),
       storage: {
         storageSync: true,
-        type: this.storageType,
+        type: this.storageType(),
         key: 'angular-demo.todos',
         loadFromStorage: true,
         syncDelay: { value: 300, unit: 'millisecond' },

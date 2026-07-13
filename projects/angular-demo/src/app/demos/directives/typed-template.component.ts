@@ -1,6 +1,8 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { TypedTemplateDirective } from '@trt-web/angular';
+
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
 
 type Person = {
   name: string;
@@ -15,7 +17,7 @@ type PersonTemplateContext = {
 
 @Component({
   selector: 'app-typed-template',
-  imports: [NgTemplateOutlet, TypedTemplateDirective],
+  imports: [NgTemplateOutlet, TypedTemplateDirective, CodeSampleComponent],
   template: `
     <article class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body gap-6">
@@ -29,14 +31,14 @@ type PersonTemplateContext = {
         </header>
 
         <div class="space-y-3">
-          @for (person of people; track person.name) {
+          @for (person of people(); track person.name) {
             <ng-container
               *ngTemplateOutlet="personCard; context: { $implicit: person, index: $index }"
             />
           }
         </div>
 
-        <ng-template #personCard [typedTemplate]="typedContext" let-person let-index="index">
+        <ng-template #personCard [typedTemplate]="typedContext()" let-person let-index="index">
           <article class="card card-compact bg-base-200 border border-base-300 shadow-sm">
             <div class="card-body gap-3">
               <div class="flex flex-wrap items-center justify-between gap-3">
@@ -53,19 +55,42 @@ type PersonTemplateContext = {
             </div>
           </article>
         </ng-template>
+
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
       </div>
     </article>
   `,
 })
 export class TypedTemplateComponent {
-  protected readonly people: Person[] = [
+  protected readonly people = signal<Person[]>([
     { name: 'Minh', role: 'Lead Angular engineer', active: true },
     { name: 'Linh', role: 'Frontend reviewer', active: false },
     { name: 'An', role: 'Design system owner', active: true },
-  ];
+  ]);
 
-  protected readonly typedContext: PersonTemplateContext = {
-    $implicit: this.people[0],
+  protected readonly typedContext = computed<PersonTemplateContext>(() => ({
+    $implicit: this.people()[0],
     index: 0,
-  };
+  }));
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { Component } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { TypedTemplateDirective } from '@trt-web/angular';
+
+@Component({
+  selector: 'app-typed-template',
+  imports: [NgTemplateOutlet, TypedTemplateDirective],
+  template: \`
+    <ng-template #tpl [typedTemplate]="context" let-person let-index="index">
+      {{ index + 1 }}. {{ person.name }}
+    </ng-template>
+  \`,
+})
+export class TypedTemplateComponent {
+  readonly context = { $implicit: { name: 'Minh' }, index: 0 };
+}`,
+    },
+  ];
 }

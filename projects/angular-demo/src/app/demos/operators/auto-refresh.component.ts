@@ -1,7 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, signal } from '@angular/core';
 import { autoRefresh } from '@trt-web/angular';
 import { Observable, of, Subscription } from 'rxjs';
 import { delay } from 'rxjs/operators';
+
+import { ApiPreferencesComponent } from '../../shared/components/api-preferences.component';
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
 
 type RefreshEvent = {
   refreshCount: number;
@@ -11,6 +14,7 @@ type RefreshEvent = {
 
 @Component({
   selector: 'app-auto-refresh',
+  imports: [ApiPreferencesComponent, CodeSampleComponent],
   template: `
     <article class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body gap-6">
@@ -35,15 +39,17 @@ type RefreshEvent = {
           <div class="card-body gap-3 text-sm text-base-content/70">
             <p>
               State:
-              <span class="font-medium text-base-content">{{ running ? 'running' : 'idle' }}</span>
+              <span class="font-medium text-base-content">{{
+                running() ? 'running' : 'idle'
+              }}</span>
             </p>
             <p>
               Emissions:
-              <span class="font-medium text-base-content">{{ events.length }}</span>
+              <span class="font-medium text-base-content">{{ events().length }}</span>
             </p>
 
             <div class="space-y-2">
-              @for (event of events; track event.timestamp) {
+              @for (event of events(); track event.timestamp) {
                 <div
                   class="rounded-box border border-base-300 bg-base-100 px-3 py-2 text-base-content/80"
                 >
@@ -55,20 +61,52 @@ type RefreshEvent = {
             </div>
           </div>
         </section>
+
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
+
+        <app-api-preferences [preferences]="preferences" />
       </div>
     </article>
   `,
 })
 export class AutoRefreshComponent implements OnDestroy {
-  protected running = false;
-  protected events: RefreshEvent[] = [];
+  protected readonly running = signal(false);
+  protected readonly events = signal<RefreshEvent[]>([]);
+  protected readonly preferences = [
+    {
+      name: 'delay',
+      description: 'How long the operator waits before asking for the next refresh.',
+      optional: true,
+      default: { value: 1, unit: 'second' },
+      unit: 'time',
+    },
+    {
+      name: 'maxRefreshCount',
+      description: 'Stops the refresh loop after this many automatic reruns.',
+      optional: true,
+      default: 4,
+      unit: 'count',
+    },
+  ];
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { autoRefresh } from '@trt-web/angular';
+import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
+
+autoRefresh(() => of('data').pipe(delay(350)), {
+  delay: { value: 1, unit: 'second' },
+});`,
+    },
+  ];
 
   private subscription = Subscription.EMPTY;
 
   start(): void {
     this.stop();
-    this.running = true;
-    this.events = [];
+    this.running.set(true);
+    this.events.set([]);
 
     const source = (context: {
       isAutoRefresh: boolean;
@@ -85,14 +123,14 @@ export class AutoRefreshComponent implements OnDestroy {
       delay: { value: 1, unit: 'second' },
       maxRefreshCount: 4,
     }).subscribe((event) => {
-      this.events = [...this.events, event];
+      this.events.update((current) => [...current, event]);
     });
   }
 
   stop(): void {
     this.subscription.unsubscribe();
     this.subscription = Subscription.EMPTY;
-    this.running = false;
+    this.running.set(false);
   }
 
   ngOnDestroy(): void {

@@ -1,14 +1,15 @@
 import { JsonPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { HttpCacheService } from '@trt-web/angular';
 
+import { ApiPreferencesComponent } from '../../shared/components/api-preferences.component';
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
 import { HttpCacheQuote, MockHttpCacheService } from './mock-http-cache.service';
 
 @Component({
   selector: 'app-http-cache',
-  imports: [FormsModule, JsonPipe],
+  imports: [ApiPreferencesComponent, JsonPipe, CodeSampleComponent],
   template: `
     <article class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body gap-6">
@@ -24,7 +25,11 @@ import { HttpCacheQuote, MockHttpCacheService } from './mock-http-cache.service'
           <div class="space-y-3">
             <label class="form-control gap-2 text-sm">
               <span>Topic</span>
-              <select class="select select-bordered w-full" [(ngModel)]="topic">
+              <select
+                class="select select-bordered w-full"
+                [value]="topic()"
+                (change)="topic.set($any($event.target).value)"
+              >
                 <option value="utils">utils</option>
                 <option value="forms">forms</option>
                 <option value="data">data</option>
@@ -32,14 +37,15 @@ import { HttpCacheQuote, MockHttpCacheService } from './mock-http-cache.service'
             </label>
 
             <label class="form-control gap-2 text-sm">
-              <span>TTL: {{ ttlMs }}ms</span>
+              <span>TTL: {{ ttlMs() }}ms</span>
               <input
                 class="range range-primary"
                 type="range"
                 min="1000"
                 max="20000"
                 step="500"
-                [(ngModel)]="ttlMs"
+                [value]="ttlMs()"
+                (input)="ttlMs.set($any($event.target).valueAsNumber)"
               />
             </label>
 
@@ -83,7 +89,7 @@ import { HttpCacheQuote, MockHttpCacheService } from './mock-http-cache.service'
                 <span class="font-medium text-base-content">{{ demo.backendHitCount() }}</span>
               </p>
               <p>
-                Current topic: <span class="font-medium text-base-content">{{ topic }}</span>
+                Current topic: <span class="font-medium text-base-content">{{ topic() }}</span>
               </p>
               <p>
                 The first request reaches the mock backend. Repeating the same request hits the
@@ -95,6 +101,10 @@ import { HttpCacheQuote, MockHttpCacheService } from './mock-http-cache.service'
             </div>
           </section>
         </div>
+
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
+
+        <app-api-preferences [preferences]="preferences" />
       </div>
     </article>
   `,
@@ -103,9 +113,96 @@ export class HttpCacheComponent {
   readonly demo = inject(MockHttpCacheService);
   private readonly http = inject(HttpClient);
   private readonly cache = inject(HttpCacheService);
+  protected readonly preferences = [
+    {
+      name: 'provideHttpCache.ttl',
+      description: 'Sets the default lifetime for cached HTTP responses.',
+      optional: true,
+      default: '5m',
+      unit: 'time',
+    },
+    {
+      name: 'provideHttpCache.debug',
+      description: 'Logs cache hits, stores, deletions, and expirations in the console.',
+      optional: true,
+      default: false,
+      unit: 'boolean',
+    },
+    {
+      name: 'createContext.tag',
+      description: 'Associates a request with one or more tags for bulk invalidation.',
+      optional: true,
+      default: ['utils'],
+      unit: 'tag',
+    },
+    {
+      name: 'createContext.group',
+      description: 'Groups cache entries that should be invalidated together.',
+      optional: true,
+      default: 'quote-demo',
+      unit: 'group',
+    },
+    {
+      name: 'createContext.id',
+      description: 'Assigns a stable ID so a single cache entry can be removed or updated.',
+      optional: true,
+      default: 'quote-utils',
+      unit: 'id',
+    },
+  ];
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { HttpClient } from '@angular/common/http';
+import { Component, inject } from '@angular/core';
+import { HttpCacheService, provideHttpCache } from '@trt-web/angular';
 
-  protected topic = 'utils';
-  protected ttlMs = 10_000;
+export const appConfig = {
+  providers: [provideHttpCache({ ttl: 5 * 60 * 1000, debug: false })],
+};
+
+@Component({
+  template: \`<button (click)="load()">Load quote</button>\`,
+})
+export class DemoComponent {
+  private readonly http = inject(HttpClient);
+
+  load() {
+    return this.http.get('/api/demo/quote', {
+      context: HttpCacheService.createContext({
+        ttl: 10_000,
+        tag: ['utils'],
+        group: 'quote-demo',
+        id: 'quote-utils',
+      }),
+    });
+  }
+}`,
+    },
+    {
+      fileExt: 'html',
+      code: `<button class="btn btn-primary btn-sm" (click)="load()">
+  Load cached quote
+</button>
+
+@if (response()) {
+  <pre>{{ response() | json }}</pre>
+}`,
+    },
+    {
+      fileExt: 'scss',
+      code: `:host {
+  display: block;
+}
+
+.quote-panel {
+  border-radius: 1rem;
+}`,
+    },
+  ];
+
+  protected topic = signal('utils');
+  protected ttlMs = signal(10_000);
   protected loading = signal(false);
   protected error = signal<string | null>(null);
   protected response = signal<HttpCacheQuote | null>(null);
@@ -116,12 +213,12 @@ export class HttpCacheComponent {
 
     this.http
       .get<HttpCacheQuote>('/api/demo/quote', {
-        params: { topic: this.topic },
+        params: { topic: this.topic() },
         context: HttpCacheService.createContext({
-          ttl: this.ttlMs,
-          tag: [this.topic],
+          ttl: this.ttlMs(),
+          tag: [this.topic()],
           group: 'quote-demo',
-          id: `quote-${this.topic}`,
+          id: `quote-${this.topic()}`,
           overwrite,
         }),
       })

@@ -3,9 +3,11 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { fieldHasErrors, fieldHasErrorType } from '@trt-web/angular';
 
+import { CodeSampleComponent } from '../../shared/components/code-sample.component';
+
 @Component({
   selector: 'app-field-has-errors',
-  imports: [JsonPipe, ReactiveFormsModule],
+  imports: [JsonPipe, ReactiveFormsModule, CodeSampleComponent],
   template: `
     <article class="card bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body gap-6">
@@ -67,6 +69,8 @@ import { fieldHasErrors, fieldHasErrorType } from '@trt-web/angular';
             </div>
           </section>
         </form>
+
+        <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
       </div>
     </article>
   `,
@@ -81,4 +85,16 @@ export class FieldHasErrorsComponent {
 
   protected readonly fieldHasErrors = fieldHasErrors;
   protected readonly fieldHasErrorType = fieldHasErrorType;
+  protected readonly codeExample = [
+    {
+      fileExt: 'ts',
+      code: `import { fieldHasErrors, fieldHasErrorType } from '@trt-web/angular';
+
+if (fieldHasErrors(form, 'name')) {
+  if (fieldHasErrorType(form, 'name', 'required')) {
+    console.log('Name is required');
+  }
+}`,
+    },
+  ];
 }
