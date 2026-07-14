@@ -1,3 +1,4 @@
+import { requireBrowserEnv } from '../../utils';
 import {
   BrowserPermissionState,
   ExecuteBrowserServiceResult,
@@ -6,6 +7,8 @@ import { BrowserShareData } from './browser-share.type';
 
 export class BrowserShare {
   static async share(data: BrowserShareData): Promise<ExecuteBrowserServiceResult> {
+    requireBrowserEnv();
+
     const permission = this.getSharedState(data);
 
     if (permission === 'unsupported') {
