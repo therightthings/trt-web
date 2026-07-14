@@ -1,12 +1,6 @@
-import { checkCircularReferences, requireBrowserEnv } from '../../utils';
+import { requireBrowserEnv, stringify } from '../../utils';
 
 export class SessionStorage {
-  private static stringify(value: unknown): string {
-    checkCircularReferences(value);
-
-    return JSON.stringify(value);
-  }
-
   private static isQuotaError(err: unknown): boolean {
     return (
       err instanceof DOMException &&
@@ -31,7 +25,7 @@ export class SessionStorage {
     }
 
     try {
-      const value = this.stringify(data);
+      const value = stringify(data);
       sessionStorage.setItem(key, value);
     } catch (err) {
       if (this.isQuotaError(err)) {

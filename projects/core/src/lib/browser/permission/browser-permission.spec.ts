@@ -39,8 +39,6 @@ function stubBrowserGlobals(overrides?: {
     requestMIDIAccess: vi.fn(),
     serviceWorker,
     wakeLock,
-    share: vi.fn(),
-    canShare: vi.fn(),
     ...overrides?.navigator,
   } as Record<string, unknown>;
   const notification = {
@@ -135,17 +133,6 @@ describe('BrowserPermission', () => {
     expect(registration.pushManager.permissionState).toHaveBeenCalledWith({
       userVisibleOnly: true,
     });
-  });
-
-  it('treats shared permissions as denied when sharing is not available for the payload', async () => {
-    const { navigator } = stubBrowserGlobals({
-      navigator: {
-        canShare: vi.fn(() => false),
-      },
-    });
-
-    expect((navigator as any).canShare).toBeDefined();
-    await expect(BrowserPermission.getState('shared')).resolves.toBe('denied');
   });
 
   it('requests clipboard read and denies on failure', async () => {

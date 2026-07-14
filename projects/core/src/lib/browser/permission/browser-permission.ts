@@ -1,8 +1,8 @@
 import { requireBrowserEnv } from '../../utils';
-import { BrowserPermissionState, ExtraBrowserPermissionName } from './browser-permission.type';
+import { BrowserPermissionName, BrowserPermissionState } from './browser-permission.type';
 
 export class BrowserPermission {
-  static async getState(name: ExtraBrowserPermissionName): Promise<BrowserPermissionState> {
+  static async getState(name: BrowserPermissionName): Promise<BrowserPermissionState> {
     requireBrowserEnv();
 
     if (typeof navigator === 'undefined') {
@@ -12,9 +12,6 @@ export class BrowserPermission {
     switch (name) {
       case 'push': {
         return this.getPushState();
-      }
-      case 'shared': {
-        return this.getSharedState();
       }
 
       default: {
@@ -35,7 +32,7 @@ export class BrowserPermission {
     }
   }
 
-  static async request(name: ExtraBrowserPermissionName): Promise<BrowserPermissionState> {
+  static async request(name: BrowserPermissionName): Promise<BrowserPermissionState> {
     requireBrowserEnv();
 
     if (typeof navigator === 'undefined') {
@@ -85,10 +82,6 @@ export class BrowserPermission {
 
       case 'storage-access': {
         return this.requestStorageAccess();
-      }
-
-      case 'shared': {
-        return this.requestShared();
       }
 
       default: {
@@ -274,35 +267,6 @@ export class BrowserPermission {
 
     try {
       await document.requestStorageAccess();
-
-      return 'granted';
-    } catch {
-      return 'denied';
-    }
-  }
-
-  private static async getSharedState(): Promise<BrowserPermissionState> {
-    if (!navigator.share) {
-      return 'unsupported';
-    }
-
-    if (
-      navigator.canShare &&
-      !navigator.canShare({
-        text: 'test shared data',
-      })
-    ) {
-      return 'denied';
-    }
-
-    return 'granted';
-  }
-
-  private static async requestShared(): Promise<BrowserPermissionState> {
-    try {
-      await navigator.share({
-        text: 'request shared data',
-      });
 
       return 'granted';
     } catch {
