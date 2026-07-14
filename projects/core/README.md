@@ -10,9 +10,9 @@
 npm install @trt-web/core
 ```
 
-## Utilities
+## Public API
 
-### Browser
+### Direct exports
 
 - `BrowserClipboard`: read and write clipboard content.
 - `BrowserEnvironment`: inspect locale, hardware, battery, storage, and screen details.
@@ -24,21 +24,24 @@ npm install @trt-web/core
 - `Cookie`: typed cookie helper with JSON serialization.
 - `LocalStorage`: typed wrapper around `localStorage`.
 - `SessionStorage`: typed wrapper around `sessionStorage`.
+
+### TrtCore.Browser
+
 - `createWorker`: create a Web Worker from a function.
 - `runWorker`: run a function in a Web Worker and resolve its result.
 
-### Date
+### TrtCore.Date
 
 - `generateTimestamp`: generate a timestamp value.
 - `getDateRange`: resolve common preset ranges and dynamic ranges into `startDate` / `endDate`.
 
-### DOM
+### TrtCore.DOM
 
 - `generateRandomColor`: generate a random color value.
 - `getElementInfo`: read size and position details from an element.
 - `varCSS`: read/write CSS custom property values.
 
-### File
+### TrtCore.File
 
 - `compressImageFile`: compress and resize image files.
 - `convertFileSize`: convert file size values between byte units.
@@ -47,7 +50,7 @@ npm install @trt-web/core
 - `getImageSize`: inspect image dimensions.
 - `loadImage`: load an image element from a source.
 
-### Number
+### TrtCore.Number
 
 - `calcBayesianRating`: calculate a Bayesian-style rating using a global average prior.
 - `calcHaversineDistance`: calculate distance between two latitude/longitude points.
@@ -55,24 +58,24 @@ npm install @trt-web/core
 - `generateRandomNumber`: generate integer or decimal numbers in a range.
 - `formatViewCount`: format a view count into compact notation like `1.2k`.
 
-### Object
+### TrtCore.Object
 
 - `cleanObj`: remove empty values from objects and nested structures.
 - `removeDuplicateObjects`: deduplicate object arrays while preserving structure.
 
-### Rate Limit
+### TrtCore.RateLimit
 
 - `debounce`: debounce function calls.
 - `throttle`: throttle function calls.
 - `wait`: pause execution for a duration.
 
-### String
+### TrtCore.String
 
 - `capitalizeFirst`: capitalize the first letter of a string.
 - `capitalizeTextFields`: capitalize string fields in objects.
 - `capitalizeWords`: capitalize each word in a string.
 - `generateHash`: create a hash string.
-- `generateId`: create a unique identifier.
+- `generateId`: generate a unique identifier.
 - `generateRandomString`: generate a random string.
 - `generateSearchKeys`: build searchable prefixes and tokens from text.
 - `generateSortOrderKey`: generate a sortable order key for drag-and-drop style ordering.
