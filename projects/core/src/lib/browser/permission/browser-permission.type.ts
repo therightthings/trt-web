@@ -11,8 +11,6 @@ export type BrowserPermissionName =
   | 'screen-wake-lock'
   | 'storage-access';
 
-export type ExtraBrowserPermissionName = BrowserPermissionName | 'shared';
-
 export type BrowserPermissionState = 'granted' | 'denied' | 'prompt' | 'unsupported';
 
 export type ExecuteBrowserServiceResult<T = unknown> = {
