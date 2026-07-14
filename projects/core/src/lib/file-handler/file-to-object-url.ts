@@ -22,10 +22,13 @@ function dataUrlToBlob(dataUrl: string, type?: string): Blob {
   return new Blob([bytes], { type: mimeType });
 }
 
-export function fileToObjectUrl(source: File | string, options?: FileToObjectUrlOptions): string {
+export function fileToObjectUrl(
+  source: Blob | File | string,
+  options?: FileToObjectUrlOptions,
+): string {
   requireBrowserEnv();
 
-  if (source instanceof File) {
+  if (source instanceof File || source instanceof Blob) {
     return URL.createObjectURL(source);
   }
 
