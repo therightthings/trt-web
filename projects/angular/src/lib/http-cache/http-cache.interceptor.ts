@@ -6,7 +6,7 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { generateHash } from '@trt-web/core';
+import { TrtCore } from '@trt-web/core';
 import { from, Observable, of } from 'rxjs';
 import { finalize, map, shareReplay, switchMap } from 'rxjs/operators';
 
@@ -22,7 +22,7 @@ import {
 async function generateCacheKey(req: HttpRequest<unknown>): Promise<string> {
   let key = `${req.method}_${req.urlWithParams}`;
   if (req.body) {
-    const hash = await generateHash(req.body);
+    const hash = await TrtCore.Text.generateHash(req.body);
     key += `_${hash}`;
   }
   return key;
