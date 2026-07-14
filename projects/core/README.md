@@ -14,7 +14,14 @@ npm install @trt-web/core
 
 ### Browser
 
+- `BrowserClipboard`: read and write clipboard content.
+- `BrowserEnvironment`: inspect locale, hardware, battery, storage, and screen details.
+- `BrowserLocation`: get geolocation with permission handling and speed presets.
 - `BrowserPermission`: browser permission helper for checking and requesting permissions.
+- `BrowserPresentation`: fullscreen and picture-in-picture helpers.
+- `BrowserResource`: asset URLs, script/link loading, and file downloads.
+- `BrowserShare`: browser share helper for Web Share API.
+- `Cookie`: typed cookie helper with JSON serialization.
 - `LocalStorage`: typed wrapper around `localStorage`.
 - `SessionStorage`: typed wrapper around `sessionStorage`.
 - `createWorker`: create a Web Worker from a function.
@@ -34,9 +41,11 @@ npm install @trt-web/core
 ### File
 
 - `compressImageFile`: compress and resize image files.
+- `convertFileSize`: convert file size values between byte units.
 - `fileToDataUrl`: convert a file to a data URL.
 - `fileToObjectUrl`: convert a file to an object URL.
 - `getImageSize`: inspect image dimensions.
+- `loadImage`: load an image element from a source.
 
 ### Number
 
