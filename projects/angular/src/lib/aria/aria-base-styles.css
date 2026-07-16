@@ -1,0 +1,63 @@
+@layer components {
+  :where([trtAccordionGroup]) {
+    --trt-accordion-divider-color: color-mix(in srgb, currentColor 12%, transparent);
+    --trt-accordion-panel-padding-block: 0.75rem 1rem;
+    --trt-accordion-panel-padding-inline: 1rem;
+    --trt-accordion-trigger-padding-block: 0.875rem;
+    --trt-accordion-trigger-padding-inline: 1rem;
+    display: block;
+  }
+
+  :where([trtAccordionTrigger]) {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-block-end: 1px solid var(--trt-accordion-divider-color);
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font: inherit;
+    gap: 0.75rem;
+    justify-content: space-between;
+    padding-block: var(--trt-accordion-trigger-padding-block);
+    padding-inline: var(--trt-accordion-trigger-padding-inline);
+    text-align: left;
+    width: 100%;
+  }
+
+  :where([trtAccordionTrigger]:not([aria-disabled='true']):not([disabled]):hover) {
+    background-color: color-mix(in srgb, currentColor 4%, transparent);
+  }
+
+  :where([trtAccordionTrigger]:focus-visible) {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  :where([trtAccordionTrigger][aria-disabled='true']),
+  :where([trtAccordionTrigger][disabled]) {
+    background-color: color-mix(in srgb, currentColor 6%, transparent);
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  :where([trtAccordionTrigger][aria-disabled='true']:hover),
+  :where([trtAccordionTrigger][disabled]:hover) {
+    background-color: color-mix(in srgb, currentColor 10%, transparent);
+  }
+
+  :where([trtAccordionPanel]) {
+    display: block;
+    padding-block: var(--trt-accordion-panel-padding-block);
+    padding-inline: var(--trt-accordion-panel-padding-inline);
+  }
+
+  :where([trtAccordionPanel][inert]) {
+    display: none;
+  }
+
+  :where(ng-template[trtAccordionContent]) {
+    display: block;
+  }
+}

@@ -29,7 +29,13 @@
   },
   "peerDependencies": {
     "@angular/common": ">=16.0.0 <23.0.0",
-    "@angular/core": ">=16.0.0 <23.0.0"
+    "@angular/core": ">=16.0.0 <23.0.0",
+    "@angular/aria": ">=22.0.0 <23.0.0"
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "exports": {
+    "./aria-base-styles.css": {
+      "default": "./aria-base-styles.css"
+    }
+  }
 }
