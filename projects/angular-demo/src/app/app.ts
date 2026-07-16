@@ -12,6 +12,11 @@ export class App {
 
   protected readonly groups = signal([
     {
+      label: 'Components',
+      path: '/components',
+      links: [{ label: 'Accordion', path: 'accordion' }],
+    },
+    {
       label: 'Directives',
       path: '/directives',
       links: [

@@ -21,7 +21,10 @@
             "input": "projects/angular-demo/public"
           }
         ],
-        "styles": ["projects/angular-demo/src/styles.scss"]
+        "styles": [
+          "projects/angular-demo/src/styles.scss",
+          "projects/angular/src/lib/aria/aria-base-styles.css"
+        ]
       },
       "configurations": {
         "production": {

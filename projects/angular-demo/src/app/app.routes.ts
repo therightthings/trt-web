@@ -7,7 +7,24 @@ export const appRoutes: Route[] = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'directives',
+        redirectTo: 'components',
+      },
+      {
+        path: 'components',
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: 'accordion',
+          },
+          {
+            path: 'accordion',
+            loadComponent: () =>
+              import('./demos/components/accordion/accordion.component').then(
+                (m) => m.AccordionComponent,
+              ),
+          },
+        ],
       },
       {
         path: 'directives',
