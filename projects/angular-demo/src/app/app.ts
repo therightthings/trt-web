@@ -24,6 +24,7 @@ export class App {
         { label: 'Listbox', path: 'listbox' },
         { label: 'Select', path: 'select' },
         { label: 'Multiselect', path: 'multiselect' },
+        { label: 'Tabs', path: 'tabs' },
       ],
     },
     {

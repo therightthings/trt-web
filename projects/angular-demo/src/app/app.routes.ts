@@ -57,6 +57,11 @@ export const appRoutes: Route[] = [
                 (m) => m.MultiselectComponent,
               ),
           },
+          {
+            path: 'tabs',
+            loadComponent: () =>
+              import('./demos/components/tabs/tabs.component').then((m) => m.TabsComponent),
+          },
         ],
       },
       {
