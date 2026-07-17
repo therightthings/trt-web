@@ -254,6 +254,76 @@
 }
 
 @layer components {
+  /* toolbar */
+  :where([trtToolbar]) {
+    background: var(--trt-surface-color);
+    border: var(--trt-border-width) solid var(--trt-border-color);
+    border-radius: var(--trt-radius);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.5rem;
+  }
+
+  :where([trtToolbar][aria-orientation='vertical']) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  :where([trtToolbarWidgetGroup]) {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  :where([trtToolbarWidget]) {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 0.75rem;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font: inherit;
+    min-width: 2.75rem;
+    min-height: var(--trt-control-min-height);
+    padding-inline: 0.875rem;
+    padding-block: 0.625rem;
+  }
+
+  :where([trtToolbarWidget]:focus-visible) {
+    outline: var(--trt-focus-ring-width) solid var(--trt-accent-color);
+    outline-offset: var(--trt-focus-ring-offset);
+  }
+
+  :where([trtToolbarWidget]:not([aria-disabled='true']):not([disabled]):hover) {
+    background-color: var(--trt-interactive-hover-bg);
+  }
+
+  :where([trtToolbarWidget][aria-pressed='true']),
+  :where([trtToolbarWidget][aria-checked='true']) {
+    background-color: var(--trt-interactive-selected-bg);
+    font-weight: 600;
+  }
+
+  :where([trtToolbarWidget][aria-disabled='true']),
+  :where([trtToolbarWidget][disabled]) {
+    cursor: not-allowed;
+    opacity: var(--trt-disabled-opacity-soft);
+  }
+
+  :where([trtToolbar] > [role='separator']) {
+    background: var(--trt-border-color);
+    align-self: stretch;
+    inline-size: 1px;
+    min-block-size: 1.75rem;
+  }
+}
+
+@layer components {
   /* menu */
   :where([trtMenuBar]) {
     background: var(--trt-surface-color);
