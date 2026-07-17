@@ -462,3 +462,83 @@
     outline-offset: var(--trt-focus-ring-offset);
   }
 }
+
+@layer components {
+  /* tree */
+  :where([trtTree]) {
+    border: var(--trt-border-width) solid var(--trt-border-color);
+    border-radius: var(--trt-radius);
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: calc(var(--trt-padding) * 0.5);
+  }
+
+  :where([trtTree] > li) {
+    list-style: none;
+  }
+
+  :where([trtTreeItem]) {
+    border-radius: 0.875rem;
+    list-style: none;
+    padding: 0.125rem;
+  }
+
+  :where([trtTreeItem]:not([aria-disabled='true']):hover) {
+    background-color: var(--trt-interactive-hover-bg);
+  }
+
+  :where([trtTreeItem]:focus-visible) {
+    outline: var(--trt-focus-ring-width) solid var(--trt-accent-color);
+    outline-offset: var(--trt-focus-ring-offset);
+  }
+
+  :where([trtTreeItem][aria-selected='true']) {
+    background-color: var(--trt-interactive-selected-bg);
+    font-weight: 600;
+  }
+
+  :where([trtTreeItem][aria-current]) {
+    background-color: color-mix(in srgb, var(--trt-primary-color) 10%, transparent);
+  }
+
+  :where([trtTreeItem][aria-disabled='true']) {
+    cursor: not-allowed;
+    opacity: var(--trt-disabled-opacity-soft);
+  }
+
+  :where([trtTreeItem] > .trt-tree-row) {
+    align-items: center;
+    display: flex;
+    gap: 0.625rem;
+    min-block-size: var(--trt-control-min-height);
+    padding-block: calc(var(--trt-padding) * 0.625);
+    padding-inline: calc(var(--trt-padding) * 0.875);
+  }
+
+  :where([trtTreeItem] > .trt-tree-row > .trt-tree-toggle) {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    inline-size: 1rem;
+    flex: 0 0 auto;
+  }
+
+  :where([trtTreeItem] > .trt-tree-row > .trt-tree-label) {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  :where([trtTreeItem] > ul[role='group']) {
+    margin: 0;
+    padding-inline-start: 1.25rem;
+  }
+
+  :where([trtTreeItem][aria-expanded='false'] > ul[role='group']) {
+    display: none;
+  }
+
+  :where([trtTreeItem] > ul[role='group'] > li) {
+    list-style: none;
+  }
+}
