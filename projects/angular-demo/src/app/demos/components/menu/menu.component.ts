@@ -109,9 +109,13 @@ export class MenuComponent {
     {
       fileExt: 'html',
       code: `<section>
-  <header>
-    <div>trt-menu</div>
-    <h3>Menu built on Angular Aria</h3>
+  <header class="space-y-2">
+    <div class="badge badge-outline badge-sm">trt-menu</div>
+    <h3 class="card-title text-lg">Menu built on Angular Aria</h3>
+    <p class="text-sm leading-6 text-base-content/70">
+      This demo shows a standalone dropdown menu with a nested submenu, using only the library
+      base styles so the interaction model stays easy to see.
+    </p>
   </header>
 
   <div>

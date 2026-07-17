@@ -110,38 +110,49 @@ export class TabsComponent {
   protected readonly codeExample = [
     {
       fileExt: 'html',
-      code: `<div trtTabs>
-  <div trtTabList [(selectedTab)]="selectedTab" selectionMode="follow">
-    <button type="button" trtTab value="overview">Overview</button>
-    <button type="button" trtTab value="cast">Cast</button>
-    <button type="button" trtTab value="reviews">Reviews</button>
-    <button type="button" trtTab value="extras" [disabled]="true">Extras</button>
-  </div>
+      code: `<section>
+  <header class="space-y-2">
+    <div class="badge badge-outline badge-sm">trt-tabs</div>
+    <h3 class="card-title text-lg">Tabs built on Angular Aria</h3>
+    <p class="text-sm leading-6 text-base-content/70">
+      This demo shows the base tabs wrapper with lazy panel content, keyboard-friendly navigation,
+      and one disabled tab so you can see the full interaction model.
+    </p>
+  </header>
 
-  <div trtTabPanel [preserveContent]="true" value="overview">
-    <ng-template trtTabContent>
-      <p>Lazy content for the overview tab.</p>
-    </ng-template>
-  </div>
+  <div trtTabs>
+    <div trtTabList [(selectedTab)]="selectedTab" selectionMode="follow">
+      <button type="button" trtTab value="overview">Overview</button>
+      <button type="button" trtTab value="cast">Cast</button>
+      <button type="button" trtTab value="reviews">Reviews</button>
+      <button type="button" trtTab value="extras" [disabled]="true">Extras</button>
+    </div>
 
-  <div trtTabPanel [preserveContent]="true" value="cast">
-    <ng-template trtTabContent>
-      <p>Lazy content for the cast tab.</p>
-    </ng-template>
-  </div>
+    <div trtTabPanel [preserveContent]="true" value="overview">
+      <ng-template trtTabContent>
+        <p>Lazy content for the overview tab.</p>
+      </ng-template>
+    </div>
 
-  <div trtTabPanel [preserveContent]="true" value="reviews">
-    <ng-template trtTabContent>
-      <p>Lazy content for the reviews tab.</p>
-    </ng-template>
-  </div>
+    <div trtTabPanel [preserveContent]="true" value="cast">
+      <ng-template trtTabContent>
+        <p>Lazy content for the cast tab.</p>
+      </ng-template>
+    </div>
 
-  <div trtTabPanel [preserveContent]="true" value="extras">
-    <ng-template trtTabContent>
-      <p>Disabled tabs can still have associated panels.</p>
-    </ng-template>
+    <div trtTabPanel [preserveContent]="true" value="reviews">
+      <ng-template trtTabContent>
+        <p>Lazy content for the reviews tab.</p>
+      </ng-template>
+    </div>
+
+    <div trtTabPanel [preserveContent]="true" value="extras">
+      <ng-template trtTabContent>
+        <p>Disabled tabs can still have associated panels.</p>
+      </ng-template>
+    </div>
   </div>
-</div>`,
+</section>`,
     },
   ];
 }

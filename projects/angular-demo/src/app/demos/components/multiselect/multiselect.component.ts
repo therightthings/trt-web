@@ -113,9 +113,13 @@ export class MultiselectComponent {
     {
       fileExt: 'html',
       code: `<section>
-  <header>
-    <div>trt-combobox + trt-listbox</div>
-    <h3>Multiselect built on Angular Aria</h3>
+  <header class="space-y-2">
+    <div class="badge badge-outline badge-sm">trt-combobox</div>
+    <h3 class="card-title text-lg">Multiselect built on Angular Aria</h3>
+    <p class="text-sm leading-6 text-base-content/70">
+      This demo mirrors the select pattern, but keeps multiple selections visible in the popup so
+      the shared base styles are easy to inspect.
+    </p>
   </header>
 
   <div>
