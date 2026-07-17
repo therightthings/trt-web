@@ -26,15 +26,12 @@
           />
 
           <button
-            aria-label="Clear selection"
-            class="btn btn-ghost btn-xs absolute right-2 top-1/2 -translate-y-1/2"
+            class="btn btn-ghost btn-square btn-xs rounded-full absolute right-2 top-1/2 -translate-y-1/2"
             type="button"
             (mousedown)="$event.preventDefault()"
             (click)="clear()"
           >
-            <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4 stroke-current">
-              <use xlink:href="/icon-sprites.svg#clear"></use>
-            </svg>
+            <fa-icon icon="xmark" size="xs"></fa-icon>
           </button>
 
           <ng-template
@@ -54,27 +51,20 @@
                 (keydown.enter)="onCommit()"
                 class="bg-base-100"
               >
-                @if (countries().length === 0) {
+                @for (country of countries(); track country) {
+                  <div trtOption [value]="country" [label]="country">
+                    {{ country }}
+                  </div>
+                } @empty {
                   <div class="px-4 py-3 text-sm text-base-content/60">No results found</div>
-                } @else {
-                  @for (country of countries(); track country) {
-                    <div trtOption [value]="country" [label]="country">
-                      {{ country }}
-                    </div>
-                  }
                 }
               </div>
             </ng-template>
           </ng-template>
         </div>
-
-        <p class="text-sm text-base-content/60">
-          Selected:
-          <span class="font-medium text-base-content">{{ selectedCountry() }}</span>
-        </p>
       </div>
 
-      <div aria-live="polite" class="sr-only">
+      <div class="sr-only">
         {{ countries().length === 0 ? 'No results found for ' + query() : '' }}
       </div>
     </section>

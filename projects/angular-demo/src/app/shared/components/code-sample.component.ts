@@ -25,7 +25,6 @@ type CodeSampleTab = {
                 role="tab"
                 class="tab"
                 [class.tab-active]="activeSample().fileExt === sample.fileExt"
-                [attr.aria-selected]="activeSample().fileExt === sample.fileExt"
                 (click)="activeFileExt.set(sample.fileExt)"
               >
                 {{ sample.fileExt.toUpperCase() }}

@@ -45,6 +45,18 @@ export const appRoutes: Route[] = [
                 (m) => m.ListboxComponent,
               ),
           },
+          {
+            path: 'select',
+            loadComponent: () =>
+              import('./demos/components/select/select.component').then((m) => m.SelectComponent),
+          },
+          {
+            path: 'multiselect',
+            loadComponent: () =>
+              import('./demos/components/multiselect/multiselect.component').then(
+                (m) => m.MultiselectComponent,
+              ),
+          },
         ],
       },
       {

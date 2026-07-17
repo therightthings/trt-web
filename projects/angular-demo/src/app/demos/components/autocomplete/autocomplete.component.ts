@@ -13,6 +13,7 @@ import {
   ApiPreferencesComponent,
 } from '../../../shared/components/api-preferences.component';
 import { CodeSampleComponent } from '../../../shared/components/code-sample.component';
+import { IconModule } from '../../../shared/icons/font-awesome.module';
 
 const COUNTRIES = [
   'Argentina',
@@ -41,6 +42,7 @@ const COUNTRIES = [
   imports: [
     ApiPreferencesComponent,
     CodeSampleComponent,
+    IconModule,
     OverlayModule,
     TrtCombobox,
     TrtComboboxPopup,
@@ -183,10 +185,8 @@ export class AutocompleteComponent {
       code: `<div #origin class="relative">
   <input trtCombobox #combobox="trtCombobox" [(value)]="query" [(expanded)]="popupExpanded" />
 
-  <button type="button" aria-label="Clear selection">
-    <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4 stroke-current">
-      <use xlink:href="/icon-sprites.svg#clear"></use>
-    </svg>
+  <button type="button">
+    <fa-icon [icon]="clearIcon" size="xs"></fa-icon>
   </button>
 
   <ng-template
