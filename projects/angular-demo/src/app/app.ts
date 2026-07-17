@@ -29,6 +29,7 @@ export class App {
         { label: 'Menubar', path: 'menubar' },
         { label: 'Tabs', path: 'tabs' },
         { label: 'Grid', path: 'grid' },
+        { label: 'Tree', path: 'tree' },
       ],
     },
     {

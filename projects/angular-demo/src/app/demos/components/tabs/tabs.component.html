@@ -1,59 +1,63 @@
-<article>
-  <header class="space-y-2">
-    <div class="badge badge-outline badge-sm">trt-tabs</div>
-    <h3 class="card-title text-lg">Tabs built on Angular Aria</h3>
-    <p class="text-sm leading-6 text-base-content/70">
-      This demo shows the base tabs wrapper with lazy panel content, keyboard-friendly navigation,
-      and one disabled tab so you can see the full interaction model.
-    </p>
-  </header>
+<article class="card bg-base-100 border border-base-300 shadow-sm">
+  <div class="card-body gap-6">
+    <header class="space-y-2">
+      <div class="badge badge-outline badge-sm">trt-tabs</div>
+      <h3 class="card-title text-lg">Tabs built on Angular Aria</h3>
+      <p class="text-sm leading-6 text-base-content/70">
+        This demo shows the base tabs wrapper with lazy panel content, keyboard-friendly navigation,
+        and one disabled tab so you can see the full interaction model.
+      </p>
+    </header>
 
-  <section>
-    <div trtTabs>
-      <div trtTabList [(selectedTab)]="selectedTab" selectionMode="follow">
-        <button type="button" trtTab value="overview">Overview</button>
-        <button type="button" trtTab value="cast">Cast</button>
-        <button type="button" trtTab value="reviews">Reviews</button>
-        <button type="button" trtTab value="extras" [disabled]="true">Extras</button>
+    <section>
+      <div trtTabs>
+        <div trtTabList [(selectedTab)]="selectedTab" selectionMode="follow">
+          <button type="button" trtTab value="overview">Overview</button>
+          <button type="button" trtTab value="cast">Cast</button>
+          <button type="button" trtTab value="reviews">Reviews</button>
+          <button type="button" trtTab value="extras" [disabled]="true">Extras</button>
+        </div>
+
+        <div trtTabPanel [preserveContent]="true" value="overview">
+          <ng-template trtTabContent>
+            <p>The overview panel is lazily rendered the first time it becomes active.</p>
+            <p>
+              Selected tab:
+              <span>{{ selectedLabel() }}</span>
+            </p>
+          </ng-template>
+        </div>
+
+        <div trtTabPanel [preserveContent]="true" value="cast">
+          <ng-template trtTabContent>
+            <ul>
+              <li>Director</li>
+              <li>Lead Actor</li>
+              <li>Supporting Cast</li>
+            </ul>
+          </ng-template>
+        </div>
+
+        <div trtTabPanel [preserveContent]="true" value="reviews">
+          <ng-template trtTabContent>
+            <p>
+              Reviews content stays mounted after first activation because preserveContent is on.
+            </p>
+          </ng-template>
+        </div>
+
+        <div trtTabPanel [preserveContent]="true" value="extras">
+          <ng-template trtTabContent>
+            <p>
+              This tab is disabled in the demo, but it still has a matching panel to show the API.
+            </p>
+          </ng-template>
+        </div>
       </div>
+    </section>
 
-      <div trtTabPanel [preserveContent]="true" value="overview">
-        <ng-template trtTabContent>
-          <p>The overview panel is lazily rendered the first time it becomes active.</p>
-          <p>
-            Selected tab:
-            <span>{{ selectedLabel() }}</span>
-          </p>
-        </ng-template>
-      </div>
+    <app-code-sample title="Markup" badge="Tabs usage" [code]="codeExample" />
 
-      <div trtTabPanel [preserveContent]="true" value="cast">
-        <ng-template trtTabContent>
-          <ul>
-            <li>Director</li>
-            <li>Lead Actor</li>
-            <li>Supporting Cast</li>
-          </ul>
-        </ng-template>
-      </div>
-
-      <div trtTabPanel [preserveContent]="true" value="reviews">
-        <ng-template trtTabContent>
-          <p>Reviews content stays mounted after first activation because preserveContent is on.</p>
-        </ng-template>
-      </div>
-
-      <div trtTabPanel [preserveContent]="true" value="extras">
-        <ng-template trtTabContent>
-          <p>
-            This tab is disabled in the demo, but it still has a matching panel to show the API.
-          </p>
-        </ng-template>
-      </div>
-    </div>
-  </section>
-
-  <app-code-sample title="Markup" badge="Tabs usage" [code]="codeExample" />
-
-  <app-api-preferences [preferences]="preferences" />
+    <app-api-preferences [preferences]="preferences" />
+  </div>
 </article>

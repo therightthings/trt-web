@@ -1,104 +1,106 @@
-<article>
-  <header class="space-y-2">
-    <div class="badge badge-outline badge-sm">trt-menu-bar</div>
-    <h3 class="card-title text-lg">Menubar built on Angular Aria</h3>
-    <p class="text-sm leading-6 text-base-content/70">
-      This demo keeps the top-level menu strip persistent so you can test left and right arrow
-      navigation plus submenu opening behavior.
-    </p>
-  </header>
+<article class="card bg-base-100 border border-base-300 shadow-sm">
+  <div class="card-body gap-6">
+    <header class="space-y-2">
+      <div class="badge badge-outline badge-sm">trt-menu-bar</div>
+      <h3 class="card-title text-lg">Menubar built on Angular Aria</h3>
+      <p class="text-sm leading-6 text-base-content/70">
+        This demo keeps the top-level menu strip persistent so you can test left and right arrow
+        navigation plus submenu opening behavior.
+      </p>
+    </header>
 
-  <section>
-    <div trtMenuBar tabindex="0" (keydown)="onMenubarKeydown($event)">
-      <button
-        trtMenuTrigger
-        #fileTrigger="trtMenuTrigger"
-        #fileOrigin
-        [menu]="fileMenuRef()?.menu"
-        type="button"
-      >
-        File
-      </button>
+    <section>
+      <div trtMenuBar tabindex="0" (keydown)="onMenubarKeydown($event)">
+        <button
+          trtMenuTrigger
+          #fileTrigger="trtMenuTrigger"
+          #fileOrigin
+          [menu]="fileMenuRef()?.menu"
+          type="button"
+        >
+          File
+        </button>
 
-      <button
-        trtMenuTrigger
-        #editTrigger="trtMenuTrigger"
-        #editOrigin
-        [menu]="editMenuRef()?.menu"
-        type="button"
-      >
-        Edit
-      </button>
+        <button
+          trtMenuTrigger
+          #editTrigger="trtMenuTrigger"
+          #editOrigin
+          [menu]="editMenuRef()?.menu"
+          type="button"
+        >
+          Edit
+        </button>
 
-      <button
-        trtMenuTrigger
-        #viewTrigger="trtMenuTrigger"
-        #viewOrigin
-        [menu]="viewMenuRef()?.menu"
-        type="button"
-      >
-        View
-      </button>
-    </div>
-
-    <ng-template
-      [cdkConnectedOverlay]="{ origin: fileOrigin, usePopover: 'inline' }"
-      [cdkConnectedOverlayOpen]="fileTrigger.expanded()"
-    >
-      <div trtMenu #fileMenu="trtMenu" (itemSelected)="selectAction('File', $event)">
-        <ng-template trtMenuContent>
-          <button trtMenuItem value="New">New</button>
-          <button trtMenuItem value="Open">Open</button>
-          <button trtMenuItem value="Save">Save</button>
-          <button trtMenuItem value="Share" [submenu]="shareMenuRef()?.menu">
-            <span>Share</span>
-            <fa-icon icon="chevron-right" size="xs"></fa-icon>
-          </button>
-
-          <div trtMenu #shareMenu="trtMenu" (itemSelected)="selectAction('File / Share', $event)">
-            <ng-template trtMenuContent>
-              <button trtMenuItem value="Copy link">Copy link</button>
-              <button trtMenuItem value="Email">Email</button>
-              <button trtMenuItem value="Slack">Slack</button>
-            </ng-template>
-          </div>
-        </ng-template>
+        <button
+          trtMenuTrigger
+          #viewTrigger="trtMenuTrigger"
+          #viewOrigin
+          [menu]="viewMenuRef()?.menu"
+          type="button"
+        >
+          View
+        </button>
       </div>
-    </ng-template>
 
-    <ng-template
-      [cdkConnectedOverlay]="{ origin: editOrigin, usePopover: 'inline' }"
-      [cdkConnectedOverlayOpen]="editTrigger.expanded()"
-    >
-      <div trtMenu #editMenu="trtMenu" (itemSelected)="selectAction('Edit', $event)">
-        <ng-template trtMenuContent>
-          <button trtMenuItem value="Undo">Undo</button>
-          <button trtMenuItem value="Redo">Redo</button>
-          <button trtMenuItem value="Cut">Cut</button>
-          <button trtMenuItem value="Copy">Copy</button>
-          <button trtMenuItem value="Paste">Paste</button>
-        </ng-template>
-      </div>
-    </ng-template>
+      <ng-template
+        [cdkConnectedOverlay]="{ origin: fileOrigin, usePopover: 'inline' }"
+        [cdkConnectedOverlayOpen]="fileTrigger.expanded()"
+      >
+        <div trtMenu #fileMenu="trtMenu" (itemSelected)="selectAction('File', $event)">
+          <ng-template trtMenuContent>
+            <button trtMenuItem value="New">New</button>
+            <button trtMenuItem value="Open">Open</button>
+            <button trtMenuItem value="Save">Save</button>
+            <button trtMenuItem value="Share" [submenu]="shareMenuRef()?.menu">
+              <span>Share</span>
+              <fa-icon icon="chevron-right" size="xs"></fa-icon>
+            </button>
 
-    <ng-template
-      [cdkConnectedOverlay]="{ origin: viewOrigin, usePopover: 'inline' }"
-      [cdkConnectedOverlayOpen]="viewTrigger.expanded()"
-    >
-      <div trtMenu #viewMenu="trtMenu" (itemSelected)="selectAction('View', $event)">
-        <ng-template trtMenuContent>
-          <button trtMenuItem value="Zoom in">Zoom in</button>
-          <button trtMenuItem value="Zoom out">Zoom out</button>
-          <button trtMenuItem value="Reset zoom">Reset zoom</button>
-          <button trtMenuItem value="Full screen">Full screen</button>
-        </ng-template>
-      </div>
-    </ng-template>
+            <div trtMenu #shareMenu="trtMenu" (itemSelected)="selectAction('File / Share', $event)">
+              <ng-template trtMenuContent>
+                <button trtMenuItem value="Copy link">Copy link</button>
+                <button trtMenuItem value="Email">Email</button>
+                <button trtMenuItem value="Slack">Slack</button>
+              </ng-template>
+            </div>
+          </ng-template>
+        </div>
+      </ng-template>
 
-    <p>Last action: {{ summary() }}</p>
-  </section>
+      <ng-template
+        [cdkConnectedOverlay]="{ origin: editOrigin, usePopover: 'inline' }"
+        [cdkConnectedOverlayOpen]="editTrigger.expanded()"
+      >
+        <div trtMenu #editMenu="trtMenu" (itemSelected)="selectAction('Edit', $event)">
+          <ng-template trtMenuContent>
+            <button trtMenuItem value="Undo">Undo</button>
+            <button trtMenuItem value="Redo">Redo</button>
+            <button trtMenuItem value="Cut">Cut</button>
+            <button trtMenuItem value="Copy">Copy</button>
+            <button trtMenuItem value="Paste">Paste</button>
+          </ng-template>
+        </div>
+      </ng-template>
 
-  <app-code-sample title="Markup" badge="Menubar usage" [code]="codeExample" />
+      <ng-template
+        [cdkConnectedOverlay]="{ origin: viewOrigin, usePopover: 'inline' }"
+        [cdkConnectedOverlayOpen]="viewTrigger.expanded()"
+      >
+        <div trtMenu #viewMenu="trtMenu" (itemSelected)="selectAction('View', $event)">
+          <ng-template trtMenuContent>
+            <button trtMenuItem value="Zoom in">Zoom in</button>
+            <button trtMenuItem value="Zoom out">Zoom out</button>
+            <button trtMenuItem value="Reset zoom">Reset zoom</button>
+            <button trtMenuItem value="Full screen">Full screen</button>
+          </ng-template>
+        </div>
+      </ng-template>
 
-  <app-api-preferences [preferences]="preferences" />
+      <p>Last action: {{ summary() }}</p>
+    </section>
+
+    <app-code-sample title="Markup" badge="Menubar usage" [code]="codeExample" />
+
+    <app-api-preferences [preferences]="preferences" />
+  </div>
 </article>

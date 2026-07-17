@@ -86,6 +86,11 @@ export const appRoutes: Route[] = [
             loadComponent: () =>
               import('./demos/components/grid/grid.component').then((m) => m.GridComponent),
           },
+          {
+            path: 'tree',
+            loadComponent: () =>
+              import('./demos/components/tree/tree.component').then((m) => m.TreeComponent),
+          },
         ],
       },
       {
