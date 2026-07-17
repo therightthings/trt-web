@@ -189,3 +189,66 @@
     opacity: var(--trt-disabled-opacity-soft);
   }
 }
+
+@layer components {
+  /* tabs */
+  :where([trtTabs]) {
+    background: var(--trt-surface-color);
+    border: var(--trt-border-width) solid var(--trt-border-color);
+    border-radius: var(--trt-radius);
+    display: block;
+    overflow: hidden;
+  }
+
+  :where([trtTabList]) {
+    border-block-end: var(--trt-border-width) solid var(--trt-border-color);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: 0.25rem;
+  }
+
+  :where([trtTab]) {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 0.75rem 0.75rem 0 0;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    padding: 0.75rem 1rem;
+    text-align: left;
+  }
+
+  :where([trtTab]:not([aria-disabled='true']):hover) {
+    background-color: var(--trt-interactive-hover-bg);
+  }
+
+  :where([trtTab]:focus-visible) {
+    outline: var(--trt-focus-ring-width) solid var(--trt-accent-color);
+    outline-offset: var(--trt-focus-ring-offset);
+  }
+
+  :where([trtTab][aria-selected='true']) {
+    background-color: var(--trt-interactive-selected-bg);
+    font-weight: 600;
+  }
+
+  :where([trtTab][aria-disabled='true']) {
+    cursor: not-allowed;
+    opacity: var(--trt-disabled-opacity-soft);
+  }
+
+  :where([trtTabPanel]) {
+    display: block;
+    padding: var(--trt-padding);
+  }
+
+  :where([trtTabPanel][inert]) {
+    display: none;
+  }
+
+  :where(ng-template[trtTabContent]) {
+    display: block;
+  }
+}
