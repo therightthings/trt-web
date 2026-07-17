@@ -1,10 +1,42 @@
+@layer base {
+  :root {
+    --trt-accent-color: currentColor;
+    --trt-primary-color: currentColor;
+    --trt-secondary-color: currentColor;
+    --trt-surface-color: canvas;
+    --trt-surface-elevated-color: canvas;
+    --trt-border-color: color-mix(in srgb, currentColor 14%, transparent);
+    --trt-border-width: 1px;
+    --trt-radius: 0.875rem;
+    --trt-padding: 1rem;
+    --trt-control-min-height: 3rem;
+    --trt-listbox-max-height: 18rem;
+    --trt-option-gap: 0.75rem;
+    --trt-focus-ring-width: 2px;
+    --trt-focus-ring-offset: 2px;
+    --trt-shadow-popover: 0 20px 40px color-mix(in srgb, var(--trt-primary-color) 16%, transparent);
+    --trt-shadow-popover-inner: 0 1px 0
+      color-mix(in srgb, var(--trt-surface-color) 70%, transparent) inset;
+    --trt-shadow-elevation: 0 12px 30px
+      color-mix(in srgb, var(--trt-primary-color) 14%, transparent);
+    --trt-interactive-hover-bg: color-mix(in srgb, var(--trt-secondary-color) 4%, transparent);
+    --trt-interactive-active-bg: color-mix(in srgb, var(--trt-secondary-color) 5%, transparent);
+    --trt-interactive-selected-bg: color-mix(in srgb, var(--trt-primary-color) 12%, transparent);
+    --trt-disabled-bg: color-mix(in srgb, currentColor 5%, transparent);
+    --trt-disabled-bg-strong: color-mix(in srgb, currentColor 10%, transparent);
+    --trt-disabled-opacity: 0.6;
+    --trt-disabled-opacity-soft: 0.5;
+  }
+}
+
 @layer components {
+  /* accordion */
   :where([trtAccordionGroup]) {
-    --trt-accordion-divider-color: color-mix(in srgb, currentColor 12%, transparent);
-    --trt-accordion-panel-padding-block: 0.75rem 1rem;
-    --trt-accordion-panel-padding-inline: 1rem;
-    --trt-accordion-trigger-padding-block: 0.875rem;
-    --trt-accordion-trigger-padding-inline: 1rem;
+    --trt-accordion-divider-color: var(--trt-border-color);
+    --trt-accordion-panel-padding-block: calc(var(--trt-padding) * 0.625) var(--trt-padding);
+    --trt-accordion-panel-padding-inline: var(--trt-padding);
+    --trt-accordion-trigger-padding-block: calc(var(--trt-padding) * 0.875);
+    --trt-accordion-trigger-padding-inline: var(--trt-padding);
     display: block;
   }
 
@@ -12,7 +44,7 @@
     appearance: none;
     background: transparent;
     border: 0;
-    border-block-end: 1px solid var(--trt-accordion-divider-color);
+    border-block-end: var(--trt-border-width) solid var(--trt-accordion-divider-color);
     color: inherit;
     cursor: pointer;
     display: flex;
@@ -27,24 +59,24 @@
   }
 
   :where([trtAccordionTrigger]:not([aria-disabled='true']):not([disabled]):hover) {
-    background-color: color-mix(in srgb, currentColor 4%, transparent);
+    background-color: var(--trt-interactive-hover-bg);
   }
 
   :where([trtAccordionTrigger]:focus-visible) {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
+    outline: var(--trt-focus-ring-width) solid var(--trt-accent-color);
+    outline-offset: var(--trt-focus-ring-offset);
   }
 
   :where([trtAccordionTrigger][aria-disabled='true']),
   :where([trtAccordionTrigger][disabled]) {
-    background-color: color-mix(in srgb, currentColor 6%, transparent);
+    background-color: var(--trt-disabled-bg-strong);
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: var(--trt-disabled-opacity-soft);
   }
 
   :where([trtAccordionTrigger][aria-disabled='true']:hover),
   :where([trtAccordionTrigger][disabled]:hover) {
-    background-color: color-mix(in srgb, currentColor 10%, transparent);
+    background-color: var(--trt-disabled-bg-strong);
   }
 
   :where([trtAccordionPanel]) {
@@ -59,5 +91,101 @@
 
   :where(ng-template[trtAccordionContent]) {
     display: block;
+  }
+}
+
+@layer components {
+  /* combobox */
+  :where([trtCombobox]) {
+    appearance: none;
+    background: transparent;
+    border: var(--trt-border-width) solid var(--trt-border-color);
+    border-radius: var(--trt-radius);
+    color: inherit;
+    display: block;
+    font: inherit;
+    min-height: var(--trt-control-min-height);
+    padding-block: calc(var(--trt-padding) * 0.75);
+    padding-inline: var(--trt-padding);
+    width: 100%;
+  }
+
+  :where([trtCombobox]:focus-visible) {
+    outline: var(--trt-focus-ring-width) solid var(--trt-accent-color);
+    outline-offset: var(--trt-focus-ring-offset);
+  }
+
+  :where([trtCombobox][aria-disabled='true']),
+  :where([trtCombobox][disabled]) {
+    background-color: var(--trt-disabled-bg);
+    cursor: not-allowed;
+    opacity: var(--trt-disabled-opacity);
+  }
+
+  :where([trtComboboxWidget]) {
+    background: var(--trt-surface-elevated-color);
+    border: var(--trt-border-width) solid var(--trt-border-color);
+    border-radius: 1rem;
+    box-shadow: var(--trt-shadow-popover), var(--trt-shadow-popover-inner);
+    box-sizing: border-box;
+    display: block;
+    margin-block-start: 0.5rem;
+    inline-size: 100%;
+    min-inline-size: 100%;
+    padding: calc(var(--trt-padding) * 0.375);
+    overflow: hidden;
+  }
+
+  :where([trtComboboxWidget]:hover) {
+    border-color: color-mix(in srgb, var(--trt-primary-color) 20%, transparent);
+    box-shadow: var(--trt-shadow-elevation), var(--trt-shadow-popover-inner);
+  }
+}
+
+@layer components {
+  /* listbox */
+  :where([trtListbox]) {
+    display: block;
+    max-block-size: var(--trt-listbox-max-height);
+    overflow: auto;
+    padding: calc(var(--trt-padding) * 0.375);
+  }
+
+  :where([trtOption]) {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: var(--trt-option-gap);
+    justify-content: space-between;
+    border-radius: 0.75rem;
+    padding-block: calc(var(--trt-padding) * 0.6875);
+    padding-inline: calc(var(--trt-padding) * 0.875);
+    text-align: left;
+  }
+
+  :where([trtOption]:not([aria-disabled='true']):hover) {
+    background-color: var(--trt-interactive-hover-bg);
+  }
+
+  :where([trtOption][aria-selected='true']:not([aria-disabled='true']):hover) {
+    background-color: color-mix(
+      in srgb,
+      var(--trt-interactive-selected-bg) 80%,
+      var(--trt-interactive-hover-bg)
+    );
+  }
+
+  :where([trtOption][data-active='true']) {
+    background-color: var(--trt-interactive-active-bg);
+  }
+
+  :where([trtOption][aria-selected='true']) {
+    background-color: var(--trt-interactive-selected-bg);
+    font-weight: 700;
+  }
+
+  :where([trtOption][aria-disabled='true']) {
+    cursor: not-allowed;
+    opacity: var(--trt-disabled-opacity-soft);
   }
 }
