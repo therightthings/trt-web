@@ -63,6 +63,13 @@ export const appRoutes: Route[] = [
               import('./demos/components/menu/menu.component').then((m) => m.MenuComponent),
           },
           {
+            path: 'toolbar',
+            loadComponent: () =>
+              import('./demos/components/toolbar/toolbar.component').then(
+                (m) => m.ToolbarComponent,
+              ),
+          },
+          {
             path: 'menubar',
             loadComponent: () =>
               import('./demos/components/menubar/menubar.component').then(
