@@ -9,17 +9,7 @@
           </h1>
         </div>
 
-        <button
-          class="btn btn-square rounded-full"
-          type="button"
-          (click)="toggleTheme()"
-          [attr.aria-label]="themeAriaLabel()"
-          [attr.aria-pressed]="theme() === 'dark'"
-        >
-          <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4 stroke-current">
-            <use [attr.xlink:href]="'/icon-sprites.svg#' + themeIcon()"></use>
-          </svg>
-        </button>
+        <app-theme-switcher />
       </div>
 
       <nav class="flex flex-wrap gap-3">
@@ -28,13 +18,7 @@
           class="dropdown dropdown-bottom flex-none"
           [class.dropdown-open]="openGroupPath() === group.path"
         >
-          <button
-            class="btn btn-outline btn-sm"
-            type="button"
-            (click)="toggleGroup(group.path)"
-            [attr.aria-expanded]="openGroupPath() === group.path"
-            [attr.aria-haspopup]="'menu'"
-          >
+          <button class="btn btn-outline btn-sm" type="button" (click)="toggleGroup(group.path)">
             {{ group.label }}
           </button>
 
