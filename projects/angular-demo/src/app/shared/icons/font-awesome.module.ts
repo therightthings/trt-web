@@ -6,7 +6,9 @@ import {
   faChevronRight,
   faChevronUp,
   faCircle,
+  faMinus,
   faMoon,
+  faPlus,
   faSun,
   faXmark,
   faXmarkCircle,
@@ -27,6 +29,8 @@ export class IconModule {
       faChevronRight,
       faMoon,
       faSun,
+      faPlus,
+      faMinus,
     );
     faConfig.fallbackIcon = faCircle;
   }

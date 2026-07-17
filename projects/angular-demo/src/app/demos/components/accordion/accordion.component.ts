@@ -11,6 +11,7 @@ import {
   ApiPreferencesComponent,
 } from '../../../shared/components/api-preferences.component';
 import { CodeSampleComponent } from '../../../shared/components/code-sample.component';
+import { IconModule } from '../../../shared/icons/font-awesome.module';
 
 @Component({
   selector: 'app-accordion',
@@ -21,6 +22,7 @@ import { CodeSampleComponent } from '../../../shared/components/code-sample.comp
     TrtAccordionGroup,
     TrtAccordionPanel,
     TrtAccordionTrigger,
+    IconModule,
   ],
   templateUrl: './accordion.component.html',
 })

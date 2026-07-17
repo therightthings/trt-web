@@ -28,7 +28,7 @@
               [(expanded)]="expanded.shipping"
             >
               <span>Shipping</span>
-              <span>{{ expanded.shipping ? '-' : '+' }}</span>
+              <fa-icon [icon]="expanded.shipping ? 'minus' : 'plus'"></fa-icon>
             </button>
           </h4>
 
@@ -50,7 +50,7 @@
               [(expanded)]="expanded.billing"
             >
               <span>Billing</span>
-              <span>{{ expanded.billing ? '-' : '+' }}</span>
+              <fa-icon [icon]="expanded.billing ? 'minus' : 'plus'"></fa-icon>
             </button>
           </h4>
 
