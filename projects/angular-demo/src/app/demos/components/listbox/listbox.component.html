@@ -1,0 +1,39 @@
+<article class="card bg-base-100 border border-base-300 shadow-sm">
+  <div class="card-body gap-6">
+    <header class="space-y-2">
+      <div class="badge badge-outline badge-sm">trt-listbox</div>
+      <h3 class="card-title text-lg">Listbox built on Angular Aria</h3>
+      <p class="text-sm leading-6 text-base-content/70">
+        This demo shows the standalone listbox primitive without the combobox wrapper, so the
+        structure stays easy to read and restyle.
+      </p>
+    </header>
+
+    <section class="space-y-4">
+      <div class="max-w-xl rounded-xl border border-base-300 bg-base-100 p-2">
+        <div
+          trtListbox
+          #listbox="trtListbox"
+          focusMode="activedescendant"
+          [tabindex]="0"
+          [(value)]="selectedValues"
+        >
+          @for (option of options; track option) {
+            <div trtOption [value]="option" [label]="option">
+              {{ option }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <p class="text-sm text-base-content/60">
+        Selected:
+        <span class="font-medium text-base-content">{{ selectedLabel() }}</span>
+      </p>
+    </section>
+
+    <app-code-sample title="Markup" badge="Listbox usage" [code]="codeExample" />
+
+    <app-api-preferences [preferences]="preferences" />
+  </div>
+</article>

@@ -8,6 +8,18 @@
             Angular utilities playground
           </h1>
         </div>
+
+        <button
+          class="btn btn-square rounded-full"
+          type="button"
+          (click)="toggleTheme()"
+          [attr.aria-label]="themeAriaLabel()"
+          [attr.aria-pressed]="theme() === 'dark'"
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24" class="h-4 w-4 stroke-current">
+            <use [attr.xlink:href]="'/icon-sprites.svg#' + themeIcon()"></use>
+          </svg>
+        </button>
       </div>
 
       <nav class="flex flex-wrap gap-3">

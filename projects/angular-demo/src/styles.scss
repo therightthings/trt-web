@@ -2,7 +2,9 @@
 @use './styles/font';
 
 @plugin "daisyui" {
-  themes: light --default;
+  themes:
+    light --default,
+    dark;
 }
 
 body {

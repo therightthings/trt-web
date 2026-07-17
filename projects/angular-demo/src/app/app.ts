@@ -1,5 +1,17 @@
-import { Component, ElementRef, HostListener, inject, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  HostListener,
+  inject,
+  signal,
+} from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
+import { LocalStorage } from '@trt-web/core';
+
+type Theme = 'light' | 'dark';
 
 @Component({
   imports: [RouterOutlet],
@@ -9,12 +21,25 @@ import { Router, RouterOutlet } from '@angular/router';
 export class App {
   private readonly host = inject(ElementRef) as ElementRef<HTMLElement>;
   private readonly router = inject(Router);
+  private readonly document = inject(DOCUMENT);
+  private readonly themeStorageKey = 'trt-web-demo-theme';
+
+  protected readonly theme = signal<Theme>(this.getInitialTheme());
+  protected readonly themeIcon = computed(() => (this.theme() === 'light' ? 'moon' : 'sun'));
+  protected readonly themeAriaLabel = computed(
+    () => `Switch to ${this.theme() === 'light' ? 'dark' : 'light'} theme`,
+  );
 
   protected readonly groups = signal([
     {
       label: 'Components',
       path: '/components',
-      links: [{ label: 'Accordion', path: 'accordion' }],
+      links: [
+        { label: 'Autocomplete', path: 'autocomplete' },
+        { label: 'Accordion', path: 'accordion' },
+        { label: 'Combobox', path: 'combobox' },
+        { label: 'Listbox', path: 'listbox' },
+      ],
     },
     {
       label: 'Directives',
@@ -59,6 +84,17 @@ export class App {
   ]);
   protected readonly openGroupPath = signal<string | null>(null);
 
+  constructor() {
+    effect(() => {
+      const theme = this.theme();
+      const root = this.document.documentElement;
+      root.setAttribute('data-theme', theme);
+      root.style.colorScheme = theme;
+
+      LocalStorage.set(this.themeStorageKey, theme);
+    });
+  }
+
   @HostListener('document:click', ['$event'])
   protected onDocumentClick(event: MouseEvent): void {
     const target = event.target;
@@ -87,5 +123,20 @@ export class App {
   protected navigateToGroup(groupPath: string, linkPath: string): void {
     this.openGroupPath.set(null);
     void this.router.navigateByUrl(`${groupPath}/${linkPath}`);
+  }
+
+  protected toggleTheme(): void {
+    this.theme.set(this.theme() === 'light' ? 'dark' : 'light');
+  }
+
+  private getInitialTheme(): Theme {
+    const stored = LocalStorage.get<Theme>(this.themeStorageKey);
+    if (stored === 'light' || stored === 'dark') {
+      return stored;
+    }
+
+    return this.document.defaultView?.matchMedia?.('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
   }
 }

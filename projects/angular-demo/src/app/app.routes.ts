@@ -15,13 +15,34 @@ export const appRoutes: Route[] = [
           {
             path: '',
             pathMatch: 'full',
-            redirectTo: 'accordion',
+            redirectTo: 'autocomplete',
+          },
+          {
+            path: 'autocomplete',
+            loadComponent: () =>
+              import('./demos/components/autocomplete/autocomplete.component').then(
+                (m) => m.AutocompleteComponent,
+              ),
           },
           {
             path: 'accordion',
             loadComponent: () =>
               import('./demos/components/accordion/accordion.component').then(
                 (m) => m.AccordionComponent,
+              ),
+          },
+          {
+            path: 'combobox',
+            loadComponent: () =>
+              import('./demos/components/combobox/combobox.component').then(
+                (m) => m.ComboboxComponent,
+              ),
+          },
+          {
+            path: 'listbox',
+            loadComponent: () =>
+              import('./demos/components/listbox/listbox.component').then(
+                (m) => m.ListboxComponent,
               ),
           },
         ],

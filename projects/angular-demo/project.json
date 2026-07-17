@@ -53,6 +53,9 @@
       "continuous": true,
       "executor": "@angular/build:dev-server",
       "defaultConfiguration": "development",
+      "options": {
+        "port": 4000
+      },
       "configurations": {
         "production": {
           "buildTarget": "angular-demo:build:production"
@@ -76,7 +79,7 @@
       "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "angular-demo:build",
-        "port": 4200,
+        "port": 4000,
         "staticFilePath": "dist/projects/angular-demo/browser",
         "spa": true
       }
