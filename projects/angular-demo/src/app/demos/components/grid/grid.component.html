@@ -1,0 +1,60 @@
+<article>
+  <header class="space-y-2">
+    <div class="badge badge-outline badge-sm">trt-grid</div>
+    <h3 class="card-title text-lg">Grid built on Angular Aria</h3>
+  </header>
+
+  <section>
+    <table trtGrid [enableSelection]="true" selectionMode="explicit" focusMode="roving">
+      <thead>
+        <tr trtGridRow>
+          <th trtGridCell role="columnheader">Task</th>
+          <th trtGridCell role="columnheader">Owner</th>
+          <th trtGridCell role="columnheader">Priority</th>
+          <th trtGridCell role="columnheader">Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (task of tasks; track task.title) {
+          <tr trtGridRow>
+            <th
+              trtGridCell
+              role="rowheader"
+              [selected]="selectedTask() === task.title"
+              (selectedChange)="selectedTask.set(task.title)"
+            >
+              <div>{{ task.title }}</div>
+            </th>
+
+            <td trtGridCell>
+              <div>{{ task.owner }}</div>
+            </td>
+
+            <td trtGridCell>
+              <div>{{ task.priority }}</div>
+            </td>
+
+            <td trtGridCell>
+              <button
+                trtGridCellWidget
+                type="button"
+                (click)="lastAction.set('Opened ' + task.title)"
+              >
+                Open
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <p>Selected task: {{ selectedTask() }}</p>
+    <p>Last action: {{ lastAction() }}</p>
+    <p>Summary: {{ summary() }}</p>
+  </section>
+
+  <app-code-sample title="Markup" badge="Grid usage" [code]="codeExample" />
+
+  <app-api-preferences [preferences]="preferences" />
+</article>

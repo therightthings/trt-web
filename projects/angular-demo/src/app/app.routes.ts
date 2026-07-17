@@ -58,9 +58,26 @@ export const appRoutes: Route[] = [
               ),
           },
           {
+            path: 'menu',
+            loadComponent: () =>
+              import('./demos/components/menu/menu.component').then((m) => m.MenuComponent),
+          },
+          {
+            path: 'menubar',
+            loadComponent: () =>
+              import('./demos/components/menubar/menubar.component').then(
+                (m) => m.MenubarComponent,
+              ),
+          },
+          {
             path: 'tabs',
             loadComponent: () =>
               import('./demos/components/tabs/tabs.component').then((m) => m.TabsComponent),
+          },
+          {
+            path: 'grid',
+            loadComponent: () =>
+              import('./demos/components/grid/grid.component').then((m) => m.GridComponent),
           },
         ],
       },

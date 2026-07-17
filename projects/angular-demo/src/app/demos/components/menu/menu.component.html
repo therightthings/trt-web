@@ -1,0 +1,50 @@
+<article>
+  <header class="space-y-2">
+    <div class="badge badge-outline badge-sm">trt-menu</div>
+    <h3 class="card-title text-lg">Menu built on Angular Aria</h3>
+  </header>
+
+  <section>
+    <button
+      trtMenuTrigger
+      #trigger="trtMenuTrigger"
+      #origin
+      [menu]="actionsMenuRef()?.menu"
+      type="button"
+    >
+      Actions
+    </button>
+
+    <ng-template
+      [cdkConnectedOverlay]="{ origin, usePopover: 'inline' }"
+      [cdkConnectedOverlayOpen]="trigger.expanded()"
+    >
+      <div trtMenu #actionsMenu="trtMenu" (itemSelected)="selectedAction.set($event)">
+        <ng-template trtMenuContent>
+          <button trtMenuItem value="Open">Open</button>
+          <button trtMenuItem value="Rename">Rename</button>
+          <button trtMenuItem value="Duplicate">Duplicate</button>
+          <button trtMenuItem value="Delete" [disabled]="true">Delete</button>
+          <button trtMenuItem value="Share" [submenu]="shareMenuRef()?.menu">
+            <span>Share</span>
+            <span aria-hidden="true">›</span>
+          </button>
+
+          <div trtMenu #shareMenu="trtMenu" (itemSelected)="submenuAction.set($event)">
+            <ng-template trtMenuContent>
+              <button trtMenuItem value="Copy link">Copy link</button>
+              <button trtMenuItem value="Email">Email</button>
+              <button trtMenuItem value="Slack">Slack</button>
+            </ng-template>
+          </div>
+        </ng-template>
+      </div>
+    </ng-template>
+
+    <p>Last action: {{ summary() }}</p>
+  </section>
+
+  <app-code-sample title="Markup" badge="Menu usage" [code]="codeExample" />
+
+  <app-api-preferences [preferences]="preferences" />
+</article>
