@@ -1,0 +1,79 @@
+<article class="card bg-base-100 border border-base-300 shadow-sm">
+  <div class="card-body gap-6">
+    <header class="space-y-2">
+      <div class="badge badge-outline badge-sm">trt-tree</div>
+      <h3 class="card-title text-lg">Tree built on Angular Aria</h3>
+      <p class="text-sm leading-6 text-base-content/70">
+        This demo renders a small file explorer so the tree wrapper, nested groups, and selection
+        state stay easy to inspect with the library base styles only.
+      </p>
+    </header>
+
+    <section class="space-y-4">
+      <div>
+        <h4>Project files</h4>
+
+        <ul
+          trtTree
+          #tree="trtTree"
+          aria-label="Project files"
+          focusMode="roving"
+          selectionMode="explicit"
+          [multi]="true"
+          [(value)]="selectedValues"
+        >
+          <ng-template
+            [ngTemplateOutlet]="treeNodes"
+            [ngTemplateOutletContext]="{ nodes: nodes, parent: tree.tree }"
+          />
+        </ul>
+
+        <p>Selected: {{ selectedSummary() }}</p>
+      </div>
+    </section>
+
+    <ng-template #treeNodes let-nodes="nodes" let-parent="parent">
+      @for (node of nodes; track node.value) {
+        <li
+          trtTreeItem
+          #treeItem="trtTreeItem"
+          [parent]="parent"
+          [value]="node.value"
+          [label]="node.label"
+          [disabled]="node.disabled"
+          [(expanded)]="node.expanded"
+        >
+          <div class="trt-tree-row">
+            <span class="trt-tree-toggle" aria-hidden="true">
+              @if (node.children?.length) {
+                <fa-icon
+                  [icon]="treeItem.expanded() ? 'chevron-down' : 'chevron-right'"
+                  size="2xs"
+                ></fa-icon>
+              } @else {
+                <fa-icon icon="file" size="2xs"></fa-icon>
+              }
+            </span>
+
+            <span class="trt-tree-label">{{ node.label }}</span>
+          </div>
+
+          @if (node.children?.length) {
+            <ul role="group">
+              <ng-template trtTreeItemGroup [ownedBy]="treeItem.treeItem" #group="trtTreeItemGroup">
+                <ng-template
+                  [ngTemplateOutlet]="treeNodes"
+                  [ngTemplateOutletContext]="{ nodes: node.children, parent: group.treeItemGroup }"
+                />
+              </ng-template>
+            </ul>
+          }
+        </li>
+      }
+    </ng-template>
+
+    <app-code-sample title="Markup" badge="Tree usage" [code]="codeExample" />
+
+    <app-api-preferences [preferences]="preferences" />
+  </div>
+</article>

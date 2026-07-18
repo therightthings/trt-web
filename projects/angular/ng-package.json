@@ -1,7 +1,14 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/angular",
-  "allowedNonPeerDependencies": ["@trt-web/core"],
+  "allowedNonPeerDependencies": ["@angular/aria", "@trt-web/core"],
+  "assets": [
+    {
+      "glob": "aria-base-styles.css",
+      "input": "src/lib/aria",
+      "output": "."
+    }
+  ],
   "lib": {
     "entryFile": "src/public-api.ts",
     "flatModuleFile": "angular"

@@ -1,0 +1,87 @@
+<article class="card bg-base-100 border border-base-300 shadow-sm">
+  <div class="card-body gap-6">
+    <header class="space-y-2">
+      <div class="badge badge-outline badge-sm">trt-accordion</div>
+      <h3 class="card-title text-lg">Accordion built on Angular Aria</h3>
+      <p class="text-sm leading-6 text-base-content/70">
+        This demo shows the wrapper with only its injected base styles, so you can see the default
+        look before applying any Tailwind overrides.
+      </p>
+    </header>
+
+    <section class="space-y-4">
+      <div class="flex flex-wrap gap-2">
+        <button class="btn btn-primary btn-sm" type="button" (click)="accordion.expandAll()">
+          Expand all
+        </button>
+        <button class="btn btn-outline btn-sm" type="button" (click)="accordion.collapseAll()">
+          Collapse all
+        </button>
+      </div>
+
+      <div #accordion="trtAccordionGroup" trtAccordionGroup [multiExpandable]="false" [wrap]="true">
+        <article>
+          <h4>
+            <button
+              trtAccordionTrigger
+              [panel]="shippingPanel.panel"
+              [(expanded)]="expanded.shipping"
+            >
+              <span>Shipping</span>
+              <fa-icon [icon]="expanded.shipping ? 'minus' : 'plus'"></fa-icon>
+            </button>
+          </h4>
+
+          <section trtAccordionPanel #shippingPanel="trtAccordionPanel" [preserveContent]="true">
+            <ng-template trtAccordionContent>
+              <p>
+                Shipping content is preserved after collapse so stateful children do not reset when
+                the panel closes.
+              </p>
+            </ng-template>
+          </section>
+        </article>
+
+        <article>
+          <h4>
+            <button
+              trtAccordionTrigger
+              [panel]="billingPanel.panel"
+              [(expanded)]="expanded.billing"
+            >
+              <span>Billing</span>
+              <fa-icon [icon]="expanded.billing ? 'minus' : 'plus'"></fa-icon>
+            </button>
+          </h4>
+
+          <section trtAccordionPanel #billingPanel="trtAccordionPanel">
+            <ng-template trtAccordionContent>
+              <p>
+                This panel is lazily rendered only after the accordion opens for the first time.
+              </p>
+            </ng-template>
+          </section>
+        </article>
+
+        <article>
+          <h4>
+            <button trtAccordionTrigger [panel]="returnsPanel.panel" [disabled]="true">
+              <span>Returns</span>
+              <span>Disabled example</span>
+            </button>
+          </h4>
+
+          <section trtAccordionPanel #returnsPanel="trtAccordionPanel">
+            <ng-template trtAccordionContent>
+              <p>This item can be disabled by state to verify the basic disabled API.</p>
+            </ng-template>
+          </section>
+        </article>
+      </div>
+    </section>
+
+    <app-code-sample title="Markup" badge="Accordion usage" [code]="codeExample" />
+
+    <app-api-preferences [preferences]="preferences" />
+  </div>
+</article>

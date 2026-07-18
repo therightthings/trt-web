@@ -1,3 +1,4 @@
+export * from './aria';
 export * from './directives';
 export * from './http-cache';
 export * from './operators';

@@ -10,6 +10,12 @@
 npm install @trt-web/angular
 ```
 
+- Import the ARIA base styles when you use the accessibility wrappers:
+
+```ts
+import '@trt-web/angular/aria-base-styles.css';
+```
+
 ## Compatibility
 
 - Angular 16 through Angular 22.
@@ -21,6 +27,19 @@ npm install @trt-web/angular
 - `HooksTracking`: track Angular lifecycle hooks.
 - `PreventWhitespaceDirective`: block whitespace input.
 - `TypedTemplateDirective`: provide typed template context support.
+
+## Angular Aria
+
+- `TrtAccordion*`: accordion wrapper directives for grouped disclosure panels.
+- `TrtCombobox`, `TrtComboboxWidget`, `TrtComboboxPopup`: combobox wrapper directives.
+- `TrtListbox` and `TrtOption`: listbox/selectable option wrappers.
+- `TrtGrid*`: grid wrapper directives for table-like navigation and selection.
+- `TrtMenu*`: menu, menubar, trigger, item, and content wrappers.
+- `TrtTabs*`: tabs, tab list, tab, tab panel, and tab content wrappers.
+- `TrtToolbar*`: toolbar and widget wrappers.
+- `TrtTree*`: tree, tree item, and tree item group wrappers.
+
+- For full details, please refer to the official Angular Team documentation: [angular-aria](https://angular.dev/guide/aria/overview)
 
 ## HTTP Cache
 

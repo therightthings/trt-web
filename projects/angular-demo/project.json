@@ -21,7 +21,10 @@
             "input": "projects/angular-demo/public"
           }
         ],
-        "styles": ["projects/angular-demo/src/styles.scss"]
+        "styles": [
+          "projects/angular-demo/src/styles.scss",
+          "projects/angular/src/lib/aria/aria-base-styles.css"
+        ]
       },
       "configurations": {
         "production": {
@@ -50,6 +53,9 @@
       "continuous": true,
       "executor": "@angular/build:dev-server",
       "defaultConfiguration": "development",
+      "options": {
+        "port": 4567
+      },
       "configurations": {
         "production": {
           "buildTarget": "angular-demo:build:production"
@@ -73,7 +79,7 @@
       "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "angular-demo:build",
-        "port": 4200,
+        "port": 4567,
         "staticFilePath": "dist/projects/angular-demo/browser",
         "spa": true
       }

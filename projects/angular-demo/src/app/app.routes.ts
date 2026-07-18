@@ -7,7 +7,91 @@ export const appRoutes: Route[] = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'directives',
+        redirectTo: 'components',
+      },
+      {
+        path: 'components',
+        children: [
+          {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: 'autocomplete',
+          },
+          {
+            path: 'autocomplete',
+            loadComponent: () =>
+              import('./demos/components/autocomplete/autocomplete.component').then(
+                (m) => m.AutocompleteComponent,
+              ),
+          },
+          {
+            path: 'accordion',
+            loadComponent: () =>
+              import('./demos/components/accordion/accordion.component').then(
+                (m) => m.AccordionComponent,
+              ),
+          },
+          {
+            path: 'combobox',
+            loadComponent: () =>
+              import('./demos/components/combobox/combobox.component').then(
+                (m) => m.ComboboxComponent,
+              ),
+          },
+          {
+            path: 'listbox',
+            loadComponent: () =>
+              import('./demos/components/listbox/listbox.component').then(
+                (m) => m.ListboxComponent,
+              ),
+          },
+          {
+            path: 'select',
+            loadComponent: () =>
+              import('./demos/components/select/select.component').then((m) => m.SelectComponent),
+          },
+          {
+            path: 'multiselect',
+            loadComponent: () =>
+              import('./demos/components/multiselect/multiselect.component').then(
+                (m) => m.MultiselectComponent,
+              ),
+          },
+          {
+            path: 'menu',
+            loadComponent: () =>
+              import('./demos/components/menu/menu.component').then((m) => m.MenuComponent),
+          },
+          {
+            path: 'toolbar',
+            loadComponent: () =>
+              import('./demos/components/toolbar/toolbar.component').then(
+                (m) => m.ToolbarComponent,
+              ),
+          },
+          {
+            path: 'menubar',
+            loadComponent: () =>
+              import('./demos/components/menubar/menubar.component').then(
+                (m) => m.MenubarComponent,
+              ),
+          },
+          {
+            path: 'tabs',
+            loadComponent: () =>
+              import('./demos/components/tabs/tabs.component').then((m) => m.TabsComponent),
+          },
+          {
+            path: 'grid',
+            loadComponent: () =>
+              import('./demos/components/grid/grid.component').then((m) => m.GridComponent),
+          },
+          {
+            path: 'tree',
+            loadComponent: () =>
+              import('./demos/components/tree/tree.component').then((m) => m.TreeComponent),
+          },
+        ],
       },
       {
         path: 'directives',

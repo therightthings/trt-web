@@ -1,0 +1,96 @@
+<article class="card bg-base-100 border border-base-300 shadow-sm">
+  <div class="card-body gap-6">
+    <header class="space-y-2">
+      <div class="badge badge-outline badge-sm">trt-toolbar</div>
+      <h3 class="card-title text-lg">Toolbar built on Angular Aria</h3>
+      <p class="text-sm leading-6 text-base-content/70">
+        This demo uses only the toolbar wrapper styles from the Angular lib, so the base keyboard
+        and selection behavior stays visible.
+      </p>
+    </header>
+
+    <section class="space-y-4">
+      <div trtToolbar aria-label="Text formatting tools" [(value)]="selectedValues">
+        <button trtToolbarWidget value="undo" type="button" aria-label="Undo">Undo</button>
+        <button trtToolbarWidget value="redo" type="button" aria-label="Redo">Redo</button>
+
+        <div role="separator" aria-orientation="vertical"></div>
+
+        <button
+          trtToolbarWidget
+          #bold="trtToolbarWidget"
+          value="bold"
+          type="button"
+          aria-label="Bold"
+          [aria-pressed]="bold.selected()"
+        >
+          Bold
+        </button>
+        <button
+          trtToolbarWidget
+          #italic="trtToolbarWidget"
+          value="italic"
+          type="button"
+          aria-label="Italic"
+          [aria-pressed]="italic.selected()"
+        >
+          Italic
+        </button>
+        <button
+          trtToolbarWidget
+          #underlined="trtToolbarWidget"
+          value="underlined"
+          type="button"
+          aria-label="Underline"
+          [aria-pressed]="underlined.selected()"
+        >
+          Underline
+        </button>
+
+        <div role="separator" aria-orientation="vertical"></div>
+
+        <div trtToolbarWidgetGroup role="radiogroup" aria-label="Text alignment">
+          <button
+            trtToolbarWidget
+            role="radio"
+            #leftAlign="trtToolbarWidget"
+            value="align-left"
+            type="button"
+            aria-label="Align left"
+            [aria-checked]="leftAlign.selected()"
+          >
+            Left
+          </button>
+          <button
+            trtToolbarWidget
+            role="radio"
+            #centerAlign="trtToolbarWidget"
+            value="align-center"
+            type="button"
+            aria-label="Align center"
+            [aria-checked]="centerAlign.selected()"
+          >
+            Center
+          </button>
+          <button
+            trtToolbarWidget
+            role="radio"
+            #rightAlign="trtToolbarWidget"
+            value="align-right"
+            type="button"
+            aria-label="Align right"
+            [aria-checked]="rightAlign.selected()"
+          >
+            Right
+          </button>
+        </div>
+      </div>
+
+      <p>Selected values: {{ selectionSummary() }}</p>
+    </section>
+
+    <app-code-sample title="Markup" badge="Toolbar usage" [code]="codeExample" />
+
+    <app-api-preferences [preferences]="preferences" />
+  </div>
+</article>

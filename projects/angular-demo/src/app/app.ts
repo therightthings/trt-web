@@ -1,16 +1,37 @@
 import { Component, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 
+import { ThemeSwitcherComponent } from './shared/components/theme-switcher.component';
+import { IconModule } from './shared/icons/font-awesome.module';
+
 @Component({
-  imports: [RouterOutlet],
+  imports: [IconModule, RouterOutlet, ThemeSwitcherComponent],
   selector: 'app-root',
   templateUrl: './app.html',
 })
 export class App {
-  private readonly host = inject(ElementRef) as ElementRef<HTMLElement>;
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly router = inject(Router);
 
   protected readonly groups = signal([
+    {
+      label: 'Components',
+      path: '/components',
+      links: [
+        { label: 'Autocomplete', path: 'autocomplete' },
+        { label: 'Accordion', path: 'accordion' },
+        { label: 'Combobox', path: 'combobox' },
+        { label: 'Listbox', path: 'listbox' },
+        { label: 'Select', path: 'select' },
+        { label: 'Multiselect', path: 'multiselect' },
+        { label: 'Menu', path: 'menu' },
+        { label: 'Toolbar', path: 'toolbar' },
+        { label: 'Menubar', path: 'menubar' },
+        { label: 'Tabs', path: 'tabs' },
+        { label: 'Grid', path: 'grid' },
+        { label: 'Tree', path: 'tree' },
+      ],
+    },
     {
       label: 'Directives',
       path: '/directives',

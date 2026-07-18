@@ -1,0 +1,544 @@
+@layer base {
+  :root {
+    --trt-accent-color: currentColor;
+    --trt-primary-color: currentColor;
+    --trt-secondary-color: currentColor;
+    --trt-surface-color: canvas;
+    --trt-surface-elevated-color: canvas;
+    --trt-border-color: color-mix(in srgb, currentColor 14%, transparent);
+    --trt-border-width: 1px;
+    --trt-radius: 0.875rem;
+    --trt-padding: 1rem;
+    --trt-control-min-height: 3rem;
+    --trt-listbox-max-height: 18rem;
+    --trt-option-gap: 0.75rem;
+    --trt-focus-ring-width: 2px;
+    --trt-focus-ring-offset: 2px;
+    --trt-shadow-popover: 0 20px 40px color-mix(in srgb, var(--trt-primary-color) 16%, transparent);
+    --trt-shadow-popover-inner: 0 1px 0
+      color-mix(in srgb, var(--trt-surface-color) 70%, transparent) inset;
+    --trt-shadow-elevation: 0 12px 30px
+      color-mix(in srgb, var(--trt-primary-color) 14%, transparent);
+    --trt-interactive-hover-bg: color-mix(in srgb, var(--trt-secondary-color) 4%, transparent);
+    --trt-interactive-active-bg: color-mix(in srgb, var(--trt-secondary-color) 5%, transparent);
+    --trt-interactive-selected-bg: color-mix(in srgb, var(--trt-primary-color) 12%, transparent);
+    --trt-disabled-bg: color-mix(in srgb, currentColor 5%, transparent);
+    --trt-disabled-bg-strong: color-mix(in srgb, currentColor 10%, transparent);
+    --trt-disabled-opacity: 0.6;
+    --trt-disabled-opacity-soft: 0.5;
+  }
+}
+
+@layer components {
+  /* accordion */
+  :where([trtAccordionGroup]) {
+    --trt-accordion-divider-color: var(--trt-border-color);
+    --trt-accordion-panel-padding-block: calc(var(--trt-padding) * 0.625) var(--trt-padding);
+    --trt-accordion-panel-padding-inline: var(--trt-padding);
+    --trt-accordion-trigger-padding-block: calc(var(--trt-padding) * 0.875);
+    --trt-accordion-trigger-padding-inline: var(--trt-padding);
+    display: block;
+  }
+
+  :where([trtAccordionTrigger]) {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-block-end: var(--trt-border-width) solid var(--trt-accordion-divider-color);
+    color: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font: inherit;
+    gap: 0.75rem;
+    justify-content: space-between;
+    padding-block: var(--trt-accordion-trigger-padding-block);
+    padding-inline: var(--trt-accordion-trigger-padding-inline);
+    text-align: left;
+    width: 100%;
+  }
+
+  :where([trtAccordionTrigger]:not([aria-disabled='true']):not([disabled]):hover) {
+    background-color: var(--trt-interactive-hover-bg);
+  }
+
+  :where([trtAccordionTrigger]:focus-visible) {
+    outline: var(--trt-focus-ring-width) solid var(--trt-accent-color);
+    outline-offset: var(--trt-focus-ring-offset);
+  }
+
+  :where([trtAccordionTrigger][aria-disabled='true']),
+  :where([trtAccordionTrigger][disabled]) {
+    background-color: var(--trt-disabled-bg-strong);
+    cursor: not-allowed;
+    opacity: var(--trt-disabled-opacity-soft);
+  }
+
+  :where([trtAccordionTrigger][aria-disabled='true']:hover),
+  :where([trtAccordionTrigger][disabled]:hover) {
+    background-color: var(--trt-disabled-bg-strong);
+  }
+
+  :where([trtAccordionPanel]) {
+    display: block;
+    padding-block: var(--trt-accordion-panel-padding-block);
+    padding-inline: var(--trt-accordion-panel-padding-inline);
+  }
+
+  :where([trtAccordionPanel][inert]) {
+    display: none;
+  }
+
+  :where(ng-template[trtAccordionContent]) {
+    display: block;
+  }
+}
+
+@layer components {
+  /* combobox */
+  :where([trtCombobox]) {
+    appearance: none;
+    background: transparent;
+    border: var(--trt-border-width) solid var(--trt-border-color);
+    border-radius: var(--trt-radius);
+    color: inherit;
+    display: block;
+    font: inherit;
+    min-height: var(--trt-control-min-height);
+    padding-block: calc(var(--trt-padding) * 0.75);
+    padding-inline: var(--trt-padding);
+    width: 100%;
+  }
+
+  :where([trtCombobox]:focus-visible) {
+    outline: var(--trt-focus-ring-width) solid var(--trt-accent-color);
+    outline-offset: var(--trt-focus-ring-offset);
+  }
+
+  :where([trtCombobox][aria-disabled='true']),
+  :where([trtCombobox][disabled]) {
+    background-color: var(--trt-disabled-bg);
+    cursor: not-allowed;
+    opacity: var(--trt-disabled-opacity);
+  }
+
+  :where([trtComboboxWidget]) {
+    background: var(--trt-surface-elevated-color);
+    border: var(--trt-border-width) solid var(--trt-border-color);
+    border-radius: 1rem;
+    box-shadow: var(--trt-shadow-popover), var(--trt-shadow-popover-inner);
+    box-sizing: border-box;
+    display: block;
+    margin-block-start: 0.5rem;
+    inline-size: 100%;
+    min-inline-size: 100%;
+    padding: calc(var(--trt-padding) * 0.375);
+    overflow: hidden;
+  }
+
+  :where([trtComboboxWidget]:hover) {
+    border-color: color-mix(in srgb, var(--trt-primary-color) 20%, transparent);
+    box-shadow: var(--trt-shadow-elevation), var(--trt-shadow-popover-inner);
+  }
+}
+
+@layer components {
+  /* listbox */
+  :where([trtListbox]) {
+    display: block;
+    max-block-size: var(--trt-listbox-max-height);
+    overflow: auto;
+    padding: calc(var(--trt-padding) * 0.375);
+  }
+
+  :where([trtOption]) {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: var(--trt-option-gap);
+    justify-content: space-between;
+    border-radius: 0.75rem;
+    padding-block: calc(var(--trt-padding) * 0.6875);
+    padding-inline: calc(var(--trt-padding) * 0.875);
+    text-align: left;
+  }
+
+  :where([trtOption]:not([aria-disabled='true']):hover) {
+    background-color: var(--trt-interactive-hover-bg);
+  }
+
+  :where([trtOption][aria-selected='true']:not([aria-disabled='true']):hover) {
+    background-color: color-mix(
+      in srgb,
+      var(--trt-interactive-selected-bg) 80%,
+      var(--trt-interactive-hover-bg)
+    );
+  }
+
+  :where([trtOption][data-active='true']) {
+    background-color: var(--trt-interactive-active-bg);
+  }
+
+  :where([trtOption][aria-selected='true']) {
+    background-color: var(--trt-interactive-selected-bg);
+    font-weight: 700;
+  }
+
+  :where([trtOption][aria-disabled='true']) {
+    cursor: not-allowed;
+    opacity: var(--trt-disabled-opacity-soft);
+  }
+}
+
+@layer components {
+  /* tabs */
+  :where([trtTabs]) {
+    background: var(--trt-surface-color);
+    border: var(--trt-border-width) solid var(--trt-border-color);
+    border-radius: var(--trt-radius);
+    display: block;
+    overflow: hidden;
+  }
+
+  :where([trtTabList]) {
+    border-block-end: var(--trt-border-width) solid var(--trt-border-color);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: 0.25rem;
+  }
+
+  :where([trtTab]) {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 0.75rem 0.75rem 0 0;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    padding: 0.75rem 1rem;
+    text-align: left;
+  }
+
+  :where([trtTab]:not([aria-disabled='true']):hover) {
+    background-color: var(--trt-interactive-hover-bg);
+  }
+
+  :where([trtTab]:focus-visible) {
+    outline: var(--trt-focus-ring-width) solid var(--trt-accent-color);
+    outline-offset: var(--trt-focus-ring-offset);
+  }
+
+  :where([trtTab][aria-selected='true']) {
+    background-color: var(--trt-interactive-selected-bg);
+    font-weight: 600;
+  }
+
+  :where([trtTab][aria-disabled='true']) {
+    cursor: not-allowed;
+    opacity: var(--trt-disabled-opacity-soft);
+  }
+
+  :where([trtTabPanel]) {
+    display: block;
+    padding: var(--trt-padding);
+  }
+
+  :where([trtTabPanel][inert]) {
+    display: none;
+  }
+
+  :where(ng-template[trtTabContent]) {
+    display: block;
+  }
+}
+
+@layer components {
+  /* toolbar */
+  :where([trtToolbar]) {
+    background: var(--trt-surface-color);
+    border: var(--trt-border-width) solid var(--trt-border-color);
+    border-radius: var(--trt-radius);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.5rem;
+  }
+
+  :where([trtToolbar][aria-orientation='vertical']) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  :where([trtToolbarWidgetGroup]) {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  :where([trtToolbarWidget]) {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 0.75rem;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font: inherit;
+    min-width: 2.75rem;
+    min-height: var(--trt-control-min-height);
+    padding-inline: 0.875rem;
+    padding-block: 0.625rem;
+  }
+
+  :where([trtToolbarWidget]:focus-visible) {
+    outline: var(--trt-focus-ring-width) solid var(--trt-accent-color);
+    outline-offset: var(--trt-focus-ring-offset);
+  }
+
+  :where([trtToolbarWidget]:not([aria-disabled='true']):not([disabled]):hover) {
+    background-color: var(--trt-interactive-hover-bg);
+  }
+
+  :where([trtToolbarWidget][aria-pressed='true']),
+  :where([trtToolbarWidget][aria-checked='true']) {
+    background-color: var(--trt-interactive-selected-bg);
+    font-weight: 600;
+  }
+
+  :where([trtToolbarWidget][aria-disabled='true']),
+  :where([trtToolbarWidget][disabled]) {
+    cursor: not-allowed;
+    opacity: var(--trt-disabled-opacity-soft);
+  }
+
+  :where([trtToolbar] > [role='separator']) {
+    background: var(--trt-border-color);
+    align-self: stretch;
+    inline-size: 1px;
+    min-block-size: 1.75rem;
+  }
+}
+
+@layer components {
+  /* menu */
+  :where([trtMenuBar]) {
+    background: var(--trt-surface-color);
+    border: var(--trt-border-width) solid var(--trt-border-color);
+    border-radius: var(--trt-radius);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: 0.25rem;
+  }
+
+  :where([trtMenuTrigger]) {
+    appearance: none;
+    background: transparent;
+    border: var(--trt-border-width) solid var(--trt-border-color);
+    border-radius: var(--trt-radius);
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    font: inherit;
+    min-height: var(--trt-control-min-height);
+    padding-block: calc(var(--trt-padding) * 0.75);
+    padding-inline: var(--trt-padding);
+  }
+
+  :where([trtMenuTrigger]:focus-visible) {
+    outline: var(--trt-focus-ring-width) solid var(--trt-accent-color);
+    outline-offset: var(--trt-focus-ring-offset);
+  }
+
+  :where([trtMenuTrigger][aria-disabled='true']),
+  :where([trtMenuTrigger][disabled]) {
+    background-color: var(--trt-disabled-bg);
+    cursor: not-allowed;
+    opacity: var(--trt-disabled-opacity);
+  }
+
+  :where([trtMenu]) {
+    background: var(--trt-surface-elevated-color);
+    border: var(--trt-border-width) solid var(--trt-border-color);
+    border-radius: 1rem;
+    box-shadow: var(--trt-shadow-popover), var(--trt-shadow-popover-inner);
+    box-sizing: border-box;
+    display: block;
+    min-inline-size: 12rem;
+    overflow: hidden;
+    padding: calc(var(--trt-padding) * 0.375);
+  }
+
+  :where([trtMenu][data-visible='false']),
+  :where([trtMenu][hidden]) {
+    display: none;
+  }
+
+  :where(ng-template[trtMenuContent]) {
+    display: block;
+  }
+
+  :where([trtMenuItem]) {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: var(--trt-option-gap);
+    justify-content: space-between;
+    border-radius: 0.75rem;
+    inline-size: 100%;
+    padding-block: calc(var(--trt-padding) * 0.6875);
+    padding-inline: calc(var(--trt-padding) * 0.875);
+    text-align: left;
+  }
+
+  :where([trtMenuItem]:not([aria-disabled='true']):hover) {
+    background-color: var(--trt-interactive-hover-bg);
+  }
+
+  :where([trtMenuItem][aria-expanded='true']) {
+    background-color: var(--trt-interactive-active-bg);
+  }
+
+  :where([trtMenuItem][aria-disabled='true']) {
+    cursor: not-allowed;
+    opacity: var(--trt-disabled-opacity-soft);
+  }
+}
+
+@layer components {
+  /* grid */
+  :where(table[trtGrid]) {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+  }
+
+  :where([trtGridRow]) {
+    background: transparent;
+  }
+
+  :where([trtGridCell]) {
+    border-block-end: var(--trt-border-width) solid var(--trt-border-color);
+    vertical-align: top;
+  }
+
+  :where([trtGridCell]:focus-within),
+  :where([trtGridCell]:hover) {
+    background-color: var(--trt-interactive-hover-bg);
+  }
+
+  :where([trtGridCell] > :not([trtGridCellWidget])) {
+    display: block;
+    min-height: var(--trt-control-min-height);
+    padding-block: calc(var(--trt-padding) * 0.75);
+    padding-inline: var(--trt-padding);
+  }
+
+  :where([trtGridCell][aria-selected='true']) {
+    background-color: var(--trt-interactive-selected-bg);
+  }
+
+  :where([trtGridCell][aria-disabled='true']) {
+    opacity: var(--trt-disabled-opacity-soft);
+  }
+
+  :where([trtGridCellWidget]) {
+    align-items: center;
+    display: flex;
+    gap: var(--trt-option-gap);
+    justify-content: space-between;
+    min-height: var(--trt-control-min-height);
+    padding-block: calc(var(--trt-padding) * 0.75);
+    padding-inline: var(--trt-padding);
+  }
+
+  :where([trtGridCellWidget]:focus-visible) {
+    outline: var(--trt-focus-ring-width) solid var(--trt-accent-color);
+    outline-offset: var(--trt-focus-ring-offset);
+  }
+}
+
+@layer components {
+  /* tree */
+  :where([trtTree]) {
+    border: var(--trt-border-width) solid var(--trt-border-color);
+    border-radius: var(--trt-radius);
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: calc(var(--trt-padding) * 0.5);
+  }
+
+  :where([trtTree] > li) {
+    list-style: none;
+  }
+
+  :where([trtTreeItem]) {
+    border-radius: 0.875rem;
+    list-style: none;
+    padding: 0.125rem;
+  }
+
+  :where([trtTreeItem]:not([aria-disabled='true']):hover) {
+    background-color: var(--trt-interactive-hover-bg);
+  }
+
+  :where([trtTreeItem]:focus-visible) {
+    outline: var(--trt-focus-ring-width) solid var(--trt-accent-color);
+    outline-offset: var(--trt-focus-ring-offset);
+  }
+
+  :where([trtTreeItem][aria-selected='true']) {
+    background-color: var(--trt-interactive-selected-bg);
+    font-weight: 600;
+  }
+
+  :where([trtTreeItem][aria-current]) {
+    background-color: color-mix(in srgb, var(--trt-primary-color) 10%, transparent);
+  }
+
+  :where([trtTreeItem][aria-disabled='true']) {
+    cursor: not-allowed;
+    opacity: var(--trt-disabled-opacity-soft);
+  }
+
+  :where([trtTreeItem] > .trt-tree-row) {
+    align-items: center;
+    display: flex;
+    gap: 0.625rem;
+    min-block-size: var(--trt-control-min-height);
+    padding-block: calc(var(--trt-padding) * 0.625);
+    padding-inline: calc(var(--trt-padding) * 0.875);
+  }
+
+  :where([trtTreeItem] > .trt-tree-row > .trt-tree-toggle) {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    inline-size: 1rem;
+    flex: 0 0 auto;
+  }
+
+  :where([trtTreeItem] > .trt-tree-row > .trt-tree-label) {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  :where([trtTreeItem] > ul[role='group']) {
+    margin: 0;
+    padding-inline-start: 1.25rem;
+  }
+
+  :where([trtTreeItem][aria-expanded='false'] > ul[role='group']) {
+    display: none;
+  }
+
+  :where([trtTreeItem] > ul[role='group'] > li) {
+    list-style: none;
+  }
+}
