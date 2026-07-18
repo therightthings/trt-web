@@ -8,7 +8,6 @@
 
 ```bash
 npm install @trt-web/angular
-npm install @angular/aria
 ```
 
 - Import the ARIA base styles when you use the accessibility wrappers:
