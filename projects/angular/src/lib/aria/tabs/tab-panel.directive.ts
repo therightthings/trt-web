@@ -1,4 +1,4 @@
-import { ɵɵDeferredContentAware,TabPanel } from '@angular/aria/tabs';
+import { ɵɵDeferredContentAware, TabPanel } from '@angular/aria/tabs';
 import { Directive, inject } from '@angular/core';
 
 @Directive({
