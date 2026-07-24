@@ -44,6 +44,7 @@ describe('LocalStorage', () => {
   it('returns undefined when storage is unavailable', () => {
     stubBrowserShell();
 
+    expect(LocalStorage.isSupported()).toBe(false);
     expect(LocalStorage.get('missing')).toBeUndefined();
     expect(LocalStorage.exists('missing')).toBe(false);
   });
@@ -55,6 +56,7 @@ describe('LocalStorage', () => {
     });
     vi.stubGlobal('localStorage', storage);
 
+    expect(LocalStorage.isSupported()).toBe(true);
     LocalStorage.set('profile', { id: 1, name: 'Alice' });
 
     expect(storage.setItem).toHaveBeenCalledWith(

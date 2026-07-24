@@ -19,6 +19,10 @@ export class SessionStorage {
     return true;
   }
 
+  static isSupported(): boolean {
+    return this.isAvailable();
+  }
+
   static set<T = any>(key: string, data: T): void {
     if (!this.isAvailable()) {
       return;
