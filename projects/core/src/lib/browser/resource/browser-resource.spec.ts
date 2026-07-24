@@ -59,7 +59,7 @@ function stubBrowserShell() {
     body,
     createElement,
     head,
-  } as Record<string, unknown>;
+  };
 
   vi.stubGlobal('window', { document });
   vi.stubGlobal('document', document);
@@ -165,5 +165,26 @@ describe('BrowserResource', () => {
     });
 
     expect(anchor.target).toBe('_blank');
+  });
+
+  it('checks the cache using the matching resource type', async () => {
+    const performance = {
+      getEntriesByName: vi.fn(() => [
+        {
+          decodedBodySize: 100,
+          entryType: 'resource',
+          transferSize: 0,
+        },
+      ]),
+    };
+    const { document } = stubBrowserShell();
+    vi.stubGlobal('performance', performance);
+
+    await expect(BrowserResource.isCached('image.png', { type: 'image' })).resolves.toBe(true);
+    await expect(BrowserResource.isCached('file.pdf')).resolves.toBe(true);
+    expect(performance.getEntriesByName).toHaveBeenCalledWith('image.png');
+    expect(performance.getEntriesByName).toHaveBeenCalledWith(
+      new URL('file.pdf', document.baseURI).href,
+    );
   });
 });

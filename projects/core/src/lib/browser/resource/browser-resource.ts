@@ -1,6 +1,8 @@
 import { fileToObjectUrl } from '../../file-handler';
 import { requireBrowserEnv } from '../../utils';
 
+type BrowserResourceType = 'image' | 'script' | 'style' | 'font' | 'media' | 'document';
+
 export class BrowserResource {
   private static readonly scriptLoadPromises = new Map<string, Promise<void>>();
   private static readonly linkLoadPromises = new Map<string, Promise<void>>();
@@ -9,6 +11,50 @@ export class BrowserResource {
     requireBrowserEnv();
 
     return new URL(path, document.baseURI).toString();
+  }
+
+  static async isCached(
+    src: string,
+    config?: {
+      type?: BrowserResourceType;
+    },
+  ): Promise<boolean> {
+    requireBrowserEnv();
+    const { type = 'document' } = config ?? {};
+
+    if (type === 'image') {
+      const resource = performance
+        .getEntriesByName(src)
+        .find((entry): entry is PerformanceResourceTiming => {
+          return entry.entryType === 'resource';
+        });
+
+      return resource?.transferSize === 0 && resource.decodedBodySize > 0;
+    }
+
+    const absoluteUrl = new URL(src, document.baseURI).href;
+
+    if ('caches' in window) {
+      const cacheNames = await caches.keys();
+      const responses = await Promise.all(
+        cacheNames.map(async (cacheName) => {
+          const cache = await caches.open(cacheName);
+          return cache.match(absoluteUrl);
+        }),
+      );
+
+      if (responses.some(Boolean)) {
+        return true;
+      }
+    }
+
+    const resource = performance
+      .getEntriesByName(absoluteUrl)
+      .find((entry): entry is PerformanceResourceTiming => {
+        return entry.entryType === 'resource';
+      });
+
+    return resource?.transferSize === 0;
   }
 
   static async loadScript(src: string) {
