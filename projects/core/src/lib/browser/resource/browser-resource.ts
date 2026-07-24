@@ -81,6 +81,7 @@ export class BrowserResource {
     config?: {
       name?: string;
       ext?: string;
+      target?: '_self' | '_blank';
     },
   ) {
     requireBrowserEnv();
@@ -95,12 +96,12 @@ export class BrowserResource {
       url = src;
     }
 
-    const { name = `file-${Date.now()}`, ext } = config ?? {};
+    const { name = `file-${Date.now()}`, ext, target = '_blank' } = config ?? {};
 
     const a = document.createElement('a');
     a.href = url;
     a.download = ext ? `${name}.${ext}` : name;
-    a.target = '_blank';
+    a.target = target;
     a.rel = 'noopener noreferrer';
 
     document.body.appendChild(a);

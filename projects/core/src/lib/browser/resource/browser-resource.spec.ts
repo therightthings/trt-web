@@ -4,6 +4,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BrowserResource } from './browser-resource';
 
 function stubBrowserShell() {
+  const anchor = {
+    click: vi.fn(),
+    download: '',
+    href: '',
+    rel: '',
+    target: '',
+  } as unknown as HTMLAnchorElement;
+
   const script = {
     async: false,
     defer: false,
@@ -30,6 +38,10 @@ function stubBrowserShell() {
       return link;
     }
 
+    if (tag === 'a') {
+      return anchor;
+    }
+
     return {};
   });
 
@@ -37,8 +49,14 @@ function stubBrowserShell() {
     appendChild: vi.fn(),
   };
 
+  const body = {
+    appendChild: vi.fn(),
+    removeChild: vi.fn(),
+  };
+
   const document = {
     baseURI: 'https://example.com/app/',
+    body,
     createElement,
     head,
   } as Record<string, unknown>;
@@ -48,6 +66,8 @@ function stubBrowserShell() {
 
   return {
     createElement,
+    anchor,
+    body,
     document,
     head,
     link,
@@ -114,5 +134,36 @@ describe('BrowserResource', () => {
 
     await expect(promise).rejects.toThrow('Could not load https://example.com/fail.css');
     expect(link.remove).toHaveBeenCalledTimes(1);
+  });
+
+  it('configures and cleans up the download anchor', () => {
+    const { anchor, body } = stubBrowserShell();
+
+    BrowserResource.download('https://example.com/file.pdf', {
+      name: 'report',
+      ext: 'pdf',
+      target: '_self',
+    });
+
+    expect(anchor.href).toBe('https://example.com/file.pdf');
+    expect(anchor.download).toBe('report.pdf');
+    expect(anchor.target).toBe('_self');
+    expect(anchor.rel).toBe('noopener noreferrer');
+    expect(body.appendChild).toHaveBeenCalledWith(anchor);
+    expect(anchor.click).toHaveBeenCalledTimes(1);
+    expect(body.removeChild).toHaveBeenCalledWith(anchor);
+  });
+
+  it('uses a new tab by default and supports an explicit new-tab target', () => {
+    const { anchor } = stubBrowserShell();
+
+    BrowserResource.download('https://example.com/file.pdf');
+    expect(anchor.target).toBe('_blank');
+
+    BrowserResource.download('https://example.com/file.pdf', {
+      target: '_blank',
+    });
+
+    expect(anchor.target).toBe('_blank');
   });
 });
