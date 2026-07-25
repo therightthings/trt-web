@@ -1,5 +1,3 @@
-import { IndexedDB } from './indexed-db';
-
 export type IndexedDBCollectionConfig = {
   database: string;
   collection: string;
@@ -13,7 +11,3 @@ export type IndexedDBDatabaseConfig = {
 };
 
 export type IndexedDBRecord = { id: IDBValidKey };
-
-export type IndexedDBDatabase = {
-  collection<T extends IndexedDBRecord>(collection: string): IndexedDB<T>;
-};

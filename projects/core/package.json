@@ -1,6 +1,6 @@
 {
   "name": "@trt-web/core",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "type": "module",
   "main": "./src/public-api.js",
   "module": "./src/public-api.js",

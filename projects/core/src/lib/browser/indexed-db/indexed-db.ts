@@ -1,10 +1,13 @@
 import { requireBrowserEnv, stringify, toError } from '../../utils';
 import {
   IndexedDBCollectionConfig,
-  IndexedDBDatabase,
   IndexedDBDatabaseConfig,
   IndexedDBRecord,
 } from './indexed-db.type';
+
+export type IndexedDBDatabase = {
+  collection<T extends IndexedDBRecord>(collection: string): IndexedDB<T>;
+};
 
 export class IndexedDB<T extends IndexedDBRecord> {
   private static readonly instances = new Map<string, IndexedDB<IndexedDBRecord>>();
