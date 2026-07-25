@@ -3,4 +3,5 @@ export { requireBrowserEnv } from './require-browser-env';
 export { roundToDecimals } from './round-to-decimals';
 export { stringify } from './stringify';
 export type { TimeConfig } from './time-config.type';
+export { toError } from './to-error';
 export { toMs } from './to-ms';
