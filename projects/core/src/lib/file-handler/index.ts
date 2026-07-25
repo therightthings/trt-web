@@ -3,3 +3,4 @@ export { convertFileSize } from './convert-file-size/convert-file-size';
 export { fileToDataUrl } from './file-to-data-url';
 export { fileToObjectUrl } from './file-to-object-url';
 export { getImageSize } from './get-image-size';
+export { loadImage } from './load-image';

@@ -1,4 +1,4 @@
-import * as TrtCore from './lib';
+import * as trt from './lib';
 
 export {
   BrowserClipboard,
@@ -9,7 +9,8 @@ export {
   BrowserResource,
   BrowserShare,
   Cookie,
+  IndexedDB,
   LocalStorage,
   SessionStorage,
 } from './lib/browser/static';
-export { TrtCore };
+export { trt };
