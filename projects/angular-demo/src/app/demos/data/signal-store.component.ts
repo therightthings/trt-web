@@ -1,5 +1,5 @@
 import { JsonPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, Injectable, signal } from '@angular/core';
 import { SignalStore } from '@trt-web/angular';
 
 import { ApiPreferencesComponent } from '../../shared/components/api-preferences.component';
@@ -10,6 +10,9 @@ type TodoItem = {
   title: string;
   done: boolean;
 };
+
+@Injectable({ providedIn: 'root' })
+class TodoSignalStore extends SignalStore<TodoItem> {}
 
 @Component({
   selector: 'app-signal-store',
@@ -68,8 +71,14 @@ type TodoItem = {
                 >
                   <option value="local">local</option>
                   <option value="session">session</option>
+                  <option value="indexed-db">indexed-db</option>
                 </select>
               </label>
+              @if (storageType() === 'indexed-db') {
+                <p class="text-xs text-base-content/60">
+                  Database: AngularDemoDB / Collection: signal-store
+                </p>
+              }
               <label class="form-control gap-2">
                 <span>Expiry: {{ expiredMinutes() }} minute(s)</span>
                 <input
@@ -115,13 +124,20 @@ type TodoItem = {
   `,
 })
 export class SignalStoreComponent {
-  readonly store = inject(SignalStore) as SignalStore<TodoItem>;
+  readonly store = inject(TodoSignalStore);
   protected readonly preferences = [
     {
       name: 'storage.type',
-      description: 'Chooses whether persistence uses local storage or session storage.',
+      description: 'Chooses whether persistence uses local, session, or IndexedDB storage.',
       optional: true,
       default: 'local',
+      unit: 'storage',
+    },
+    {
+      name: 'storage.database / storage.collection',
+      description: 'IndexedDB database and collection used when storage.type is indexed-db.',
+      optional: true,
+      default: 'AngularDemoDB / signal-store',
       unit: 'storage',
     },
     {
@@ -139,11 +155,16 @@ export class SignalStoreComponent {
 
 const store = inject(SignalStore);
 
-store.configure({
+await store.configure({
+  expiredIn: 10,
   storage: {
     storageSync: true,
-    type: 'local',
+    type: 'indexed-db',
+    database: 'AngularDemoDB',
+    collection: 'signal-store',
     key: 'angular-demo.todos',
+    loadFromStorage: true,
+    syncDelay: 300,
   },
 });
 
@@ -151,17 +172,21 @@ store.addNewData({ id: 1, title: 'Learn SignalStore', done: false });`,
     },
   ];
   protected title = signal('');
-  protected storageType = signal<'local' | 'session'>('local');
+  protected storageType = signal<'local' | 'session' | 'indexed-db'>('local');
   protected expiredMinutes = signal(10);
 
   private nextId = 1;
 
   constructor() {
-    this.applyConfig();
+    void this.initialize();
+  }
+
+  private async initialize(): Promise<void> {
+    await this.applyConfig();
 
     if (!this.store.state().data.length) {
       this.store.setData([
-        { id: this.nextId++, title: 'Read local storage into the store', done: true },
+        { id: this.nextId++, title: 'Read persisted data into the store', done: true },
         { id: this.nextId++, title: 'Toggle a todo item', done: false },
       ]);
     }
@@ -192,12 +217,29 @@ store.addNewData({ id: 1, title: 'Learn SignalStore', done: false });`,
     this.store.deleteDataById(id);
   }
 
-  applyConfig(): void {
+  applyConfig(): void | Promise<void> {
+    const type = this.storageType();
+
+    if (type === 'indexed-db') {
+      return this.store.configure({
+        expiredIn: this.expiredMinutes(),
+        storage: {
+          storageSync: true,
+          type,
+          database: 'AngularDemoDB',
+          collection: 'signal-store',
+          key: 'angular-demo.todos',
+          loadFromStorage: true,
+          syncDelay: { value: 300, unit: 'millisecond' },
+        },
+      });
+    }
+
     this.store.configure({
       expiredIn: this.expiredMinutes(),
       storage: {
         storageSync: true,
-        type: this.storageType(),
+        type,
         key: 'angular-demo.todos',
         loadFromStorage: true,
         syncDelay: { value: 300, unit: 'millisecond' },
@@ -206,6 +248,6 @@ store.addNewData({ id: 1, title: 'Learn SignalStore', done: false });`,
   }
 
   reset(): void {
-    this.store.reset();
+    void this.store.reset();
   }
 }
