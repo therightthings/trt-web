@@ -1,4 +1,4 @@
-import { TrtCore } from '@trt-web/core';
+import { trt } from '@trt-web/core';
 import {
   DocumentData,
   DocumentReference,
@@ -54,14 +54,14 @@ export abstract class FireStoreRepository<T = any> {
           createdAt: doc.createTime,
         });
         console.log(`[${doc.id}] added createdAt field`);
-        await TrtCore.RateLimit.wait(500);
+        await trt.timing.wait(500);
       }
       if (!data.updatedAt) {
         batch.update(doc.ref, {
           updatedAt: doc.updateTime,
         });
         console.log(`[${doc.id}] added updatedAt field`);
-        await TrtCore.RateLimit.wait(500);
+        await trt.timing.wait(500);
       }
     }
 

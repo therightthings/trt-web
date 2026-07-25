@@ -1,4 +1,4 @@
-import { TrtCore } from '@trt-web/core';
+import { trt } from '@trt-web/core';
 import Busboy from 'busboy';
 import type { Request } from 'express';
 import { getStorage } from 'firebase-admin/storage';
@@ -122,9 +122,9 @@ export class FireStorageService {
     folderPath += `/${category}`;
 
     const uniqueId = `${Date.now()}_${Math.round(Math.random() * 1e9)}`;
-    const bucketPath = `${folderPath}/${TrtCore.Text.removeTones(fileName)}_${uniqueId}.${fileExtension}`;
+    const bucketPath = `${folderPath}/${trt.string.removeTones(fileName)}_${uniqueId}.${fileExtension}`;
     const fileRepo = this.bucket.file(bucketPath);
-    const token = TrtCore.Text.generateId();
+    const token = trt.string.generateId();
 
     await fileRepo.save(buffer, {
       contentType: mimeType,
