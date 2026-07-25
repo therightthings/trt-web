@@ -44,6 +44,7 @@ describe('SessionStorage', () => {
   it('returns undefined when storage is unavailable', () => {
     stubBrowserShell();
 
+    expect(SessionStorage.isSupported()).toBe(false);
     expect(SessionStorage.get('missing')).toBeUndefined();
     expect(SessionStorage.exists('missing')).toBe(false);
   });
@@ -55,6 +56,7 @@ describe('SessionStorage', () => {
     });
     vi.stubGlobal('sessionStorage', storage);
 
+    expect(SessionStorage.isSupported()).toBe(true);
     SessionStorage.set('profile', { id: 1, name: 'Alice' });
 
     expect(storage.setItem).toHaveBeenCalledWith(

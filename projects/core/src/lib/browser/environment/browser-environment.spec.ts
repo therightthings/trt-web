@@ -74,7 +74,7 @@ describe('BrowserEnvironment', () => {
   it('returns only hardware info for hardware scope', async () => {
     stubBrowserShell();
 
-    await expect(BrowserEnvironment.getInformation('hardware')).resolves.toEqual({
+    await expect(BrowserEnvironment.getInformation({ scope: 'hardware' })).resolves.toEqual({
       hardware: {
         cores: 8,
         memoryGB: 16,
@@ -85,7 +85,7 @@ describe('BrowserEnvironment', () => {
   it('returns only battery info for battery scope', async () => {
     const { navigator } = stubBrowserShell();
 
-    await expect(BrowserEnvironment.getInformation('battery')).resolves.toEqual({
+    await expect(BrowserEnvironment.getInformation({ scope: 'battery' })).resolves.toEqual({
       battery: {
         charging: true,
         percent: 50,
@@ -97,7 +97,7 @@ describe('BrowserEnvironment', () => {
   it('returns only environment info for environment scope', async () => {
     stubBrowserShell();
 
-    await expect(BrowserEnvironment.getInformation('environment')).resolves.toEqual({
+    await expect(BrowserEnvironment.getInformation({ scope: 'environment' })).resolves.toEqual({
       environment: {
         locale: 'en-US',
         preferredLanguages: ['en-US', 'vi-VN'],
@@ -113,7 +113,7 @@ describe('BrowserEnvironment', () => {
   it('returns only screen info for screen scope', async () => {
     stubBrowserShell();
 
-    await expect(BrowserEnvironment.getInformation('screen')).resolves.toEqual({
+    await expect(BrowserEnvironment.getInformation({ scope: 'screen' })).resolves.toEqual({
       screenInfo: {
         window: {
           innerWidth: 1280,
@@ -145,7 +145,7 @@ describe('BrowserEnvironment', () => {
   it('returns the full payload for all scope', async () => {
     stubBrowserShell();
 
-    await expect(BrowserEnvironment.getInformation('all')).resolves.toEqual({
+    await expect(BrowserEnvironment.getInformation({ scope: 'all' })).resolves.toEqual({
       hardware: {
         cores: 8,
         memoryGB: 16,

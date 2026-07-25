@@ -3,6 +3,9 @@ import { loadImage } from './load-image';
 
 export async function getImageSize(
   blob: File | string,
+  options?: {
+    revokeObjectUrl?: boolean;
+  },
 ): Promise<{ width: number; height: number }> {
   requireBrowserEnv();
 
@@ -11,6 +14,7 @@ export async function getImageSize(
   }
 
   let url = '';
+  let shouldRevokeObjectUrl = false;
 
   if (blob instanceof File) {
     if (!blob.type.startsWith('image/')) {
@@ -18,6 +22,7 @@ export async function getImageSize(
     }
 
     url = URL.createObjectURL(blob);
+    shouldRevokeObjectUrl = options?.revokeObjectUrl ?? true;
   } else {
     url = blob;
   }
@@ -30,6 +35,8 @@ export async function getImageSize(
       height: imgEl.naturalHeight || imgEl.height,
     };
   } finally {
-    URL.revokeObjectURL(url);
+    if (shouldRevokeObjectUrl) {
+      URL.revokeObjectURL(url);
+    }
   }
 }

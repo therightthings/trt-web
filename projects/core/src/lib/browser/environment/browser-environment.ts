@@ -3,6 +3,10 @@ import { requireBrowserEnv } from '../../utils';
 
 export type BrowserInformationScope = 'all' | 'hardware' | 'battery' | 'environment' | 'screen';
 
+export type BrowserInformationConfig = {
+  scope?: BrowserInformationScope;
+};
+
 export type EnvironmentInfo = {
   locale: string;
   preferredLanguages: string[];
@@ -89,21 +93,12 @@ export class BrowserEnvironment {
     return lang.split('-')[0];
   }
 
-  static async getInformation(scope: 'all'): Promise<{
-    hardware: BrowserHardwareInfo;
-    battery: BrowserBatteryInfo;
-    environment: EnvironmentInfo;
-    storageHealth: BrowserStorageHealthInfo;
-    screenInfo: BrowserScreenInfo;
-  }>;
-  static async getInformation(scope: 'hardware'): Promise<{ hardware: BrowserHardwareInfo }>;
-  static async getInformation(scope: 'battery'): Promise<{ battery: BrowserBatteryInfo }>;
-  static async getInformation(scope: 'environment'): Promise<{ environment: EnvironmentInfo }>;
-  static async getInformation(scope: 'screen'): Promise<{ screenInfo: BrowserScreenInfo }>;
   static async getInformation(
-    scope: BrowserInformationScope = 'all',
+    config?: BrowserInformationConfig,
   ): Promise<BrowserInformationResult> {
     requireBrowserEnv();
+
+    const { scope = 'all' } = config ?? {};
 
     switch (scope) {
       case 'hardware': {

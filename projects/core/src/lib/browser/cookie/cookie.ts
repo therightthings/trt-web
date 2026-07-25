@@ -73,7 +73,7 @@ export class Cookie {
     document.cookie = parts.join('; ');
   }
 
-  static cookieEnabled(): boolean {
+  static isSupported(): boolean {
     return this.isAvailable();
   }
 
@@ -138,11 +138,15 @@ export class Cookie {
     return this.parseCookieEntries().has(key);
   }
 
-  static setCookie<T = any>(name: string, value: T, expiresIn: number | TimeConfig = 365): void {
+  private static setCookie<T = any>(
+    name: string,
+    value: T,
+    expiresIn: number | TimeConfig = 365,
+  ): void {
     this.set(name, value, { expiresIn });
   }
 
-  static getCookie<T>(name: string): T | undefined {
+  private static getCookie<T>(name: string): T | undefined {
     return this.get<T>(name);
   }
 }

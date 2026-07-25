@@ -1,4 +1,4 @@
-export { capitalizeFirst, capitalizeTextFields, capitalizeWords } from './capitalize-text';
+export { capitalize } from './capitalize/capitalize';
 export { generateHash } from './generate-hash';
 export { generateId } from './generate-id';
 export { generateRandomString } from './generate-random-string';

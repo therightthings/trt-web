@@ -5,19 +5,32 @@ export type IdType = string | number;
 /**
  * Supported backing stores for `SignalStore` persistence.
  */
-export type SignalStoreStorageType = 'local' | 'session';
+export type SignalStoreStorageType = 'local' | 'session' | 'indexed-db';
 
 /**
  * Persistence settings when storage sync is enabled.
  * `type` selects the backing store, `loadFromStorage` restores saved state on startup.
  */
-export type SignalStoreEnabledConfig = {
+export type SignalStoreLocalStorageConfig = {
   storageSync: true;
   key: string;
-  type: SignalStoreStorageType;
+  type: 'local' | 'session';
   loadFromStorage: boolean;
   syncDelay: number | TimeConfig;
 };
+
+export type SignalStoreIndexedDbConfig = {
+  storageSync: true;
+  key: string;
+  type: 'indexed-db';
+  database: string;
+  collection: string;
+  version?: number;
+  loadFromStorage: boolean;
+  syncDelay: number | TimeConfig;
+};
+
+export type SignalStoreEnabledConfig = SignalStoreLocalStorageConfig | SignalStoreIndexedDbConfig;
 
 /**
  * Persistence settings when storage sync is disabled.
@@ -33,6 +46,16 @@ export type SignalStoreDisabledConfig = {
  */
 export type SignalStoreConfig = {
   storage: SignalStoreEnabledConfig | SignalStoreDisabledConfig;
+  expiredIn: number | TimeConfig;
+};
+
+export type SignalStoreSyncConfig = {
+  storage: SignalStoreLocalStorageConfig | SignalStoreDisabledConfig;
+  expiredIn: number | TimeConfig;
+};
+
+export type SignalStoreAsyncConfig = {
+  storage: SignalStoreIndexedDbConfig;
   expiredIn: number | TimeConfig;
 };
 

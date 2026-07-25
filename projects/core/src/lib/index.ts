@@ -1,10 +1,10 @@
-import * as Browser from './browser';
-import * as Date from './date-handler';
-import * as DOM from './dom-handler';
-import * as File from './file-handler';
-import * as Number from './number-handler';
-import * as Object from './obj-handler';
-import * as RateLimit from './rate-limit';
-import * as Text from './string-handler';
+import * as browser from './browser';
+import * as date from './date-handler';
+import * as dom from './dom-handler';
+import * as file from './file-handler';
+import * as number from './number-handler';
+import * as object from './obj-handler';
+import * as timing from './rate-limit';
+import * as string from './string-handler';
 
-export { Browser, Date, DOM, File, Number, Object, RateLimit, Text };
+export { browser, date, dom, file, number, object, string, timing };
