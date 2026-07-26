@@ -5,7 +5,7 @@ export function toMs(config: TimeConfig | number): number {
     return config;
   }
 
-  const { value, unit = 'second' } = config;
+  const { value, unit } = config;
   const map: Record<string, number> = {
     millisecond: 1,
     second: 1000,

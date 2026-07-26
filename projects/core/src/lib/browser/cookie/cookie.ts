@@ -137,16 +137,4 @@ export class Cookie {
 
     return this.parseCookieEntries().has(key);
   }
-
-  private static setCookie<T = any>(
-    name: string,
-    value: T,
-    expiresIn: number | TimeConfig = 365,
-  ): void {
-    this.set(name, value, { expiresIn });
-  }
-
-  private static getCookie<T>(name: string): T | undefined {
-    return this.get<T>(name);
-  }
 }
