@@ -1,5 +1,19 @@
-import { fileToObjectUrl } from '../../file-handler';
+import { convertFileSize, fileToObjectUrl } from '../../file-handler';
+import type { FileSizeConfig } from '../../utils';
 import { requireBrowserEnv } from '../../utils';
+
+type BrowserResourceDownloadConfig = {
+  name?: string;
+  ext?: string;
+} & (
+  | {
+      target?: '_blank';
+    }
+  | {
+      target: '_self';
+      maxBlobSize?: FileSizeConfig;
+    }
+);
 
 type BrowserResourceType = 'image' | 'script' | 'style' | 'font' | 'media' | 'document';
 
@@ -122,27 +136,87 @@ export class BrowserResource {
     return promise;
   }
 
-  static download(
-    src: string | Blob | File,
-    config?: {
-      name?: string;
-      ext?: string;
-      target?: '_self' | '_blank';
-    },
-  ) {
+  static async download(src: string | Blob | File, config?: BrowserResourceDownloadConfig) {
     requireBrowserEnv();
 
     let url: string = '';
-    let shouldRevoke: boolean = false;
+    let shouldRevoke = false;
+    const { name = `file-${Date.now()}`, ext, target = '_blank' } = config ?? {};
+    const defaultMaxBlobSize: FileSizeConfig = {
+      value: 50,
+      unit: 'Mb',
+    };
+    let maxBlobSize = 0;
+    let shouldOpenInNewTab = target === '_blank';
+
+    if (target === '_blank') {
+      if (src instanceof File || src instanceof Blob) {
+        url = fileToObjectUrl(src);
+        shouldRevoke = true;
+      } else {
+        url = src;
+      }
+
+      window.open(url, '_blank', 'noopener,noreferrer');
+
+      if (shouldRevoke) {
+        setTimeout(() => URL.revokeObjectURL(url), 0);
+      }
+
+      return;
+    }
+
+    if (config?.target === '_self') {
+      const { value, unit } = config.maxBlobSize ?? defaultMaxBlobSize;
+      maxBlobSize = convertFileSize(value, `${unit}:byte`);
+    }
 
     if (src instanceof File || src instanceof Blob) {
       url = fileToObjectUrl(src);
       shouldRevoke = true;
+    } else if (target === '_self') {
+      let response: Response | undefined;
+      let size: number | undefined;
+
+      try {
+        const headResponse = await fetch(src, { method: 'HEAD' });
+        const contentLength = headResponse.headers.get('content-length');
+
+        if (headResponse.ok && contentLength) {
+          const parsedSize = Number(contentLength);
+
+          if (Number.isFinite(parsedSize) && parsedSize >= 0) {
+            size = parsedSize;
+          }
+        }
+
+        if (size !== undefined && size <= maxBlobSize) {
+          response = await fetch(src);
+        }
+      } catch {
+        response = undefined;
+      }
+
+      if (!response?.ok) {
+        shouldOpenInNewTab = true;
+        url = src;
+      } else {
+        url = fileToObjectUrl(await response.blob());
+        shouldRevoke = true;
+      }
     } else {
       url = src;
     }
 
-    const { name = `file-${Date.now()}`, ext, target = '_blank' } = config ?? {};
+    if (shouldOpenInNewTab) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+
+      if (shouldRevoke) {
+        setTimeout(() => URL.revokeObjectURL(url), 0);
+      }
+
+      return;
+    }
 
     const a = document.createElement('a');
     a.href = url;

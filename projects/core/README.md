@@ -93,7 +93,7 @@ npm install @trt-web/core
   - `isCached`: check whether a browser resource is cached.
   - `loadScript`: load a script once and reuse concurrent requests.
   - `loadLink`: load a stylesheet once and reuse concurrent requests.
-  - `download`: download a URL, Blob, or File with an optional filename and target.
+  - `download`: download a URL, Blob, or File in the current tab, or open it in a new tab.
 
   ```ts
   import { BrowserResource } from '@trt-web/core';
@@ -103,15 +103,37 @@ npm install @trt-web/core
 
   const cached = await BrowserResource.isCached('/assets/theme.css');
 
-  BrowserResource.download('/exports/report.pdf', {
+  await BrowserResource.download('/exports/report.pdf', {
     name: 'monthly-report',
     ext: 'pdf',
     target: '_self',
+    maxBlobSize: { value: 50, unit: 'Mb' },
   });
 
   console.log({ cached }); // { cached: true } when the resource is found in Cache Storage or has a zero transfer size
   console.log(BrowserResource.assetUrl('assets/theme.css')); // 'https://example.com/app/assets/theme.css'
+
+  // For a URL with target '_self', HEAD checks Content-Length first.
+  // Small files are fetched as Blob; unknown or large files open in '_blank'.
+
+  await BrowserResource.download('/exports/report.pdf', {
+    target: '_blank',
+  }); // opens the URL in a new tab; it does not force a download
+
+  const preview = new Blob(['Preview content'], { type: 'text/plain' });
+  await BrowserResource.download(preview, {
+    target: '_blank',
+  }); // opens the Blob in a new tab
   ```
+
+  `target: '_self'` is the download mode. For URL sources, the method first
+  checks `Content-Length` with `HEAD`; it fetches the resource as a Blob only
+  when the size is within `maxBlobSize` (default: `{ value: 50, unit: 'Mb' }`).
+  If the size cannot be determined or is too large, the original URL opens in
+  a new tab. Cross-origin URL checks require CORS support from the server.
+
+  `target: '_blank'` is the preview mode. It always uses `window.open()` for
+  URL, `Blob`, and `File` sources, so the `download` attribute is not applied.
 
 - `BrowserShare`
   - `share`: share content through the Web Share API.

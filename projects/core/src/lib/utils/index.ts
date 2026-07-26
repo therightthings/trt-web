@@ -1,4 +1,5 @@
 export { checkCircularReferences } from './check-circular-references';
+export type { FileSizeConfig } from './file-size-config.type';
 export { requireBrowserEnv } from './require-browser-env';
 export { roundToDecimals } from './round-to-decimals';
 export { stringify } from './stringify';

@@ -61,7 +61,9 @@ function stubBrowserShell() {
     head,
   };
 
-  vi.stubGlobal('window', { document });
+  const open = vi.fn();
+
+  vi.stubGlobal('window', { document, open });
   vi.stubGlobal('document', document);
 
   return {
@@ -72,6 +74,7 @@ function stubBrowserShell() {
     head,
     link,
     script,
+    open,
   };
 }
 
@@ -136,35 +139,101 @@ describe('BrowserResource', () => {
     expect(link.remove).toHaveBeenCalledTimes(1);
   });
 
-  it('configures and cleans up the download anchor', () => {
+  it('downloads a URL in the current tab without navigating it', async () => {
     const { anchor, body } = stubBrowserShell();
+    const createObjectURL = vi.fn(() => 'blob:report');
+    const revokeObjectURL = vi.fn();
 
-    BrowserResource.download('https://example.com/file.pdf', {
+    const fetch = vi
+      .fn()
+      .mockResolvedValueOnce({
+        headers: { get: vi.fn(() => '1024') },
+        ok: true,
+      })
+      .mockResolvedValueOnce({
+        blob: vi.fn().mockResolvedValue(new Blob(['report'], { type: 'application/pdf' })),
+        ok: true,
+      });
+    vi.stubGlobal('fetch', fetch);
+    vi.stubGlobal('URL', { createObjectURL, revokeObjectURL });
+
+    await BrowserResource.download('https://example.com/file.pdf', {
       name: 'report',
       ext: 'pdf',
       target: '_self',
     });
 
-    expect(anchor.href).toBe('https://example.com/file.pdf');
+    expect(anchor.href).toBe('blob:report');
     expect(anchor.download).toBe('report.pdf');
     expect(anchor.target).toBe('_self');
     expect(anchor.rel).toBe('noopener noreferrer');
     expect(body.appendChild).toHaveBeenCalledWith(anchor);
     expect(anchor.click).toHaveBeenCalledTimes(1);
     expect(body.removeChild).toHaveBeenCalledWith(anchor);
+    expect(fetch).toHaveBeenNthCalledWith(1, 'https://example.com/file.pdf', { method: 'HEAD' });
+    expect(fetch).toHaveBeenNthCalledWith(2, 'https://example.com/file.pdf');
   });
 
-  it('uses a new tab by default and supports an explicit new-tab target', () => {
-    const { anchor } = stubBrowserShell();
+  it('opens a large URL in a new tab when it exceeds the memory limit', async () => {
+    const { anchor, open } = stubBrowserShell();
+    const fetch = vi.fn().mockResolvedValue({
+      headers: { get: vi.fn(() => '2048') },
+      ok: true,
+    });
+    vi.stubGlobal('fetch', fetch);
 
-    BrowserResource.download('https://example.com/file.pdf');
-    expect(anchor.target).toBe('_blank');
+    await BrowserResource.download('https://example.com/large.mp4', {
+      target: '_self',
+      maxBlobSize: { value: 1, unit: 'kb' },
+    });
 
-    BrowserResource.download('https://example.com/file.pdf', {
+    expect(open).toHaveBeenCalledWith(
+      'https://example.com/large.mp4',
+      '_blank',
+      'noopener,noreferrer',
+    );
+    expect(anchor.click).not.toHaveBeenCalled();
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('opens a URL in a new tab when HEAD cannot determine its size', async () => {
+    const { anchor, open } = stubBrowserShell();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        headers: { get: vi.fn(() => null) },
+        ok: true,
+      }),
+    );
+
+    await BrowserResource.download('https://example.com/unknown-size.mp4', {
+      target: '_self',
+    });
+
+    expect(open).toHaveBeenCalledWith(
+      'https://example.com/unknown-size.mp4',
+      '_blank',
+      'noopener,noreferrer',
+    );
+    expect(anchor.click).not.toHaveBeenCalled();
+  });
+
+  it('opens URLs in a new tab by default and with an explicit new-tab target', async () => {
+    const { anchor, open } = stubBrowserShell();
+
+    await BrowserResource.download('https://example.com/file.pdf');
+
+    await BrowserResource.download('https://example.com/file.pdf', {
       target: '_blank',
     });
 
-    expect(anchor.target).toBe('_blank');
+    expect(open).toHaveBeenCalledTimes(2);
+    expect(open).toHaveBeenCalledWith(
+      'https://example.com/file.pdf',
+      '_blank',
+      'noopener,noreferrer',
+    );
+    expect(anchor.click).not.toHaveBeenCalled();
   });
 
   it('checks the cache using the matching resource type', async () => {

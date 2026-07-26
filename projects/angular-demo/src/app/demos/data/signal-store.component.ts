@@ -1,6 +1,7 @@
 import { JsonPipe } from '@angular/common';
 import { Component, inject, Injectable, signal } from '@angular/core';
 import { SignalStore } from '@trt-web/angular';
+import { BrowserResource } from '@trt-web/core';
 
 import { ApiPreferencesComponent } from '../../shared/components/api-preferences.component';
 import { CodeSampleComponent } from '../../shared/components/code-sample.component';
@@ -118,6 +119,28 @@ class TodoSignalStore extends SignalStore<TodoItem> {}
 
         <app-code-sample title="Code example" badge="Basic usage" [code]="codeExample" />
 
+        <section class="rounded-box border border-base-300 bg-base-200 p-4">
+          <div class="space-y-2">
+            <h4 class="font-medium text-base-content">BrowserResource download</h4>
+            <p class="text-sm text-base-content/70">
+              Test Blob downloads, Blob preview, URL size checks, and the large-file fallback
+              behavior.
+            </p>
+            <button class="btn btn-outline btn-sm" type="button" (click)="downloadInCurrentTab()">
+              Download Blob in current tab
+            </button>
+            <button class="btn btn-outline btn-sm" type="button" (click)="openBlobInNewTab()">
+              Open Blob in new tab
+            </button>
+            <button class="btn btn-outline btn-sm" type="button" (click)="downloadSmallUrl()">
+              Download small URL in current tab
+            </button>
+            <button class="btn btn-outline btn-sm" type="button" (click)="downloadLargeUrl()">
+              Test large URL fallback
+            </button>
+          </div>
+        </section>
+
         <app-api-preferences [preferences]="preferences" />
       </div>
     </article>
@@ -211,6 +234,48 @@ store.addNewData({ id: 1, title: 'Learn SignalStore', done: false });`,
     const item = this.store.getDataById(id);
     if (!item) return;
     this.store.updateDataById(id, { done: !item.done });
+  }
+
+  protected async downloadInCurrentTab(): Promise<void> {
+    const content = new Blob(['BrowserResource target=_self download'], {
+      type: 'text/plain',
+    });
+
+    await BrowserResource.download(content, {
+      name: 'browser-resource-current-tab',
+      ext: 'txt',
+      target: '_self',
+    });
+  }
+
+  protected async openBlobInNewTab(): Promise<void> {
+    const content = new Blob(['BrowserResource target=_blank preview'], {
+      type: 'text/plain',
+    });
+
+    await BrowserResource.download(content, {
+      name: 'browser-resource-new-tab',
+      ext: 'txt',
+      target: '_blank',
+    });
+  }
+
+  protected async downloadSmallUrl(): Promise<void> {
+    await BrowserResource.download('/favicon.ico', {
+      name: 'browser-resource-small-file',
+      ext: 'ico',
+      target: '_self',
+      maxBlobSize: { value: 1, unit: 'Mb' },
+    });
+  }
+
+  protected async downloadLargeUrl(): Promise<void> {
+    await BrowserResource.download('/favicon.ico', {
+      name: 'browser-resource-large-file-fallback',
+      ext: 'ico',
+      target: '_self',
+      maxBlobSize: { value: 1, unit: 'byte' },
+    });
   }
 
   remove(id: number): void {
