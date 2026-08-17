@@ -2,6 +2,24 @@ import { requireBrowserEnv } from '../../utils';
 import { BrowserPermissionName, BrowserPermissionState } from './browser-permission.type';
 
 export class BrowserPermission {
+  static supportedPermissions() {
+    const supports: readonly BrowserPermissionName[] = [
+      'camera',
+      'geolocation',
+      'microphone',
+      'notifications',
+      'clipboard-read',
+      'clipboard-write',
+      'persistent-storage',
+      'midi',
+      'push',
+      'screen-wake-lock',
+      'storage-access',
+    ];
+
+    return supports;
+  }
+
   static async getState(name: BrowserPermissionName): Promise<BrowserPermissionState> {
     requireBrowserEnv();
 
