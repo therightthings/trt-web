@@ -1,3 +1,4 @@
+// Run: npx vitest run projects/core/src/lib/browser/vibration/browser-vibration.spec.ts
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { BrowserVibration } from './browser-vibration';
