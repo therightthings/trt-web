@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="15" fill="#101827" />
+  <path fill="#28527f" d="m10 24 22-11 22 11-22 11L10 24Z" />
+  <path fill="#4b8ab5" d="m10 31 22-11 22 11-22 11L10 31Z" />
+  <path fill="#7dd3fc" d="m10 38 22-11 22 11-22 11L10 38Z" />
+  <text x="32" y="38" fill="#101827" font-family="Arial, sans-serif" font-size="13" font-weight="700" letter-spacing="-0.8" text-anchor="middle">trt</text>
+</svg>
