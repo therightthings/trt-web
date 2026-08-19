@@ -27,6 +27,7 @@ export const createBluetoothPage = (): HTMLElement => {
         <label>Write text <input id="bluetooth-write" value="hello" /></label>
         <div class="demo-actions">
           <button id="bluetooth-service-read" type="button">Get service</button>
+          <button id="bluetooth-characteristics" type="button">List characteristics</button>
           <button id="bluetooth-read" type="button">Read value</button>
           <button id="bluetooth-write-button" type="button">Write value</button>
         </div>
@@ -70,18 +71,30 @@ export const createBluetoothPage = (): HTMLElement => {
     ?.addEventListener('click', async () =>
       show(Boolean(await BrowserBluetooth.getPrimaryService(service()))),
     );
+  page.querySelector('#bluetooth-characteristics')?.addEventListener('click', async () => {
+    const characteristics = await BrowserBluetooth.getCharacteristics(service());
+    show(
+      characteristics.map((item) => ({
+        uuid: item.uuid,
+        properties: item.properties,
+      })),
+    );
+  });
   page.querySelector('#bluetooth-read')?.addEventListener('click', async () => {
-    const value = await BrowserBluetooth.readValue(service(), characteristic());
+    const value = await BrowserBluetooth.readValue({
+      service: service(),
+      characteristic: characteristic(),
+    });
     show(value ? [...new Uint8Array(value.buffer)] : 'Could not read value.');
   });
   page.querySelector('#bluetooth-write-button')?.addEventListener('click', async () => {
     const text = page.querySelector<HTMLInputElement>('#bluetooth-write')!.value;
     show(
-      await BrowserBluetooth.writeValue(
-        service(),
-        characteristic(),
-        new TextEncoder().encode(text),
-      ),
+      await BrowserBluetooth.writeValue({
+        service: service(),
+        characteristic: characteristic(),
+        value: new TextEncoder().encode(text),
+      }),
     );
   });
 
