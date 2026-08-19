@@ -71,13 +71,12 @@ export const createMicrophonePage = (): HTMLElement => {
         noiseSuppression: noiseSuppression === 'true',
         ...(channelCount > 0 ? { channelCount: { ideal: channelCount } } : {}),
       },
-      video: false,
     };
   };
 
   page.querySelector('#microphone-start')?.addEventListener('click', async () => {
     result.textContent = 'Requesting microphone permission...';
-    const response = await BrowserMicrophone.turnOnMicrophone(readConstraints());
+    const response = await BrowserMicrophone.turnOn(readConstraints());
     if (!response.success || !response.data) {
       result.textContent = `Microphone unavailable (${response.permission}).`;
       return;
@@ -88,7 +87,7 @@ export const createMicrophonePage = (): HTMLElement => {
   });
 
   page.querySelector('#microphone-stop')?.addEventListener('click', () => {
-    const stopped = BrowserMicrophone.turnOffMicrophone();
+    const stopped = BrowserMicrophone.turnOff();
     preview.srcObject = null;
     result.textContent = stopped ? 'Microphone stopped.' : 'No active microphone stream.';
   });
@@ -96,9 +95,16 @@ export const createMicrophonePage = (): HTMLElement => {
   page.querySelector('#microphone-devices')?.addEventListener('click', async () => {
     const devices = await BrowserMicrophone.listDevices();
     result.textContent = devices.length
-      ? devices
-          .map((device) => `${device.label || 'Unnamed microphone'} (${device.deviceId})`)
-          .join('\n')
+      ? JSON.stringify(
+          devices.map((device) => ({
+            deviceId: device.deviceId,
+            groupId: device.groupId,
+            kind: device.kind,
+            label: device.label || 'Unnamed microphone',
+          })),
+          null,
+          2,
+        )
       : 'No microphone devices found.';
   });
 
@@ -110,8 +116,8 @@ export const createMicrophonePage = (): HTMLElement => {
       : 'Could not start recording.';
   });
 
-  page.querySelector('#microphone-record-stop')?.addEventListener('click', () => {
-    const recording = BrowserMicrophone.stopRecording();
+  page.querySelector('#microphone-record-stop')?.addEventListener('click', async () => {
+    const recording = await BrowserMicrophone.stopRecording();
     if (!recording || !recording.blob.size) {
       result.textContent = 'No recording data available.';
       return;
