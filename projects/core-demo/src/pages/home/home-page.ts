@@ -16,6 +16,26 @@ export const createHomePage = (): HTMLElement => {
       <a class="github-link" href="https://www.npmjs.com/package/@trt-web/core" target="_blank" rel="noopener noreferrer">@trt-web/core</a>
       </div>
     </section>
+    <section class="card">
+      <h2>Utility groups</h2>
+      <div class="utility-grid home-groups">
+        ${[
+          ['browser', 'Browser'],
+          ['date-handler', 'Date'],
+          ['dom-handler', 'Dom'],
+          ['file-handler', 'File'],
+          ['number-handler', 'Number'],
+          ['obj-handler', 'Object'],
+          ['string-handler', 'String'],
+          ['rate-limit', 'Timing'],
+        ]
+          .map(
+            ([path, label]) =>
+              `<button class="utility-card" data-group-path="${path}" type="button"><strong>${label}</strong><span>Open group →</span></button>`,
+          )
+          .join('')}
+      </div>
+    </section>
     <section class="card install-card">
       <h2>Install</h2>
       <p>Choose your package manager and copy the command.</p>
@@ -34,6 +54,12 @@ export const createHomePage = (): HTMLElement => {
       </div>
     </section>
   `;
+
+  content.querySelectorAll<HTMLButtonElement>('[data-group-path]').forEach((button) => {
+    button.addEventListener('click', () => {
+      window.location.hash = `/${button.dataset.groupPath}`;
+    });
+  });
 
   content.querySelectorAll<HTMLButtonElement>('.copy-install').forEach((button) => {
     button.addEventListener('click', async () => {

@@ -1,5 +1,10 @@
 import { requireBrowserEnv, stringify } from '../../utils';
 
+/**
+ * Typed session storage helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage
+ */
 export class SessionStorage {
   private static isQuotaError(err: unknown): boolean {
     return (

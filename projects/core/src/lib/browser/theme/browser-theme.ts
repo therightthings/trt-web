@@ -6,6 +6,8 @@ import type { BrowserThemeMode } from './browser-theme.type';
 /**
  * Observe the system color scheme.
  *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia
+ *
  * @example
  * ```ts
  * const subscription = BrowserTheme.subscribe((theme) => {

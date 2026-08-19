@@ -200,20 +200,12 @@ const renderPage = (pageId: string) => {
     if (breadcrumb) {
       const pagePath = getBrowserPagePath(pageId);
       if (groupPageIds.has(pageId)) {
-        breadcrumb.textContent = groupExportNames[pagePath ?? ''] ?? breadcrumb.textContent;
-        breadcrumb.classList.add('is-clickable');
-        breadcrumb.setAttribute('role', 'link');
-        breadcrumb.tabIndex = 0;
+        breadcrumb.classList.add('breadcrumb');
+        breadcrumb.innerHTML = '<button class="breadcrumb-back" type="button">← Home</button>';
         const navigateHome = () => {
           window.location.hash = '';
         };
-        breadcrumb.addEventListener('click', navigateHome);
-        breadcrumb.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            navigateHome();
-          }
-        });
+        breadcrumb.querySelector('.breadcrumb-back')?.addEventListener('click', navigateHome);
       } else if (pagePath) {
         const pathParts = pagePath.split('/');
         const parentPath = pathParts[0];

@@ -6,6 +6,11 @@ import type {
   BrowserAudioWaveformOptions,
 } from './browser-audio-context.type';
 
+/**
+ * Audio buffer playback and waveform helpers for one audio session.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode
+ */
 export class BrowserAudioSession {
   private analyser?: AnalyserNode;
   private gainNode?: GainNode;

@@ -17,6 +17,12 @@ type BrowserResourceDownloadConfig = {
 
 type BrowserResourceType = 'image' | 'script' | 'style' | 'font' | 'media' | 'document';
 
+/**
+ * Browser resource loading, caching and download helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static
+ */
 export class BrowserResource {
   private static readonly scriptLoadPromises = new Map<string, Promise<void>>();
   private static readonly linkLoadPromises = new Map<string, Promise<void>>();

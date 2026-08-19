@@ -9,6 +9,11 @@ export type IndexedDBDatabase = {
   collection<T extends IndexedDBRecord>(collection: string): IndexedDB<T>;
 };
 
+/**
+ * Typed IndexedDB database and collection helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
+ */
 export class IndexedDB<T extends IndexedDBRecord> {
   private static readonly instances = new Map<string, IndexedDB<IndexedDBRecord>>();
   private static readonly databaseConfigs = new Map<string, IndexedDBDatabaseConfig>();

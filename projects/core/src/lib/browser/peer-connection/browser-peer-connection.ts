@@ -9,6 +9,12 @@ import type {
   BrowserPeerConnectionSessionDescriptionInit,
 } from './browser-peer-connection.type';
 
+/**
+ * RTCPeerConnection lifecycle and signaling helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API
+ */
 export class BrowserPeerConnection extends AbstractBrowserUtils {
   private static peerConnection?: RTCPeerConnection;
   private static cleanupListeners?: () => void;

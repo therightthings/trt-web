@@ -9,12 +9,11 @@ import {
   BrowserMicrophone,
   BrowserNetwork,
   BrowserNfc,
+  BrowserPeerConnection,
   BrowserScreen,
-  BrowserSpeech,
   BrowserTabActivity,
   BrowserVibration,
   BrowserWakeLock,
-  BrowserWebRtc,
   BrowserWindow,
   Cookie,
   IndexedDB,
@@ -34,17 +33,19 @@ import { createLocationPage } from './browser/location-page';
 import { createMicrophonePage } from './browser/microphone-page';
 import { createNetworkPage } from './browser/network-page';
 import { createNfcPage } from './browser/nfc-page';
+import { createPeerConnectionPage } from './browser/peer-connection-page';
 import { createPermissionPage } from './browser/permission-page';
 import { createPresentationPage } from './browser/presentation-page';
 import { createResourcePage } from './browser/resource-page';
 import { createScreenPage } from './browser/screen-page';
 import { createSharePage } from './browser/share-page';
-import { createSpeechPage } from './browser/speech-page';
+import { createSpeechToTextPage } from './browser/speech-to-text-page';
 import { createStoragePage } from './browser/storage-page';
 import { createTabActivityPage } from './browser/tab-activity-page';
+import { createTextToSpeechPage } from './browser/text-to-speech-page';
 import { createVibrationPage } from './browser/vibration-page';
 import { createWakeLockPage } from './browser/wake-lock-page';
-import { createWebRtcPage } from './browser/web-rtc-page';
+import { createWindowManagerPage } from './browser/window-manager-page';
 import { createWindowPage } from './browser/window-page';
 import { createWorkerPage } from './browser/worker-page';
 import { createGenerateTimestampPage, createRangeDatePage } from './date-pages';
@@ -87,20 +88,12 @@ const demoActions: Record<
     { label: 'Read all information', run: () => BrowserEnvironment.getInformation() },
     { label: 'Read hardware', run: () => BrowserEnvironment.getInformation({ scope: 'hardware' }) },
   ],
-  speech: [
-    { label: 'Speak demo text', run: () => BrowserSpeech.speak('Hello from trt web core') },
-    {
-      label: 'List voices',
-      run: () => BrowserSpeech.getVoices().then((voices) => voices.map((voice) => voice.name)),
-    },
-  ],
   'tab-activity': [{ label: 'Read tab state', run: () => BrowserTabActivity.getState() }],
   vibration: [{ label: 'Vibrate briefly', run: () => BrowserVibration.vibrate(200) }],
   'wake-lock': [
     { label: 'Enable wake lock', run: () => BrowserWakeLock.enable() },
     { label: 'Disable wake lock', run: () => BrowserWakeLock.disable() },
   ],
-  window: [{ label: 'Read screen info', run: () => BrowserWindow.screenInfo() }],
 };
 
 const supportChecks: Record<string, () => boolean> = {
@@ -119,7 +112,7 @@ const supportChecks: Record<string, () => boolean> = {
   'session-storage': () => SessionStorage.isSupported(),
   vibration: () => BrowserVibration.isSupported(),
   'wake-lock': () => BrowserWakeLock.isSupported(),
-  'web-rtc': () => BrowserWebRtc.isSupported(),
+  'peer-connection': () => BrowserPeerConnection.isSupported(),
 };
 
 const pages: Record<string, DemoPageConfig> = {
@@ -337,7 +330,7 @@ const pages: Record<string, DemoPageConfig> = {
     title: 'BrowserAudioContext',
     path: 'browser/audio-context',
     description: 'Create, control and analyze audio using AudioContext.',
-    methods: ['isSupported()', 'createContext()', 'playTone()', 'createAnalyser()', 'close()'],
+    methods: ['isSupported()', 'getInstance()', 'ready()', 'createAudioSession()', 'close()'],
   },
   bluetooth: {
     title: 'BrowserBluetooth',
@@ -367,7 +360,14 @@ const pages: Record<string, DemoPageConfig> = {
     title: 'BrowserFileSystem',
     path: 'browser/file-system',
     description: 'Open, save and manage files and directories.',
-    methods: ['isSupported()', 'openFile()', 'openFiles()', 'saveFile()', 'openDirectory()'],
+    methods: [
+      'isSupported()',
+      'openFile()',
+      'readFile()',
+      'readFiles()',
+      'saveFile()',
+      'openDirectory()',
+    ],
   },
   'indexed-db': {
     title: 'IndexedDB',
@@ -378,7 +378,7 @@ const pages: Record<string, DemoPageConfig> = {
   'local-storage': {
     title: 'LocalStorage',
     path: 'browser/local-storage',
-    description: 'Use a typed wrapper around localStorage.',
+    description: "Use Core's typed LocalStorage wrapper.",
     methods: ['isSupported()', 'set()', 'get()', 'remove()', 'clear()', 'exists()'],
   },
   location: {
@@ -397,37 +397,19 @@ const pages: Record<string, DemoPageConfig> = {
     title: 'BrowserCamera',
     path: 'browser/media/camera',
     description: 'Turn on camera streams and record camera media.',
-    methods: [
-      'isSupported()',
-      'listDevices()',
-      'turnOnCamera()',
-      'startRecording()',
-      'turnOffCamera()',
-    ],
+    methods: ['isSupported()', 'listDevices()', 'turnOn()', 'startRecording()', 'turnOff()'],
   },
   microphone: {
     title: 'BrowserMicrophone',
     path: 'browser/media/microphone',
     description: 'Turn on microphone streams and record audio.',
-    methods: [
-      'isSupported()',
-      'listDevices()',
-      'turnOnMicrophone()',
-      'startRecording()',
-      'turnOffMicrophone()',
-    ],
+    methods: ['isSupported()', 'listDevices()', 'turnOn()', 'startRecording()', 'turnOff()'],
   },
   screen: {
     title: 'BrowserScreen',
     path: 'browser/media/screen',
     description: 'Capture, record and take screenshots of a selected screen.',
-    methods: [
-      'isSupported()',
-      'startCapture()',
-      'takeScreenshot()',
-      'startRecording()',
-      'stopCapture()',
-    ],
+    methods: ['isSupported()', 'startShare()', 'screenshot()', 'startRecording()', 'stopShare()'],
   },
   network: {
     title: 'BrowserNetwork',
@@ -462,7 +444,7 @@ const pages: Record<string, DemoPageConfig> = {
   'session-storage': {
     title: 'SessionStorage',
     path: 'browser/session-storage',
-    description: 'Use a typed wrapper around sessionStorage.',
+    description: "Use Core's typed SessionStorage wrapper.",
     methods: ['isSupported()', 'set()', 'get()', 'remove()', 'clear()', 'exists()'],
   },
   share: {
@@ -471,11 +453,17 @@ const pages: Record<string, DemoPageConfig> = {
     description: 'Share content using the Web Share API.',
     methods: ['share()'],
   },
-  speech: {
-    title: 'BrowserSpeech',
-    path: 'browser/speech',
-    description: 'Speak text and recognize speech in the browser.',
-    methods: ['speak()', 'getVoices()', 'recognize()', 'pause()', 'resume()', 'cancel()'],
+  'text-to-speech': {
+    title: 'BrowserTextToSpeech',
+    path: 'browser/speech/text-to-speech',
+    description: 'Convert text into spoken audio using Speech Synthesis.',
+    methods: ['speak()', 'getVoices()', 'pause()', 'resume()', 'cancel()', 'isSupported()'],
+  },
+  'speech-to-text': {
+    title: 'BrowserSpeechToText',
+    path: 'browser/speech/speech-to-text',
+    description: 'Convert microphone speech into text using Speech Recognition.',
+    methods: ['recognize()', 'isSupported()'],
   },
   'tab-activity': {
     title: 'BrowserTabActivity',
@@ -495,9 +483,9 @@ const pages: Record<string, DemoPageConfig> = {
     description: 'Prevent the screen from sleeping while a task is active.',
     methods: ['isSupported()', 'isActive()', 'enable()', 'disable()'],
   },
-  'web-rtc': {
-    title: 'BrowserWebRtc',
-    path: 'browser/web-rtc',
+  'peer-connection': {
+    title: 'BrowserPeerConnection',
+    path: 'browser/peer-connection',
     description: 'Create peer connections and exchange realtime data.',
     methods: [
       'isSupported()',
@@ -510,8 +498,14 @@ const pages: Record<string, DemoPageConfig> = {
   window: {
     title: 'BrowserWindow',
     path: 'browser/window',
-    description: 'Use common window, history and interaction helpers.',
-    methods: ['screenInfo()', 'goBack()', 'goForward()', 'alert()', 'confirm()', 'prompt()'],
+    description: 'Use current-window helpers and manage child windows.',
+    methods: ['goBack()', 'goForward()', 'alert()', 'confirm()', 'prompt()'],
+  },
+  'window-manager': {
+    title: 'BrowserWindowManager',
+    path: 'browser/window-manager',
+    description: 'Open and monitor child browser windows.',
+    methods: ['open()'],
   },
   worker: {
     title: 'Worker utilities',
@@ -552,12 +546,14 @@ export const groupPages: Record<string, GroupPageConfig> = {
       ['resource', 'Resource'],
       ['session-storage', 'Session Storage'],
       ['share', 'Share'],
-      ['speech', 'Speech'],
+      ['text-to-speech', 'Text To Speech'],
+      ['speech-to-text', 'Speech To Text'],
       ['tab-activity', 'Tab Activity'],
       ['vibration', 'Vibration'],
       ['wake-lock', 'Wake Lock'],
-      ['web-rtc', 'WebRTC'],
+      ['peer-connection', 'Peer Connection'],
       ['window', 'Window'],
+      ['window-manager', 'Window Manager'],
       ['worker', 'Worker'],
     ].map(([id, label]) => ({
       id,
@@ -697,12 +693,14 @@ export const createBrowserPage = (pageId: string): HTMLElement | null => {
   if (pageId === 'presentation') return createPresentationPage();
   if (pageId === 'resource') return createResourcePage();
   if (pageId === 'share') return createSharePage();
-  if (pageId === 'speech') return createSpeechPage();
+  if (pageId === 'text-to-speech') return createTextToSpeechPage();
+  if (pageId === 'speech-to-text') return createSpeechToTextPage();
   if (pageId === 'tab-activity') return createTabActivityPage();
   if (pageId === 'vibration') return createVibrationPage();
   if (pageId === 'wake-lock') return createWakeLockPage();
-  if (pageId === 'web-rtc') return createWebRtcPage();
+  if (pageId === 'peer-connection') return createPeerConnectionPage();
   if (pageId === 'window') return createWindowPage();
+  if (pageId === 'window-manager') return createWindowManagerPage();
   if (pageId === 'worker') return createWorkerPage();
 
   if (pageId === 'local-storage') {

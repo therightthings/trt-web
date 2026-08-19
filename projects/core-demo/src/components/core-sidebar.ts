@@ -1,3 +1,5 @@
+import { LocalStorage } from '@trt-web/core';
+
 import { createThemeSwitcher } from './theme-switcher';
 
 export type DemoMenuItem = {
@@ -34,12 +36,20 @@ const menuItems: DemoMenuItem[] = [
       { label: 'resource' },
       { label: 'session-storage' },
       { label: 'share' },
-      { label: 'speech' },
+      {
+        label: 'speech',
+        pageId: '',
+        children: [
+          { label: 'text-to-speech', pageId: 'text-to-speech' },
+          { label: 'speech-to-text', pageId: 'speech-to-text' },
+        ],
+      },
       { label: 'tab-activity' },
       { label: 'vibration' },
       { label: 'wake-lock' },
-      { label: 'web-rtc' },
+      { label: 'peer-connection' },
       { label: 'window' },
+      { label: 'window-manager' },
       { label: 'worker' },
     ],
   },
@@ -104,25 +114,17 @@ const minSidebarWidth = 200;
 const maxSidebarWidth = 700;
 
 const readExpandedMenus = (): Set<string> => {
-  try {
-    const value = JSON.parse(localStorage.getItem(expandedStorageKey) ?? '[]');
-    return new Set(
-      Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [],
-    );
-  } catch {
-    return new Set();
-  }
+  const value = LocalStorage.get<unknown[]>(expandedStorageKey);
+  return new Set(
+    Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [],
+  );
 };
 
 const readSidebarWidth = (): number => {
-  try {
-    const value = Number(localStorage.getItem(sidebarWidthStorageKey));
-    return Number.isFinite(value)
-      ? Math.min(maxSidebarWidth, Math.max(minSidebarWidth, value))
-      : defaultSidebarWidth;
-  } catch {
-    return defaultSidebarWidth;
-  }
+  const value = Number(LocalStorage.get<number | string>(sidebarWidthStorageKey));
+  return Number.isFinite(value)
+    ? Math.min(maxSidebarWidth, Math.max(minSidebarWidth, value))
+    : defaultSidebarWidth;
 };
 
 const formatMenuLabel = (label: string): string =>
@@ -213,11 +215,7 @@ export const createCoreSidebar = (onPageSelect?: (pageId: string) => void): HTML
   const searchInput = sidebar.querySelector<HTMLInputElement>('#sidebar-search-input');
   const searchClearButton = sidebar.querySelector<HTMLButtonElement>('#sidebar-search-clear');
   const persistExpandedMenus = () => {
-    try {
-      localStorage.setItem(expandedStorageKey, JSON.stringify([...expandedMenus]));
-    } catch {
-      // Ignore storage restrictions in private or restricted browsing modes.
-    }
+    LocalStorage.set(expandedStorageKey, [...expandedMenus]);
   };
   const updateToggleAllLabel = () => {
     const allExpanded =
@@ -291,11 +289,7 @@ export const createCoreSidebar = (onPageSelect?: (pageId: string) => void): HTML
         Math.max(minSidebarWidth, startWidth + moveEvent.clientX - startX),
       );
       sidebar.style.width = `${width}px`;
-      try {
-        localStorage.setItem(sidebarWidthStorageKey, String(width));
-      } catch {
-        // Ignore storage restrictions in private or restricted browsing modes.
-      }
+      LocalStorage.set(sidebarWidthStorageKey, width);
     };
     const stopResize = () => {
       if (resizer.hasPointerCapture(event.pointerId)) {

@@ -65,10 +65,11 @@ export class BrowserScreen extends AbstractBrowserUtils {
     }
   }
 
-  static async screenshot(config: BrowserScreenScreenshotConfig = {}): Promise<Blob | null> {
-    const stream = await this.startShare(config.capture);
+  static async screenshot(config?: BrowserScreenScreenshotConfig): Promise<Blob | undefined> {
+    const { capture, image } = config ?? {};
+    const stream = await this.startShare(capture);
     if (!stream) {
-      return null;
+      return undefined;
     }
 
     const video = document.createElement('video');
@@ -89,21 +90,25 @@ export class BrowserScreen extends AbstractBrowserUtils {
       canvas.height = video.videoHeight;
 
       if (!canvas.width || !canvas.height) {
-        return null;
+        return undefined;
       }
 
       const context = canvas.getContext('2d');
       if (!context) {
-        return null;
+        return undefined;
       }
 
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      return await new Promise<Blob | null>((resolve) => {
-        canvas.toBlob(resolve, config.image?.type ?? 'image/png', config.image?.quality);
+      return await new Promise<Blob | undefined>((resolve) => {
+        canvas.toBlob(
+          (blob) => resolve(blob ?? undefined),
+          image?.type ?? 'image/png',
+          image?.quality,
+        );
       });
     } catch {
-      return null;
+      return undefined;
     } finally {
       video.pause();
       video.srcObject = null;

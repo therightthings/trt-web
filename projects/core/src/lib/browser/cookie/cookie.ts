@@ -6,6 +6,11 @@ export interface CookieSetConfig {
   path?: string;
 }
 
+/**
+ * Cookie read and write helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
+ */
 export class Cookie {
   private static readonly cookiePaths = new Map<string, string>();
 

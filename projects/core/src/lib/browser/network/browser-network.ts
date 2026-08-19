@@ -18,6 +18,10 @@ import type {
  *
  * subscription.unsubscribe();
  * ```
+ *
+ * Network status and connection information helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Network_Information_API
  */
 export class BrowserNetwork extends AbstractBrowserUtils {
   private static subscriptions = new Set<() => void>();

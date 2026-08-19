@@ -568,6 +568,10 @@ h1 {
   }
 }
 
+.home-groups .utility-card {
+  background: var(--app-bg-input);
+}
+
 .card {
   padding: 24px;
   margin-top: 10px;
@@ -677,6 +681,37 @@ h1 {
   background: var(--app-bg-code);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+}
+
+.pointer-zone {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px dashed var(--app-border-default);
+  border-radius: 8px;
+
+  strong {
+    grid-column: 1 / -1;
+    color: var(--app-text-default);
+  }
+
+  span {
+    padding: 32px 12px;
+    border-radius: 8px;
+    color: var(--app-text-default);
+    background: var(--app-bg-surface);
+    text-align: center;
+    transition:
+      background 120ms ease,
+      color 120ms ease;
+
+    &:hover {
+      color: var(--app-text-on-accent);
+      background: var(--app-accent-default);
+    }
+  }
 }
 
 .test-case {

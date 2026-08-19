@@ -10,6 +10,12 @@ import type {
   BrowserMediaStreamConstraints,
 } from './browser-media.type';
 
+/**
+ * Shared media stream and recording helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder
+ */
 export class BrowserMedia extends AbstractBrowserUtils {
   private static recorder: MediaRecorder | undefined;
   private static chunks: Blob[] = [];

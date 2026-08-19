@@ -30,8 +30,8 @@ export const createScreenPage = (): HTMLElement => {
         </label>
         <div class="demo-actions">
           <button id="screen-support" type="button">Check support</button>
-          <button id="screen-start" type="button">Start capture</button>
-          <button id="screen-stop" type="button">Stop capture</button>
+          <button id="screen-start" type="button">Start screen share</button>
+          <button id="screen-stop" type="button">Stop screen share</button>
           <button id="screen-current" type="button">Read current stream</button>
         </div>
       </article>
@@ -88,18 +88,18 @@ export const createScreenPage = (): HTMLElement => {
 
   page.querySelector('#screen-start')?.addEventListener('click', async () => {
     result.textContent = 'Waiting for screen selection...';
-    const stream = await BrowserScreen.startCapture(captureConstraints());
+    const stream = await BrowserScreen.startShare(captureConstraints());
     if (!stream) {
       result.textContent = 'Screen capture was not started.';
       return;
     }
 
     preview.srcObject = stream;
-    result.textContent = `Capture active: ${BrowserScreen.isStreamActive(stream)}.`;
+    result.textContent = `Capture active: ${BrowserScreen.isStreamActive}.`;
   });
 
   page.querySelector('#screen-stop')?.addEventListener('click', () => {
-    const stopped = BrowserScreen.stopCapture();
+    const stopped = BrowserScreen.stopShare();
     preview.srcObject = null;
     result.textContent = stopped ? 'Screen capture stopped.' : 'No active screen capture.';
   });
@@ -109,9 +109,9 @@ export const createScreenPage = (): HTMLElement => {
   });
 
   page.querySelector('#screen-current')?.addEventListener('click', () => {
-    const stream = BrowserScreen.getCurrentStream();
+    const stream = BrowserScreen.currentStream;
     result.textContent = stream
-      ? `Current stream active: ${BrowserScreen.isStreamActive(stream)}.`
+      ? `Current stream active: ${BrowserScreen.isStreamActive}.`
       : 'No current stream.';
   });
 
@@ -122,7 +122,7 @@ export const createScreenPage = (): HTMLElement => {
       | 'image/jpeg'
       | 'image/webp';
     const quality = Number(page.querySelector<HTMLInputElement>('#screen-quality')!.value);
-    const blob = await BrowserScreen.takeScreenshot({
+    const blob = await BrowserScreen.screenshot({
       capture: captureConstraints(),
       image: { type, quality },
     });
@@ -148,8 +148,8 @@ export const createScreenPage = (): HTMLElement => {
       : 'Start capture before recording.';
   });
 
-  page.querySelector('#screen-record-stop')?.addEventListener('click', () => {
-    const recording = BrowserScreen.stopRecording();
+  page.querySelector('#screen-record-stop')?.addEventListener('click', async () => {
+    const recording = await BrowserScreen.stopRecording();
     if (!recording || !recording.blob.size) {
       result.textContent = 'No recording data available.';
       return;

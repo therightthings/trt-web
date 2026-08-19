@@ -20,6 +20,12 @@ import type {
   BrowserBluetoothWritePayload,
 } from './browser-bluetooth.type';
 
+/**
+ * Bluetooth device connection and GATT helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Bluetooth
+ */
 export class BrowserBluetooth extends AbstractBrowserUtils {
   private static device?: BrowserBluetoothDevice;
   private static server?: BrowserBluetoothRemoteGATTServer;

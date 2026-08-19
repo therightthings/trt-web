@@ -1,6 +1,11 @@
 import { requireBrowserEnv } from '../../utils';
 import { BrowserPermissionName, BrowserPermissionState } from './browser-permission.type';
 
+/**
+ * Browser permission query and request helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Permissions_API
+ */
 export class BrowserPermission {
   static supportedPermissions() {
     const supports: readonly BrowserPermissionName[] = [

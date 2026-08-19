@@ -1,6 +1,11 @@
 import { requireBrowserEnv } from '../../utils';
 import type { BrowserKeyboardEventInfo, BrowserPointerEventInfo } from './browser-window.type';
 
+/**
+ * Helpers for the current browser window and its events.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Window
+ */
 export class BrowserWindow {
   static reload(): void {
     requireBrowserEnv();

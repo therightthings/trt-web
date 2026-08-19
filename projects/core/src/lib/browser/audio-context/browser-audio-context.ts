@@ -3,6 +3,12 @@ import { AbstractBrowserUtils } from '../abstract-browser';
 import type { BrowserAudioContextWindow } from './browser-audio-context.type';
 import { BrowserAudioSession } from './browser-audio-session';
 
+/**
+ * Shared Web Audio context and audio session helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioContext
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
+ */
 export class BrowserAudioContext extends AbstractBrowserUtils {
   static #instance?: BrowserAudioContext;
   private audioContext?: AudioContext;

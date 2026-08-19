@@ -14,6 +14,11 @@ import type { BrowserTabActivityState } from './browser-tab-activity.type';
  *
  * subscription.unsubscribe();
  * ```
+ *
+ * Browser tab visibility and focus activity helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/blur_event
  */
 export class BrowserTabActivity extends AbstractBrowserUtils {
   private static subscriptions = new Set<() => void>();
