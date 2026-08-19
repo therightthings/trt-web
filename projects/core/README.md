@@ -135,6 +135,324 @@ npm install @trt-web/core
   `target: '_blank'` is the preview mode. It always uses `window.open()` for
   URL, `Blob`, and `File` sources, so the `download` attribute is not applied.
 
+- `BrowserAudioContext`
+  - `isSupported`: check whether the Web Audio API is supported.
+  - `getInstance`: get the shared audio context manager.
+  - `ready`: resume the audio context when required.
+  - `createAudioSession`: create an isolated audio playback session.
+  - `close`: close the shared audio context.
+
+  ```ts
+  const audioContext = BrowserAudioContext.getInstance();
+  await audioContext.ready();
+  const session = audioContext.createAudioSession(audioBuffer);
+  session.play();
+  session.stop();
+  await audioContext.close();
+  ```
+
+- `BrowserBluetooth`
+  - `isSupported`: check whether Web Bluetooth is supported.
+  - `isAvailable`: check whether Bluetooth is currently available.
+  - `getPairedDevices`: list previously permitted Bluetooth devices.
+  - `requestDevice`: request a Bluetooth device from the user.
+  - `connect`: connect to the device's GATT server.
+  - `disconnect`: disconnect from the current GATT server.
+  - `isConnected`: check whether a GATT server is connected.
+  - `getPrimaryService`: get a primary GATT service.
+  - `getCharacteristic`: get a characteristic from a service.
+  - `getCharacteristics`: list characteristics from a service.
+  - `readValue`: read a characteristic value.
+  - `writeValue`: write a value to a characteristic.
+  - `startNotifications`: listen for characteristic value changes.
+  - `stopNotifications`: stop characteristic notifications.
+
+  ```ts
+  const device = await BrowserBluetooth.requestDevice({
+    filters: [{ services: ['heart_rate'] }],
+  });
+  await BrowserBluetooth.connect(device);
+  const value = await BrowserBluetooth.readValue({
+    service: 'heart_rate',
+    characteristic: 'heart_rate_measurement',
+  });
+  await BrowserBluetooth.disconnect();
+  console.log(value);
+  ```
+
+- `BrowserFileSystem`
+  - `isSupported`: check whether the File System Access API is supported.
+  - `openFile`: open one or more file handles from the device.
+  - `readFile`: open and read one file.
+  - `readFiles`: open and read multiple files.
+  - `saveFile`: save data through the file picker.
+  - `openDirectory`: open a directory handle.
+
+  ```ts
+  const file = await BrowserFileSystem.readFile();
+  if (file) {
+    console.log(file.file.name, file.file.size);
+  }
+  ```
+
+- `BrowserMedia`
+  - `isSupported`: check whether media devices are supported.
+  - `getUserMedia`: request camera or microphone media.
+  - `getDisplayMedia`: request screen-sharing media.
+  - `listMediaDevices`: list available media devices.
+  - `isRecorderSupported`: check whether MediaRecorder is supported.
+  - `getRecorder`: get the current media recorder.
+  - `getRecorderState`: read the current recorder state.
+  - `createRecorder`: create a recorder for a media stream.
+  - `startRecording`: start recording a media stream.
+  - `pauseRecording`: pause the current recording.
+  - `resumeRecording`: resume the current recording.
+  - `requestRecordingData`: request the current recording data chunk.
+  - `stopRecording`: stop the current recording and return its result.
+  - `isRecording`: check whether recording is active.
+  - `isPaused`: check whether recording is paused.
+  - `isInactive`: check whether the recorder is inactive.
+
+  ```ts
+  const stream = await BrowserMedia.getUserMedia({ audio: true, video: true });
+  const recorder = await BrowserMedia.startRecording(stream, { mimeType: 'video/webm' });
+  BrowserMedia.pauseRecording();
+  BrowserMedia.resumeRecording();
+  const recording = await BrowserMedia.stopRecording();
+  stream.getTracks().forEach((track) => track.stop());
+  console.log(recorder, recording);
+  ```
+
+- `BrowserCamera`
+  - `isSupported`: check whether camera capture is supported.
+  - `facingModes`: detect available camera facing modes.
+  - `listDevices`: list available camera devices.
+  - `turnOn`: request and start a camera stream.
+  - `turnOff`: stop the current camera stream.
+  - `requestRecordingData`: request the current recording data chunk.
+  - `startRecording`: start recording the camera stream.
+  - `pauseRecording`: pause camera recording.
+  - `resumeRecording`: resume camera recording.
+  - `stopRecording`: stop camera recording and return its result.
+
+  ```ts
+  const video = document.querySelector<HTMLVideoElement>('#camera-preview')!;
+  const result = await BrowserCamera.turnOn({ facingMode: 'front' });
+  if (result.success) {
+    video.srcObject = result.data;
+  }
+  ```
+
+- `BrowserMicrophone`
+  - `isSupported`: check whether microphone capture is supported.
+  - `listDevices`: list available microphone devices.
+  - `turnOn`: request and start a microphone stream.
+  - `turnOff`: stop the current microphone stream.
+  - `requestRecordingData`: request the current recording data chunk.
+  - `startRecording`: start recording the microphone stream.
+  - `pauseRecording`: pause microphone recording.
+  - `resumeRecording`: resume microphone recording.
+  - `stopRecording`: stop microphone recording and return its result.
+
+  ```ts
+  const audio = document.querySelector<HTMLAudioElement>('#microphone-preview')!;
+  const result = await BrowserMicrophone.turnOn();
+
+  if (result.success) {
+    audio.srcObject = result.data;
+    await audio.play();
+
+    await BrowserMicrophone.startRecording({ mimeType: 'audio/webm' });
+    await BrowserMicrophone.stopRecording();
+    BrowserMicrophone.turnOff();
+  }
+  ```
+
+- `BrowserScreen`
+  - `isSupported`: check whether screen capture is supported.
+  - `startShare`: start screen or window sharing.
+  - `stopShare`: stop the current screen-sharing stream.
+  - `screenshot`: capture a frame from the shared screen.
+  - `startRecording`: start recording the shared screen.
+  - `pauseRecording`: pause screen recording.
+  - `resumeRecording`: resume screen recording.
+  - `requestRecordingData`: request the current recording data chunk.
+  - `stopRecording`: stop screen recording and return its result.
+
+  ```ts
+  const screenshot = await BrowserScreen.screenshot({
+    image: { type: 'image/png' },
+  });
+  if (screenshot) {
+    console.log(screenshot.size);
+  }
+  ```
+
+- `BrowserNetwork`
+  - `isSupported`: check whether network information is available.
+  - `getState`: read online status and connection information.
+  - `subscribe`: listen for network changes and return a subscription.
+
+  ```ts
+  const subscription = BrowserNetwork.subscribe((state) => {
+    console.log(state.status, state.effectiveType);
+  });
+
+  subscription.unsubscribe();
+  ```
+
+- `BrowserNfc`
+  - `isSupported`: check whether Web NFC is supported.
+  - `isScanning`: check whether NFC scanning is active.
+  - `startScan`: start reading NFC messages.
+  - `stopScan`: stop NFC scanning.
+  - `write`: write an NFC message.
+
+  ```ts
+  await BrowserNfc.startScan({
+    onReading: (event) => console.log(event.message),
+  });
+  await BrowserNfc.write({ records: [{ recordType: 'text', data: 'Hello NFC' }] });
+  BrowserNfc.stopScan();
+  ```
+
+- `BrowserPeerConnection`
+  - `isSupported`: check secure-context WebRTC support.
+  - `isConnected`: check whether the peer connection is connected.
+  - `createPeerConnection`: create and configure a peer connection.
+  - `createDataChannel`: create a data channel.
+  - `createOffer`: create an SDP offer.
+  - `createAnswer`: create an SDP answer.
+  - `setLocalDescription`: set the local SDP description.
+  - `setRemoteDescription`: set the remote SDP description.
+  - `addIceCandidate`: add a remote ICE candidate.
+  - `getStats`: read connection statistics.
+  - `restartIce`: request an ICE restart.
+  - `close`: close the peer connection and remove listeners.
+
+  ```ts
+  BrowserPeerConnection.createPeerConnection({
+    config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] },
+    handlers: { onIceCandidate: (event) => console.log(event.candidate) },
+  });
+  const offer = await BrowserPeerConnection.createOffer();
+  await BrowserPeerConnection.setLocalDescription(offer);
+  BrowserPeerConnection.close();
+  ```
+
+- `BrowserSpeechToText`
+  - `isSupported`: check whether Speech Recognition is supported.
+  - `recognize`: recognize speech using the configured language.
+
+  ```ts
+  const text = await BrowserSpeechToText.recognize({
+    lang: 'en-US',
+    interimResults: true,
+  });
+  console.log(text);
+  ```
+
+- `BrowserTextToSpeech`
+  - `isSupported`: check whether Speech Synthesis is supported.
+  - `speak`: speak text using the selected voice and options.
+  - `getVoices`: list available speech synthesis voices.
+  - `pause`: pause current speech.
+  - `resume`: resume paused speech.
+  - `cancel`: cancel current speech.
+  - `isSpeaking`: check whether speech is active.
+  - `isPaused`: check whether speech is paused.
+
+  ```ts
+  await BrowserTextToSpeech.speak('Hello from the browser', { lang: 'en-US' });
+  console.log(BrowserTextToSpeech.isSpeaking());
+  ```
+
+- `BrowserTabActivity`
+  - `isSupported`: check whether tab activity tracking is supported.
+  - `getState`: read the current focus and visibility state.
+  - `subscribe`: listen for tab activity changes and return a subscription.
+
+  ```ts
+  const subscription = BrowserTabActivity.subscribe((state) => {
+    console.log(state);
+  });
+  subscription.unsubscribe();
+  ```
+
+- `BrowserTheme`
+  - `isSupported`: check whether system theme observation is supported.
+  - `getSystemTheme`: read the system `dark` or `light` theme.
+  - `subscribe`: listen for system theme changes and return a subscription.
+
+  ```ts
+  const applyTheme = (theme: 'dark' | 'light') => {
+    document.documentElement.dataset['theme'] = theme;
+  };
+
+  applyTheme(BrowserTheme.getSystemTheme());
+  const subscription = BrowserTheme.subscribe((theme) => {
+    applyTheme(theme);
+  });
+
+  subscription.unsubscribe();
+  ```
+
+- `BrowserVibration`
+  - `isSupported`: check whether the Vibration API is supported.
+  - `vibrate`: start a vibration pattern on the device.
+  - `cancel`: cancel the current vibration.
+
+  ```ts
+  BrowserVibration.vibrate([200, 100, 200]);
+  BrowserVibration.cancel();
+  ```
+
+- `BrowserWakeLock`
+  - `isSupported`: check whether the Screen Wake Lock API is supported.
+  - `isActive`: check whether a screen wake lock is active.
+  - `enable`: request a screen wake lock.
+  - `disable`: release the active screen wake lock.
+
+  ```ts
+  await BrowserWakeLock.enable();
+  console.log(BrowserWakeLock.isActive());
+  await BrowserWakeLock.disable();
+  ```
+
+- `BrowserWindow`
+  - `goBack`: navigate backward in the current tab.
+  - `goForward`: navigate forward in the current tab.
+  - `alert`: show a browser alert dialog.
+  - `confirm`: show a browser confirmation dialog.
+  - `prompt`: show a browser prompt dialog.
+  - `print`: open the browser print dialog.
+  - `preload`: preload a URL resource.
+  - `getKeyboardEventInfo`: extract keyboard event information.
+  - `getPointerEventInfo`: extract pointer event information.
+
+  ```ts
+  BrowserWindow.preload('/assets/app.js');
+  const confirmed = BrowserWindow.confirm('Continue?');
+  if (confirmed) {
+    BrowserWindow.print();
+  }
+  ```
+
+- `BrowserWindowManager`
+  - `open`: open and monitor a child browser window.
+
+  ```ts
+  const child = BrowserWindowManager.open({
+    url: '/preview',
+    name: 'preview-window',
+  });
+  child?.close();
+  ```
+
+- Browser worker utilities
+  - `createWorker`: create a worker from a reusable function.
+  - `runWorker`: run a function in a worker and await its result.
+
 - `BrowserShare`
   - `share`: share content through the Web Share API.
 
@@ -151,15 +469,15 @@ npm install @trt-web/core
 
 - `IndexedDB`
   - `isSupported`: check whether IndexedDB is available in the browser.
-  - `register`: register a database and return its database handle.
-  - `collection`: get a singleton collection instance from a database handle.
+  - `register`: register a database, its version, and its collections.
   - `databases`: list databases available on the current origin.
-  - `add`: add an item to a collection.
+  - `collection`: get a typed singleton collection instance from a registered database.
+  - `add`: add a new item to the collection.
   - `put`: add or replace an item by its `id`.
-  - `get`: get an item by its `id`.
-  - `getAll`: get all items from a collection.
+  - `get`: read an item by its `id`.
+  - `getAll`: read all items from the collection.
   - `remove`: remove an item by its `id`.
-  - `clear`: remove all items from a collection.
+  - `clear`: remove all items from the collection.
 
   ```ts
   import { IndexedDB } from '@trt-web/core';
