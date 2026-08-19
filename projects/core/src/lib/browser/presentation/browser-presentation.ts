@@ -1,5 +1,11 @@
 import { requireBrowserEnv } from '../../utils';
 
+/**
+ * Fullscreen and picture-in-picture helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Picture-in-Picture_API
+ */
 export class BrowserPresentation {
   static async enterFullscreen(element?: Element): Promise<boolean> {
     requireBrowserEnv();

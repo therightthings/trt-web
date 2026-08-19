@@ -80,6 +80,12 @@ type BrowserBatteryManager = {
   readonly level: number;
 };
 
+/**
+ * Browser environment and device information helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Navigator
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Screen
+ */
 export class BrowserEnvironment {
   static getLocale(): string {
     requireBrowserEnv();

@@ -1,5 +1,10 @@
 import { requireBrowserEnv, stringify } from '../../utils';
 
+/**
+ * Typed local storage helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
+ */
 export class LocalStorage {
   private static isQuotaError(err: unknown): boolean {
     return (

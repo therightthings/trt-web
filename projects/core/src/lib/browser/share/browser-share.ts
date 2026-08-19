@@ -5,6 +5,11 @@ import {
 } from '../permission/browser-permission.type';
 import { BrowserShareData } from './browser-share.type';
 
+/**
+ * Web Share API helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Web_Share_API
+ */
 export class BrowserShare {
   static async share(data: BrowserShareData): Promise<ExecuteBrowserServiceResult> {
     requireBrowserEnv();

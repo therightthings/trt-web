@@ -1,0 +1,12 @@
+{
+  "name": "core-demo",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "projects/core-demo/src",
+  "projectType": "application",
+  "tags": ["scope:demo", "type:application"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

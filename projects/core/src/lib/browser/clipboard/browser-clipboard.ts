@@ -2,6 +2,11 @@ import { requireBrowserEnv } from '../../utils';
 import { BrowserPermission } from '../permission/browser-permission';
 import { ExecuteBrowserServiceResult } from '../permission/browser-permission.type';
 
+/**
+ * Clipboard read and write helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API
+ */
 export class BrowserClipboard {
   static async copy(text: string): Promise<ExecuteBrowserServiceResult> {
     requireBrowserEnv();

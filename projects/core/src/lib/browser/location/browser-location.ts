@@ -3,6 +3,11 @@ import { BrowserPermission } from '../permission/browser-permission';
 import { ExecuteBrowserServiceResult } from '../permission/browser-permission.type';
 import { BrowserLocationOptions, GeoSpeed } from './browser-location.type';
 
+/**
+ * Geolocation and browser location helpers.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API
+ */
 export class BrowserLocation {
   private static geoSpeedMap: {
     [key in GeoSpeed]: PositionOptions;
