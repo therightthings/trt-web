@@ -2,10 +2,8 @@ import { isType, requireBrowserEnv } from '../../../utils';
 import { AbstractBrowserUtils } from '../../abstract-browser';
 import { BrowserPermission } from '../../permission/browser-permission';
 import { BrowserMedia } from '../core/browser-media';
-import type {
-  BrowserMediaRecorderOptions,
-  BrowserMediaRecordingResult,
-} from '../core/browser-media.type';
+import type { BrowserMediaRecorderOptions } from '../core/browser-media.type';
+import type { BrowserMediaRecorderSession } from '../core/browser-media-recorder-session';
 import type {
   BrowserCameraDevice,
   BrowserCameraFacingMode,
@@ -151,28 +149,13 @@ export class BrowserCamera extends AbstractBrowserUtils {
     }
   }
 
-  static requestRecordingData(): boolean {
-    return BrowserMedia.requestRecordingData();
-  }
-
-  static startRecording(options?: BrowserMediaRecorderOptions): Promise<MediaRecorder | undefined> {
+  static createRecorder(
+    options?: BrowserMediaRecorderOptions,
+  ): Promise<BrowserMediaRecorderSession | undefined> {
     if (!this.stream) {
       return Promise.resolve(undefined);
     }
 
-    return BrowserMedia.startRecording(this.stream, options);
-  }
-
-  static pauseRecording(): boolean {
-    return BrowserMedia.pauseRecording();
-  }
-
-  static resumeRecording(): boolean {
-    return BrowserMedia.resumeRecording();
-  }
-
-  static async stopRecording(): Promise<BrowserMediaRecordingResult | undefined> {
-    const recording = await BrowserMedia.stopRecording();
-    return recording;
+    return BrowserMedia.createRecorder(this.stream, options);
   }
 }

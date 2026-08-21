@@ -191,6 +191,17 @@ export class BrowserFileSystem extends AbstractBrowserUtils {
     return file?.text;
   }
 
+  static async readArrayBuffer(
+    handle: BrowserFileSystemFileHandle,
+  ): Promise<ArrayBuffer | undefined> {
+    try {
+      const file = await handle.getFile();
+      return await file.arrayBuffer();
+    } catch {
+      return undefined;
+    }
+  }
+
   static async writeText(
     handle: BrowserFileSystemFileHandle,
     text: string,
