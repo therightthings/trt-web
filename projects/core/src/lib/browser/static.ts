@@ -1,4 +1,18 @@
 export type { BrowserSubscription } from '../utils/browser-subscription.type';
+export { BrowserAI } from './ai/browser-ai';
+export type {
+  BrowserAIAvailability,
+  BrowserAIDetection,
+  BrowserAIProgress,
+  BrowserAIProgressHandler,
+  BrowserAIProgressPhase,
+  BrowserAISummarizeOptions,
+  BrowserAISummarizerFormat,
+  BrowserAISummarizerLength,
+  BrowserAISummarizerType,
+  BrowserAISupportedFeatures,
+  BrowserAITranslateOptions,
+} from './ai/browser-ai.type';
 export { BrowserAudioContext } from './audio-context/browser-audio-context';
 export type {
   BrowserAudioContextAnalyserOptions,

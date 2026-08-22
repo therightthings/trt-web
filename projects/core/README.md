@@ -151,6 +151,65 @@ npm install @trt-web/core
   await audioContext.close();
   ```
 
+- `BrowserAI`
+  - `isSupported`: check whether at least one supported built-in browser AI API is available.
+  - `isLanguageDetectorSupported`: check whether the Language Detector API is available.
+  - `isSummarizerSupported`: check whether the Summarizer API is available.
+  - `isTranslatorSupported`: check whether the Translator API is available.
+  - `supportedFeatures`: return support status for each built-in AI feature.
+  - `detectAvailability`: read Language Detector availability.
+  - `summarizeAvailability`: read Summarizer availability for the requested options.
+  - `translateAvailability`: read Translator availability for a language pair.
+  - `detectLanguage`: detect languages and confidence scores from text.
+  - `summarize`: summarize text with the selected format and length.
+  - `translate`: translate text between the selected source and target languages.
+  - `onProgress`: optional callback in `detectLanguage`, `summarize` and `translate`; receives `{ phase, progress }`, where `phase` is `downloading`, `processing` or `done`, and `progress` is between `0` and `1`.
+
+  ```ts
+  onProgress: ({ phase, progress }) => {
+    console.log(phase, `${Math.round(progress * 100)}%`);
+  };
+  // Output: downloading 50%
+  // Output: processing 0%
+  // Output: done 100%
+  ```
+
+  ```ts
+  if (BrowserAI.isTranslatorSupported()) {
+    const availability = await BrowserAI.translateAvailability({
+      sourceLanguage: 'en',
+      targetLanguage: 'vi',
+    });
+
+    if (availability === 'available') {
+      const translated = await BrowserAI.translate('Hello from the browser', {
+        sourceLanguage: 'en',
+        targetLanguage: 'vi',
+        onProgress: (progress) => {
+          console.log(progress.phase, `${Math.round(progress.progress * 100)}%`);
+        },
+      });
+      console.log(translated);
+    }
+  }
+
+  const detections = await BrowserAI.detectLanguage('Bonjour tout le monde', {
+    onProgress: (progress) => {
+      console.log(progress.phase, `${Math.round(progress.progress * 100)}%`);
+    },
+  });
+  console.log(detections);
+
+  const summary = await BrowserAI.summarize('Long text...', {
+    format: 'plain-text',
+    length: 'short',
+    onProgress: (progress) => {
+      console.log(progress.phase, `${Math.round(progress.progress * 100)}%`);
+    },
+  });
+  console.log(summary);
+  ```
+
 - `BrowserBluetooth`
   - `isSupported`: check whether Web Bluetooth is supported.
   - `isAvailable`: check whether Bluetooth is currently available.

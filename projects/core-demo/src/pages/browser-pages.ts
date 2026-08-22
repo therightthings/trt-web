@@ -1,4 +1,5 @@
 import {
+  BrowserAI,
   BrowserAudioContext,
   BrowserBluetooth,
   BrowserCamera,
@@ -21,6 +22,7 @@ import {
 } from '@trt-web/core';
 
 import { createDemoPage, type DemoPageConfig } from '../components/demo-page';
+import { createAiPage } from './browser/ai-page';
 import { createAudioContextPage } from './browser/audio-context-page';
 import { createBluetoothPage } from './browser/bluetooth-page';
 import { createCameraPage } from './browser/camera-page';
@@ -96,6 +98,7 @@ const demoActions: Record<
 };
 
 const supportChecks: Record<string, () => boolean> = {
+  ai: () => BrowserAI.isSupported(),
   'audio-context': () => BrowserAudioContext.isSupported(),
   bluetooth: () => BrowserBluetooth.isSupported(),
   camera: () => BrowserCamera.isSupported(),
@@ -330,6 +333,21 @@ const pages: Record<string, DemoPageConfig> = {
     description: 'Create, control and analyze audio using AudioContext.',
     methods: ['isSupported()', 'getInstance()', 'ready()', 'createAudioSession()', 'close()'],
   },
+  ai: {
+    title: 'BrowserAI',
+    path: 'browser/ai',
+    description: 'Use built-in browser AI for detection, summarization and translation.',
+    methods: [
+      'isSupported()',
+      'supportedFeatures()',
+      'detectAvailability()',
+      'summarizeAvailability()',
+      'translateAvailability()',
+      'detectLanguage()',
+      'summarize()',
+      'translate()',
+    ],
+  },
   bluetooth: {
     title: 'BrowserBluetooth',
     path: 'browser/bluetooth',
@@ -543,6 +561,7 @@ export const groupPages: Record<string, GroupPageConfig> = {
     path: 'browser',
     description: 'Choose a browser utility to explore.',
     entries: [
+      ['ai', 'AI'],
       ['audio-context', 'Audio Context'],
       ['bluetooth', 'Bluetooth'],
       ['clipboard', 'Clipboard'],
@@ -684,6 +703,10 @@ export const createBrowserPage = (pageId: string): HTMLElement | null => {
 
   if (pageId === 'audio-context') {
     return createAudioContextPage();
+  }
+
+  if (pageId === 'ai') {
+    return createAiPage();
   }
 
   if (pageId === 'bluetooth') {

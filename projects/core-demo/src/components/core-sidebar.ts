@@ -12,6 +12,7 @@ const menuItems: DemoMenuItem[] = [
   {
     label: 'browser',
     children: [
+      { label: 'ai', pageId: 'ai' },
       { label: 'audio-context' },
       { label: 'bluetooth' },
       { label: 'clipboard' },

@@ -3,6 +3,7 @@ import * as trt from './lib';
 export { createWorker, runWorker } from './lib/browser';
 export type * from './lib/browser/static';
 export {
+  BrowserAI,
   BrowserAudioContext,
   BrowserBluetooth,
   BrowserCamera,
