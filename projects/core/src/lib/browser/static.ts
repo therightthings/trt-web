@@ -1,5 +1,4 @@
 export type { BrowserSubscription } from '../utils/browser-subscription.type';
-export { AbstractBrowserUtils } from './abstract-browser';
 export { BrowserAudioContext } from './audio-context/browser-audio-context';
 export type {
   BrowserAudioContextAnalyserOptions,
@@ -65,15 +64,10 @@ export type {
   BrowserCameraOptions,
   BrowserCameraResult,
 } from './media/camera/browser-camera.type';
-export { BrowserMedia } from './media/core/browser-media';
 export type {
-  BrowserDisplayMediaConstraints,
-  BrowserMediaDevice,
   BrowserMediaRecorderOptions,
-  BrowserMediaRecorderState,
   BrowserMediaRecordingHandlers,
   BrowserMediaRecordingResult,
-  BrowserMediaStreamConstraints,
 } from './media/core/browser-media.type';
 export { BrowserMicrophone } from './media/microphone/browser-microphone';
 export type {

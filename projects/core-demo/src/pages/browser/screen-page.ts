@@ -75,6 +75,7 @@ export const createScreenPage = (): HTMLElement => {
   const download = page.querySelector<HTMLElement>('#screen-download')!;
   let screenshotUrl: string | null = null;
   let recordingUrl: string | null = null;
+  let recordingSession: Awaited<ReturnType<typeof BrowserScreen.createRecorder>>;
 
   const captureConstraints = () => {
     const surface = page.querySelector<HTMLSelectElement>('#screen-surface')!.value;
@@ -142,14 +143,15 @@ export const createScreenPage = (): HTMLElement => {
 
   page.querySelector('#screen-record-start')?.addEventListener('click', async () => {
     const mimeType = page.querySelector<HTMLSelectElement>('#screen-mime')!.value;
-    const recorder = await BrowserScreen.startRecording({ mimeType });
-    result.textContent = recorder
-      ? `Recording: ${recorder.mimeType}`
+    recordingSession = await BrowserScreen.createRecorder({ mimeType });
+    result.textContent = recordingSession
+      ? `Recording: ${recordingSession.mimeType}`
       : 'Start capture before recording.';
   });
 
   page.querySelector('#screen-record-stop')?.addEventListener('click', async () => {
-    const recording = await BrowserScreen.stopRecording();
+    const recording = await recordingSession?.stop();
+    recordingSession = undefined;
     if (!recording || !recording.blob.size) {
       result.textContent = 'No recording data available.';
       return;
@@ -164,13 +166,13 @@ export const createScreenPage = (): HTMLElement => {
   });
 
   page.querySelector('#screen-record-pause')?.addEventListener('click', () => {
-    result.textContent = `Pause: ${BrowserScreen.pauseRecording()}.`;
+    result.textContent = `Pause: ${recordingSession?.pause() ?? false}.`;
   });
   page.querySelector('#screen-record-resume')?.addEventListener('click', () => {
-    result.textContent = `Resume: ${BrowserScreen.resumeRecording()}.`;
+    result.textContent = `Resume: ${recordingSession?.resume() ?? false}.`;
   });
   page.querySelector('#screen-record-data')?.addEventListener('click', () => {
-    result.textContent = `Request data: ${BrowserScreen.requestRecordingData()}.`;
+    result.textContent = `Request data: ${recordingSession?.requestData() ?? false}.`;
   });
 
   return page;

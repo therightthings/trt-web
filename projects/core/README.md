@@ -185,42 +185,29 @@ npm install @trt-web/core
   - `openFile`: open one or more file handles from the device.
   - `readFile`: open and read one file.
   - `readFiles`: open and read multiple files.
+  - `readText`: read text from an existing file handle.
+  - `readArrayBuffer`: read binary data from an existing file handle.
   - `saveFile`: save data through the file picker.
   - `openDirectory`: open a directory handle.
+  - `listDirectory`: list files and directories from a directory handle.
+  - `getOpfsRoot`: get the origin private file system root.
+  - `writeText`: replace a file's text contents.
+  - `appendText`: append text to a file.
+  - `removeEntry`: remove a file or directory entry.
+  - `requestPermission`: query and request access to a file or directory handle.
 
   ```ts
   const file = await BrowserFileSystem.readFile();
   if (file) {
     console.log(file.file.name, file.file.size);
   }
-  ```
 
-- `BrowserMedia`
-  - `isSupported`: check whether media devices are supported.
-  - `getUserMedia`: request camera or microphone media.
-  - `getDisplayMedia`: request screen-sharing media.
-  - `listMediaDevices`: list available media devices.
-  - `isRecorderSupported`: check whether MediaRecorder is supported.
-  - `getRecorder`: get the current media recorder.
-  - `getRecorderState`: read the current recorder state.
-  - `createRecorder`: create a recorder for a media stream.
-  - `startRecording`: start recording a media stream.
-  - `pauseRecording`: pause the current recording.
-  - `resumeRecording`: resume the current recording.
-  - `requestRecordingData`: request the current recording data chunk.
-  - `stopRecording`: stop the current recording and return its result.
-  - `isRecording`: check whether recording is active.
-  - `isPaused`: check whether recording is paused.
-  - `isInactive`: check whether the recorder is inactive.
-
-  ```ts
-  const stream = await BrowserMedia.getUserMedia({ audio: true, video: true });
-  const recorder = await BrowserMedia.startRecording(stream, { mimeType: 'video/webm' });
-  BrowserMedia.pauseRecording();
-  BrowserMedia.resumeRecording();
-  const recording = await BrowserMedia.stopRecording();
-  stream.getTracks().forEach((track) => track.stop());
-  console.log(recorder, recording);
+  const fileHandle = await BrowserFileSystem.openFile();
+  if (fileHandle && !Array.isArray(fileHandle)) {
+    const binary = await BrowserFileSystem.readArrayBuffer(fileHandle);
+    const text = await BrowserFileSystem.readText(fileHandle);
+    console.log(binary?.byteLength, text);
+  }
   ```
 
 - `BrowserCamera`
@@ -229,17 +216,24 @@ npm install @trt-web/core
   - `listDevices`: list available camera devices.
   - `turnOn`: request and start a camera stream.
   - `turnOff`: stop the current camera stream.
-  - `requestRecordingData`: request the current recording data chunk.
-  - `startRecording`: start recording the camera stream.
-  - `pauseRecording`: pause camera recording.
-  - `resumeRecording`: resume camera recording.
-  - `stopRecording`: stop camera recording and return its result.
+  - `currentStream`: get the current camera stream.
+  - `isStreamActive`: check whether the current camera stream is active.
+  - `createRecorder`: create an independent recorder session for the camera stream.
 
   ```ts
   const video = document.querySelector<HTMLVideoElement>('#camera-preview')!;
   const result = await BrowserCamera.turnOn({ facingMode: 'front' });
   if (result.success) {
     video.srcObject = result.data;
+
+    const recorder = await BrowserCamera.createRecorder({ mimeType: 'video/webm' });
+    recorder?.pause();
+    recorder?.resume();
+
+    const output = await recorder?.stop();
+    console.log(output?.blob);
+
+    BrowserCamera.turnOff();
   }
   ```
 
@@ -248,11 +242,9 @@ npm install @trt-web/core
   - `listDevices`: list available microphone devices.
   - `turnOn`: request and start a microphone stream.
   - `turnOff`: stop the current microphone stream.
-  - `requestRecordingData`: request the current recording data chunk.
-  - `startRecording`: start recording the microphone stream.
-  - `pauseRecording`: pause microphone recording.
-  - `resumeRecording`: resume microphone recording.
-  - `stopRecording`: stop microphone recording and return its result.
+  - `currentStream`: get the current microphone stream.
+  - `isStreamActive`: check whether the current microphone stream is active.
+  - `createRecorder`: create an independent recorder session for the microphone stream.
 
   ```ts
   const audio = document.querySelector<HTMLAudioElement>('#microphone-preview')!;
@@ -262,8 +254,13 @@ npm install @trt-web/core
     audio.srcObject = result.data;
     await audio.play();
 
-    await BrowserMicrophone.startRecording({ mimeType: 'audio/webm' });
-    await BrowserMicrophone.stopRecording();
+    const recorder = await BrowserMicrophone.createRecorder({ mimeType: 'audio/webm' });
+    recorder?.pause();
+    recorder?.resume();
+
+    const output = await recorder?.stop();
+    console.log(output?.blob);
+
     BrowserMicrophone.turnOff();
   }
   ```
@@ -273,20 +270,45 @@ npm install @trt-web/core
   - `startShare`: start screen or window sharing.
   - `stopShare`: stop the current screen-sharing stream.
   - `screenshot`: capture a frame from the shared screen.
-  - `startRecording`: start recording the shared screen.
-  - `pauseRecording`: pause screen recording.
-  - `resumeRecording`: resume screen recording.
-  - `requestRecordingData`: request the current recording data chunk.
-  - `stopRecording`: stop screen recording and return its result.
+  - `currentStream`: get the current screen-sharing stream.
+  - `isStreamActive`: check whether the current screen-sharing stream is active.
+  - `createRecorder`: create an independent recorder session for the shared screen.
 
   ```ts
   const screenshot = await BrowserScreen.screenshot({
     image: { type: 'image/png' },
   });
-  if (screenshot) {
-    console.log(screenshot.size);
+  console.log(screenshot?.size);
+
+  const video = document.querySelector<HTMLVideoElement>('#screen-preview')!;
+  const stream = await BrowserScreen.startShare();
+
+  if (stream) {
+    video.srcObject = stream;
+
+    const recorder = await BrowserScreen.createRecorder({ mimeType: 'video/webm' });
+    recorder?.pause();
+    recorder?.resume();
+
+    const output = await recorder?.stop();
+    console.log(output?.blob);
+
+    BrowserScreen.stopShare();
   }
   ```
+
+- `BrowserMediaRecorderSession`
+  - Created and returned by `BrowserCamera.createRecorder()`, `BrowserMicrophone.createRecorder()`, or `BrowserScreen.createRecorder()`.
+  - `recorderInstance`: access the underlying browser `MediaRecorder` instance.
+  - `state`: read the current recorder state.
+  - `mimeType`: read the recorder MIME type.
+  - `isRecording`: check whether recording is active.
+  - `isPaused`: check whether recording is paused.
+  - `isInactive`: check whether recording is inactive.
+  - `pause`: pause the current recording session.
+  - `resume`: resume the current recording session.
+  - `requestData`: request the current recording data chunk.
+  - `stop`: stop the recording and return the recorded `Blob` result.
 
 - `BrowserNetwork`
   - `isSupported`: check whether network information is available.
@@ -329,6 +351,10 @@ npm install @trt-web/core
   - `getStats`: read connection statistics.
   - `restartIce`: request an ICE restart.
   - `close`: close the peer connection and remove listeners.
+
+  This utility wraps the browser `RTCPeerConnection` API only. It does not provide
+  signaling, ICE candidate exchange, STUN/TURN infrastructure or reconnection logic.
+  A real peer-to-peer application must provide those pieces separately.
 
   ```ts
   BrowserPeerConnection.createPeerConnection({

@@ -1,10 +1,8 @@
 import { isType, requireBrowserEnv } from '../../../utils';
 import { AbstractBrowserUtils } from '../../abstract-browser';
 import { BrowserMedia } from '../core/browser-media';
-import type {
-  BrowserMediaRecorderOptions,
-  BrowserMediaRecordingResult,
-} from '../core/browser-media.type';
+import type { BrowserMediaRecorderOptions } from '../core/browser-media.type';
+import type { BrowserMediaRecorderSession } from '../core/browser-media-recorder-session';
 import type {
   BrowserScreenScreenshotConfig,
   BrowserScreenStreamConstraints,
@@ -116,29 +114,14 @@ export class BrowserScreen extends AbstractBrowserUtils {
     }
   }
 
-  static startRecording(options?: BrowserMediaRecorderOptions): Promise<MediaRecorder | undefined> {
+  static createRecorder(
+    options?: BrowserMediaRecorderOptions,
+  ): Promise<BrowserMediaRecorderSession | undefined> {
     const stream = this.stream;
     if (!stream) {
       return Promise.resolve(undefined);
     }
 
-    return BrowserMedia.startRecording(stream, options);
-  }
-
-  static async stopRecording(): Promise<BrowserMediaRecordingResult | undefined> {
-    const recording = await BrowserMedia.stopRecording();
-    return recording;
-  }
-
-  static pauseRecording(): boolean {
-    return BrowserMedia.pauseRecording();
-  }
-
-  static resumeRecording(): boolean {
-    return BrowserMedia.resumeRecording();
-  }
-
-  static requestRecordingData(): boolean {
-    return BrowserMedia.requestRecordingData();
+    return BrowserMedia.createRecorder(stream, options);
   }
 }

@@ -48,6 +48,9 @@ export const createMicrophonePage = (): HTMLElement => {
         </label>
         <div class="demo-actions">
           <button id="microphone-record-start" type="button">Start recording</button>
+          <button id="microphone-record-pause" type="button">Pause</button>
+          <button id="microphone-record-resume" type="button">Resume</button>
+          <button id="microphone-record-data" type="button">Request data</button>
           <button id="microphone-record-stop" type="button">Stop recording</button>
         </div>
         <div id="microphone-download"></div>
@@ -59,6 +62,7 @@ export const createMicrophonePage = (): HTMLElement => {
   const result = page.querySelector<HTMLElement>('#microphone-result')!;
   const download = page.querySelector<HTMLElement>('#microphone-download')!;
   let recordingUrl: string | null = null;
+  let recordingSession: Awaited<ReturnType<typeof BrowserMicrophone.createRecorder>>;
 
   const readConstraints = () => {
     const echoCancellation = page.querySelector<HTMLSelectElement>('#microphone-echo')!.value;
@@ -110,14 +114,15 @@ export const createMicrophonePage = (): HTMLElement => {
 
   page.querySelector('#microphone-record-start')?.addEventListener('click', async () => {
     const mimeType = page.querySelector<HTMLSelectElement>('#microphone-mime')!.value;
-    const recorder = await BrowserMicrophone.startRecording({ mimeType });
-    result.textContent = recorder
-      ? `Recording: ${recorder.mimeType}`
+    recordingSession = await BrowserMicrophone.createRecorder({ mimeType });
+    result.textContent = recordingSession
+      ? `Recording: ${recordingSession.mimeType}`
       : 'Could not start recording.';
   });
 
   page.querySelector('#microphone-record-stop')?.addEventListener('click', async () => {
-    const recording = await BrowserMicrophone.stopRecording();
+    const recording = await recordingSession?.stop();
+    recordingSession = undefined;
     if (!recording || !recording.blob.size) {
       result.textContent = 'No recording data available.';
       return;
@@ -129,6 +134,18 @@ export const createMicrophonePage = (): HTMLElement => {
     recordingUrl = URL.createObjectURL(recording.blob);
     download.innerHTML = /*html*/ `<a href="${recordingUrl}" download="microphone-recording.webm">Download recording</a>`;
     result.textContent = `Recording ready (${recording.blob.size} bytes).`;
+  });
+
+  page.querySelector('#microphone-record-pause')?.addEventListener('click', () => {
+    result.textContent = `Pause: ${recordingSession?.pause() ?? false}.`;
+  });
+
+  page.querySelector('#microphone-record-resume')?.addEventListener('click', () => {
+    result.textContent = `Resume: ${recordingSession?.resume() ?? false}.`;
+  });
+
+  page.querySelector('#microphone-record-data')?.addEventListener('click', () => {
+    result.textContent = `Request data: ${recordingSession?.requestData() ?? false}.`;
   });
 
   return page;

@@ -4,11 +4,9 @@ import type {
   BrowserDisplayMediaConstraints,
   BrowserMediaDevice,
   BrowserMediaRecorderOptions,
-  BrowserMediaRecorderState,
-  BrowserMediaRecordingHandlers,
-  BrowserMediaRecordingResult,
   BrowserMediaStreamConstraints,
 } from './browser-media.type';
+import { BrowserMediaRecorderSession } from './browser-media-recorder-session';
 
 /**
  * Shared media stream and recording helpers.
@@ -17,9 +15,6 @@ import type {
  * @see https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder
  */
 export class BrowserMedia extends AbstractBrowserUtils {
-  private static recorder: MediaRecorder | undefined;
-  private static chunks: Blob[] = [];
-
   static override isSupported(): boolean {
     requireBrowserEnv();
     return isType('object', navigator, 'mediaDevices');
@@ -65,18 +60,10 @@ export class BrowserMedia extends AbstractBrowserUtils {
     return Boolean(this.mediaRecorder);
   }
 
-  static getRecorder(): MediaRecorder | undefined {
-    return this.recorder;
-  }
-
-  static getRecorderState(): BrowserMediaRecorderState {
-    return this.recorder?.state ?? 'inactive';
-  }
-
-  static createRecorder(
+  static async createRecorder(
     stream: MediaStream,
-    options?: MediaRecorderOptions,
-  ): MediaRecorder | undefined {
+    options?: BrowserMediaRecorderOptions,
+  ): Promise<BrowserMediaRecorderSession | undefined> {
     if (!this.isRecorderSupported()) {
       return undefined;
     }
@@ -86,135 +73,6 @@ export class BrowserMedia extends AbstractBrowserUtils {
       return undefined;
     }
 
-    if (this.recorder) {
-      return undefined;
-    }
-
-    try {
-      this.recorder = new Recorder(stream, options);
-      this.chunks = [];
-      return this.recorder;
-    } catch {
-      this.recorder = undefined;
-      this.chunks = [];
-      return undefined;
-    }
-  }
-
-  static async startRecording(
-    stream: MediaStream,
-    options?: BrowserMediaRecorderOptions,
-  ): Promise<MediaRecorder | undefined> {
-    const { handlers = {}, timeslice, ...recorderOptions } = options ?? {};
-    const recorder = this.createRecorder(stream, recorderOptions);
-    if (!recorder) {
-      return undefined;
-    }
-
-    recorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        this.chunks.push(event.data);
-      }
-      handlers.onDataAvailable?.(event);
-    };
-    recorder.onerror = handlers.onError ?? null;
-    recorder.onstart = handlers.onStart ?? null;
-    recorder.onstop = handlers.onStop ?? null;
-    recorder.onpause = handlers.onPause ?? null;
-    recorder.onresume = handlers.onResume ?? null;
-
-    try {
-      recorder.start(timeslice);
-      return recorder;
-    } catch {
-      this.stopRecording();
-      return undefined;
-    }
-  }
-
-  static pauseRecording(): boolean {
-    if (!this.recorder || this.recorder.state !== 'recording') {
-      return false;
-    }
-
-    try {
-      this.recorder.pause();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  static resumeRecording(): boolean {
-    if (!this.recorder || this.recorder.state !== 'paused') {
-      return false;
-    }
-
-    try {
-      this.recorder.resume();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  static requestRecordingData(): boolean {
-    if (!this.recorder || this.recorder.state === 'inactive') {
-      return false;
-    }
-
-    try {
-      this.recorder.requestData();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  static stopRecording(): Promise<BrowserMediaRecordingResult | undefined> {
-    if (!this.recorder) {
-      return Promise.resolve(undefined);
-    }
-
-    const recorder = this.recorder;
-    if (recorder.state === 'inactive') {
-      return Promise.resolve(this.finalizeRecording(recorder));
-    }
-
-    return new Promise((resolve) => {
-      const onStop = (): void => {
-        recorder.removeEventListener('stop', onStop);
-        resolve(this.finalizeRecording(recorder));
-      };
-
-      recorder.addEventListener('stop', onStop, { once: true });
-      try {
-        recorder.stop();
-      } catch {
-        recorder.removeEventListener('stop', onStop);
-        resolve(undefined);
-      }
-    });
-  }
-
-  private static finalizeRecording(recorder: MediaRecorder): BrowserMediaRecordingResult {
-    const mimeType = recorder.mimeType || 'application/octet-stream';
-    const chunks = [...this.chunks];
-    const result = { blob: new Blob(chunks, { type: mimeType }), chunks, mimeType };
-    this.recorder = undefined;
-    this.chunks = [];
-    return result;
-  }
-
-  static isRecording(): boolean {
-    return this.recorder?.state === 'recording';
-  }
-
-  static isPaused(): boolean {
-    return this.recorder?.state === 'paused';
-  }
-
-  static isInactive(): boolean {
-    return this.recorder?.state !== 'recording' && this.recorder?.state !== 'paused';
+    return BrowserMediaRecorderSession.create(stream, Recorder, options);
   }
 }

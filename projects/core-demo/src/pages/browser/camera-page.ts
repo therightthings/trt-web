@@ -44,6 +44,9 @@ export const createCameraPage = (): HTMLElement => {
         </label>
         <div class="demo-actions">
           <button id="camera-record-start" type="button">Start recording</button>
+          <button id="camera-record-pause" type="button">Pause</button>
+          <button id="camera-record-resume" type="button">Resume</button>
+          <button id="camera-record-data" type="button">Request data</button>
           <button id="camera-record-stop" type="button">Stop recording</button>
         </div>
         <div id="camera-download"></div>
@@ -55,6 +58,7 @@ export const createCameraPage = (): HTMLElement => {
   const result = page.querySelector<HTMLElement>('#camera-result')!;
   const download = page.querySelector<HTMLElement>('#camera-download')!;
   let recordingUrl: string | null = null;
+  let recordingSession: Awaited<ReturnType<typeof BrowserCamera.createRecorder>>;
 
   const readConstraints = () => {
     const width = Number(page.querySelector<HTMLInputElement>('#camera-width')!.value);
@@ -118,14 +122,15 @@ export const createCameraPage = (): HTMLElement => {
 
   page.querySelector('#camera-record-start')?.addEventListener('click', async () => {
     const mimeType = page.querySelector<HTMLSelectElement>('#camera-mime')!.value;
-    const recorder = await BrowserCamera.startRecording({ mimeType });
-    result.textContent = recorder
-      ? `Recording: ${recorder.mimeType}`
+    recordingSession = await BrowserCamera.createRecorder({ mimeType });
+    result.textContent = recordingSession
+      ? `Recording: ${recordingSession.mimeType}`
       : 'Could not start recording.';
   });
 
   page.querySelector('#camera-record-stop')?.addEventListener('click', async () => {
-    const recording = await BrowserCamera.stopRecording();
+    const recording = await recordingSession?.stop();
+    recordingSession = undefined;
     if (!recording || !recording.blob.size) {
       result.textContent = 'No recording data available.';
       return;
@@ -137,6 +142,18 @@ export const createCameraPage = (): HTMLElement => {
     recordingUrl = URL.createObjectURL(recording.blob);
     download.innerHTML = /*html*/ `<a href="${recordingUrl}" download="camera-recording.webm">Download recording</a>`;
     result.textContent = `Recording ready (${recording.blob.size} bytes).`;
+  });
+
+  page.querySelector('#camera-record-pause')?.addEventListener('click', () => {
+    result.textContent = `Pause: ${recordingSession?.pause() ?? false}.`;
+  });
+
+  page.querySelector('#camera-record-resume')?.addEventListener('click', () => {
+    result.textContent = `Resume: ${recordingSession?.resume() ?? false}.`;
+  });
+
+  page.querySelector('#camera-record-data')?.addEventListener('click', () => {
+    result.textContent = `Request data: ${recordingSession?.requestData() ?? false}.`;
   });
 
   return page;
