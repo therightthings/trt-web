@@ -122,6 +122,16 @@ export type {
   BrowserNfcWriteMessage,
   BrowserNfcWriteOptions,
 } from './nfc/browser-nfc.type';
+export { BrowserNotification } from './notification/browser-notification';
+export type {
+  BrowserNotificationAction,
+  BrowserNotificationInfo,
+  BrowserNotificationInstance,
+  BrowserNotificationOptions,
+  BrowserNotificationPermission,
+  BrowserNotificationWindow,
+} from './notification/browser-notification.type';
+export { BrowserNotificationSession } from './notification/browser-notification-session';
 export { BrowserPeerConnection } from './peer-connection/browser-peer-connection';
 export type {
   BrowserPeerConnectionConfig,

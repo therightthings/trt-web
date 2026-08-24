@@ -33,6 +33,7 @@ const menuItems: DemoMenuItem[] = [
       },
       { label: 'nfc' },
       { label: 'network' },
+      { label: 'notification' },
       { label: 'permission' },
       { label: 'presentation' },
       { label: 'resource' },

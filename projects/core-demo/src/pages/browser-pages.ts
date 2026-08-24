@@ -10,6 +10,7 @@ import {
   BrowserMicrophone,
   BrowserNetwork,
   BrowserNfc,
+  BrowserNotification,
   BrowserPeerConnection,
   BrowserScreen,
   BrowserTabActivity,
@@ -37,6 +38,7 @@ import { createLocationPage } from './browser/location-page';
 import { createMicrophonePage } from './browser/microphone-page';
 import { createNetworkPage } from './browser/network-page';
 import { createNfcPage } from './browser/nfc-page';
+import { createNotificationPage } from './browser/notification-page';
 import { createPeerConnectionPage } from './browser/peer-connection-page';
 import { createPermissionPage } from './browser/permission-page';
 import { createPresentationPage } from './browser/presentation-page';
@@ -113,6 +115,7 @@ const supportChecks: Record<string, () => boolean> = {
   'local-storage': () => LocalStorage.isSupported(),
   microphone: () => BrowserMicrophone.isSupported(),
   network: () => BrowserNetwork.isSupported(),
+  notification: () => BrowserNotification.isSupported(),
   nfc: () => BrowserNfc.isSupported(),
   screen: () => BrowserScreen.isSupported(),
   'session-storage': () => SessionStorage.isSupported(),
@@ -473,6 +476,18 @@ const pages: Record<string, DemoPageConfig> = {
     description: 'Read online state and subscribe to network changes.',
     methods: ['isSupported()', 'getState()', 'subscribe()', 'unsubscribe()'],
   },
+  notification: {
+    title: 'BrowserNotification',
+    path: 'browser/notification',
+    description: 'Request permission and display browser notifications.',
+    methods: [
+      'isSupported()',
+      'getPermission()',
+      'requestPermission()',
+      'getMaxActions()',
+      'show()',
+    ],
+  },
   nfc: {
     title: 'BrowserNfc',
     path: 'browser/nfc',
@@ -610,6 +625,7 @@ export const groupPages: Record<string, GroupPageConfig> = {
       ['screen', 'Screen'],
       ['nfc', 'NFC'],
       ['network', 'Network'],
+      ['notification', 'Notification'],
       ['permission', 'Permission'],
       ['presentation', 'Presentation'],
       ['resource', 'Resource'],
@@ -763,6 +779,7 @@ export const createBrowserPage = (pageId: string): HTMLElement | null => {
 
   if (pageId === 'location') return createLocationPage();
   if (pageId === 'network') return createNetworkPage();
+  if (pageId === 'notification') return createNotificationPage();
   if (pageId === 'nfc') return createNfcPage();
   if (pageId === 'permission') return createPermissionPage();
   if (pageId === 'presentation') return createPresentationPage();

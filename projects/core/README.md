@@ -28,6 +28,54 @@ npm install @trt-web/core
   console.log(blocked); // { permission: 'denied', success: false }
   ```
 
+- `BrowserNotification`
+  - `isSupported`: check whether the Notifications API is available in a secure context.
+  - `getPermission`: read the current notification permission.
+  - `requestPermission`: request permission from the user.
+  - `getMaxActions`: read the maximum number of notification actions supported by the browser.
+  - `show`: create a notification session when permission is granted.
+
+- `BrowserNotificationSession`
+  - `getInfo`: return a structured snapshot of the notification instance properties.
+  - `addEventListener`: listen for notification events.
+  - `removeEventListener`: remove a notification event listener.
+  - `close`: close the notification.
+
+  ```ts
+  if (BrowserNotification.isSupported()) {
+    const permission = await BrowserNotification.getPermission();
+    const nextPermission =
+      permission === 'prompt' ? await BrowserNotification.requestPermission() : permission;
+
+    if (nextPermission === 'granted') {
+      const notification = BrowserNotification.show('New message', {
+        body: 'You have a new message.',
+        icon: '/icons/notification.png',
+        tag: 'messages',
+        requireInteraction: true,
+        data: { messageId: 42 },
+      });
+
+      notification?.addEventListener('show', () => console.log('Notification shown'));
+      notification?.addEventListener('click', () => console.log('Notification clicked'));
+      notification?.addEventListener('close', () => console.log('Notification closed'));
+      notification?.addEventListener('error', () => console.log('Notification failed'));
+
+      console.log(notification?.getInfo().content.title); // 'New message'
+      console.log(notification?.getInfo().content.body); // 'You have a new message.'
+      console.log(BrowserNotification.getMaxActions()); // number | undefined
+
+      notification?.close();
+    }
+  }
+  ```
+
+  `show` returns a `BrowserNotificationSession`, which exposes the standard
+  notification properties, events, and `close()` method. Notification permission requests
+  should be triggered by a user action such as a button click. For persistent
+  notifications that work outside the current page, use a service worker and
+  `ServiceWorkerRegistration.showNotification()`.
+
 - `BrowserEnvironment`
   - `getLocale`: get the user's preferred locale.
   - `getInformation`: get browser environment, hardware, battery, storage, screen, or all information.
