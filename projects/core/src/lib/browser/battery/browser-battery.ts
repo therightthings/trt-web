@@ -31,15 +31,23 @@ export class BrowserBattery extends AbstractBrowserUtils {
   private static getStateFromBattery(battery: BrowserBatteryManager): BrowserBatteryState {
     const { charging, level, chargingTime, dischargingTime } = battery;
     const percent = level <= 1 ? Math.round(level * 100) : level;
-    const normalizedDischargingTime =
-      dischargingTime === Infinity ? Number.MAX_SAFE_INTEGER : dischargingTime;
+    let normalizedChargingTime = chargingTime;
+    if (percent >= 100) {
+      normalizedChargingTime = 0;
+    } else if (chargingTime === Infinity) {
+      normalizedChargingTime = Number.MAX_SAFE_INTEGER;
+    }
+
+    let normalizedDischargingTime = dischargingTime;
+    if (dischargingTime === Infinity) {
+      normalizedDischargingTime = Number.MAX_SAFE_INTEGER;
+    }
 
     return {
       charging,
-      level,
       percent,
-      chargingTime,
-      dischargingTime: normalizedDischargingTime,
+      chargingTimeSeconds: normalizedChargingTime,
+      dischargingTimeSeconds: normalizedDischargingTime,
     };
   }
 

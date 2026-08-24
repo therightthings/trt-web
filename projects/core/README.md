@@ -205,6 +205,34 @@ npm install @trt-web/core
   console.log(session?.getWaveformData({ samples: 500 }));
   ```
 
+- `BrowserBattery`
+  - `isSupported`: check whether the Battery Status API is available.
+  - `getState`: read the current charging status, battery percentage, and estimated times.
+  - `subscribe`: listen for charging, level, charging-time, and discharging-time changes.
+
+  ```ts
+  if (BrowserBattery.isSupported()) {
+    const state = await BrowserBattery.getState();
+    console.log(state);
+    // {
+    //   charging: true,
+    //   percent: 80,
+    //   chargingTimeSeconds: 1800,
+    //   dischargingTimeSeconds: 9007199254740991,
+    // }
+
+    const subscription = await BrowserBattery.subscribe((nextState) => {
+      console.log(nextState.percent, nextState.charging);
+    });
+
+    subscription.unsubscribe();
+  }
+  ```
+
+  `chargingTimeSeconds` and `dischargingTimeSeconds` are measured in seconds.
+  An unavailable infinite discharging time is normalized to
+  `Number.MAX_SAFE_INTEGER`.
+
 - `BrowserAI`
   - `isSupported`: check whether at least one supported built-in browser AI API is available.
   - `isLanguageDetectorSupported`: check whether the Language Detector API is available.
@@ -625,15 +653,48 @@ npm install @trt-web/core
   ```
 
 - `BrowserWindowManager`
-  - `open`: open and monitor a child browser window.
+  - `open`: open a child browser window and return an instance for closing the window or listening to its lifecycle changes.
 
   ```ts
   const child = BrowserWindowManager.open({
     url: '/preview',
-    name: 'preview-window',
+    target: 'preview-window',
+    features: 'width=800,height=600,resizable=yes',
+    title: 'Preview',
+    pollInterval: 250,
   });
-  child?.close();
+
+  if (!child) {
+    console.log('The browser blocked the popup.');
+  } else {
+    child.onFocus = () => {
+      console.log('Preview focused.');
+    };
+
+    child.onBlur = () => {
+      console.log('Preview lost focus.');
+    };
+
+    child.onResize = ({ width, height }) => {
+      console.log('Preview resized:', width, height);
+    };
+
+    child.onZoomChange = ({ devicePixelRatio, direction }) => {
+      console.log('Preview zoom changed:', direction, devicePixelRatio);
+    };
+
+    child.onClose = () => {
+      console.log('Preview closed.');
+    };
+
+    child.close();
+  }
   ```
+
+  Set only the callbacks your app needs. Resize and zoom changes are monitored
+  using the configured `pollInterval`, while focus and blur use child-window
+  events. Cross-origin child windows may restrict access to their document and
+  event listeners.
 
 - Browser worker utilities
   - `createWorker`: create a worker from a reusable function.

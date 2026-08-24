@@ -8,7 +8,7 @@ const createBattery = () => {
   const battery = {
     charging: true,
     level: 0.8,
-    chargingTime: 0,
+    chargingTime: 1800,
     dischargingTime: Infinity,
     addEventListener: vi.fn((event: string, handler: EventListener) => {
       listeners.set(event, handler);
@@ -41,10 +41,9 @@ describe('BrowserBattery', () => {
 
     await expect(BrowserBattery.getState()).resolves.toEqual({
       charging: true,
-      level: 0.8,
       percent: 80,
-      chargingTime: 0,
-      dischargingTime: Number.MAX_SAFE_INTEGER,
+      chargingTimeSeconds: 1800,
+      dischargingTimeSeconds: Number.MAX_SAFE_INTEGER,
     });
   });
 
@@ -56,17 +55,39 @@ describe('BrowserBattery', () => {
 
     battery.level = 0.6;
     battery.charging = false;
+    battery.chargingTime = Infinity;
     battery.emit('levelchange');
 
     expect(handler).toHaveBeenCalledWith({
       charging: false,
-      level: 0.6,
       percent: 60,
-      chargingTime: 0,
-      dischargingTime: Number.MAX_SAFE_INTEGER,
+      chargingTimeSeconds: Number.MAX_SAFE_INTEGER,
+      dischargingTimeSeconds: Number.MAX_SAFE_INTEGER,
     });
 
     subscription.unsubscribe();
     expect(battery.removeEventListener).toHaveBeenCalledTimes(4);
+  });
+
+  it('normalizes unavailable charging time', async () => {
+    const battery = createBattery();
+    battery.chargingTime = Infinity;
+    vi.stubGlobal('navigator', { getBattery: vi.fn().mockResolvedValue(battery) });
+
+    await expect(BrowserBattery.getState()).resolves.toMatchObject({
+      chargingTimeSeconds: Number.MAX_SAFE_INTEGER,
+    });
+  });
+
+  it('returns zero charging time when the battery is full', async () => {
+    const battery = createBattery();
+    battery.level = 1;
+    battery.chargingTime = Infinity;
+    vi.stubGlobal('navigator', { getBattery: vi.fn().mockResolvedValue(battery) });
+
+    await expect(BrowserBattery.getState()).resolves.toMatchObject({
+      percent: 100,
+      chargingTimeSeconds: 0,
+    });
   });
 });
