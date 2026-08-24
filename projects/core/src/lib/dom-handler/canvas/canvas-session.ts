@@ -7,6 +7,7 @@ import type {
   CanvasImageOptions,
   CanvasLineOptions,
   CanvasPathOptions,
+  CanvasPolylineOptions,
   CanvasPutImageDataOptions,
   CanvasRectangleOptions,
   CanvasResizeOptions,
@@ -77,19 +78,66 @@ export class CanvasSession {
   }
 
   drawRectangle(options: CanvasRectangleOptions): boolean {
-    const { fillStyle, height, lineWidth, strokeStyle, width, x, y } = options;
+    const { fillStyle, height, lineWidth, radius = 0, strokeStyle, width, x, y } = options;
     const context = this.getContext();
     if (!context) return false;
 
     context.save();
+    if (radius <= 0) {
+      if (fillStyle) {
+        context.fillStyle = fillStyle;
+        context.fillRect(x, y, width, height);
+      }
+      if (strokeStyle) {
+        context.strokeStyle = strokeStyle;
+        if (lineWidth !== undefined) context.lineWidth = lineWidth;
+        context.strokeRect(x, y, width, height);
+      }
+      context.restore();
+      return true;
+    }
+
+    const normalizedX = Math.min(x, x + width);
+    const normalizedY = Math.min(y, y + height);
+    const normalizedWidth = Math.abs(width);
+    const normalizedHeight = Math.abs(height);
+    const safeRadius = Math.min(Math.max(0, radius), normalizedWidth / 2, normalizedHeight / 2);
+
+    context.beginPath();
+    context.moveTo(normalizedX + safeRadius, normalizedY);
+    context.lineTo(normalizedX + normalizedWidth - safeRadius, normalizedY);
+    context.quadraticCurveTo(
+      normalizedX + normalizedWidth,
+      normalizedY,
+      normalizedX + normalizedWidth,
+      normalizedY + safeRadius,
+    );
+    context.lineTo(normalizedX + normalizedWidth, normalizedY + normalizedHeight - safeRadius);
+    context.quadraticCurveTo(
+      normalizedX + normalizedWidth,
+      normalizedY + normalizedHeight,
+      normalizedX + normalizedWidth - safeRadius,
+      normalizedY + normalizedHeight,
+    );
+    context.lineTo(normalizedX + safeRadius, normalizedY + normalizedHeight);
+    context.quadraticCurveTo(
+      normalizedX,
+      normalizedY + normalizedHeight,
+      normalizedX,
+      normalizedY + normalizedHeight - safeRadius,
+    );
+    context.lineTo(normalizedX, normalizedY + safeRadius);
+    context.quadraticCurveTo(normalizedX, normalizedY, normalizedX + safeRadius, normalizedY);
+    context.closePath();
+
     if (fillStyle) {
       context.fillStyle = fillStyle;
-      context.fillRect(x, y, width, height);
+      context.fill();
     }
     if (strokeStyle) {
       context.strokeStyle = strokeStyle;
       if (lineWidth !== undefined) context.lineWidth = lineWidth;
-      context.strokeRect(x, y, width, height);
+      context.stroke();
     }
     context.restore();
     return true;
@@ -200,13 +248,26 @@ export class CanvasSession {
   }
 
   drawPath(path: Path2D, options?: CanvasPathOptions): boolean {
-    const { fillRule, fillStyle, lineWidth, strokeStyle } = options ?? {};
+    const { fillRule, fillStyle, lineCap, lineJoin, lineWidth, miterLimit, strokeStyle } =
+      options ?? {};
     const context = this.getContext();
     if (!context) {
       return false;
     }
 
     context.save();
+    if (lineWidth !== undefined) {
+      context.lineWidth = lineWidth;
+    }
+    if (lineCap) {
+      context.lineCap = lineCap;
+    }
+    if (lineJoin) {
+      context.lineJoin = lineJoin;
+    }
+    if (miterLimit !== undefined) {
+      context.miterLimit = miterLimit;
+    }
     if (fillStyle) {
       context.fillStyle = fillStyle;
       context.fill(path, fillRule);
@@ -218,6 +279,40 @@ export class CanvasSession {
       }
       context.stroke(path);
     }
+    context.restore();
+    return true;
+  }
+
+  drawPolyline(options: CanvasPolylineOptions): boolean {
+    const { closePath, lineCap, lineJoin, lineWidth, points, strokeStyle } = options;
+    const context = this.getContext();
+    if (!context || points.length < 2) {
+      return false;
+    }
+
+    context.save();
+    if (strokeStyle) {
+      context.strokeStyle = strokeStyle;
+    }
+    if (lineWidth !== undefined) {
+      context.lineWidth = lineWidth;
+    }
+    if (lineCap) {
+      context.lineCap = lineCap;
+    }
+    if (lineJoin) {
+      context.lineJoin = lineJoin;
+    }
+
+    context.beginPath();
+    context.moveTo(points[0][0], points[0][1]);
+    for (const [x, y] of points.slice(1)) {
+      context.lineTo(x, y);
+    }
+    if (closePath === true) {
+      context.closePath();
+    }
+    context.stroke();
     context.restore();
     return true;
   }

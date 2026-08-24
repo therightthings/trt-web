@@ -26,6 +26,8 @@ export const createCanvasPage = (): HTMLElement => {
         <button id="canvas-linear-gradient" type="button">Linear gradient</button>
         <button id="canvas-radial-gradient" type="button">Radial gradient</button>
         <button id="canvas-path" type="button">Draw path</button>
+        <button id="canvas-polyline" type="button">Draw polyline</button>
+        <button id="canvas-closed-polyline" type="button">Draw closed polyline</button>
         <button id="canvas-rotate" type="button">Rotate</button>
         <button id="canvas-scale" type="button">Scale</button>
         <button id="canvas-translate" type="button">Translate</button>
@@ -107,6 +109,7 @@ export const createCanvasPage = (): HTMLElement => {
     session.drawRectangle({
       fillStyle: '#1e3a5f',
       height: 100,
+      radius: 16,
       strokeStyle: '#7dd3fc',
       width: 180,
       x: 32,
@@ -218,8 +221,44 @@ export const createCanvasPage = (): HTMLElement => {
     path.lineTo(140, 40);
     path.lineTo(250, 220);
     path.closePath();
-    session.drawPath(path, { fillStyle: '#1e3a5f', lineWidth: 3, strokeStyle: '#7dd3fc' });
+    session.drawPath(path, {
+      fillRule: 'nonzero',
+      fillStyle: '#1e3a5f',
+      lineCap: 'round',
+      lineJoin: 'round',
+      lineWidth: 3,
+      miterLimit: 4,
+      strokeStyle: '#7dd3fc',
+    });
     show('drawPath completed.');
+  });
+
+  const drawPolyline = (closePath: boolean): void => {
+    resize();
+    session.clear('#101827');
+    session.drawPolyline({
+      closePath,
+      lineCap: 'round',
+      lineJoin: 'round',
+      lineWidth: 8,
+      points: [
+        [40, 220],
+        [120, 70],
+        [220, 190],
+        [320, 50],
+        [420, 220],
+      ],
+      strokeStyle: '#7dd3fc',
+    });
+    show(`drawPolyline(${closePath ? 'closed' : 'open'}) completed.`);
+  };
+
+  page.querySelector('#canvas-polyline')?.addEventListener('click', () => {
+    drawPolyline(false);
+  });
+
+  page.querySelector('#canvas-closed-polyline')?.addEventListener('click', () => {
+    drawPolyline(true);
   });
 
   page.querySelector('#canvas-rotate')?.addEventListener('click', () => {

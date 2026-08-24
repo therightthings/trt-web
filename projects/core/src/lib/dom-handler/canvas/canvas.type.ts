@@ -21,6 +21,7 @@ export type CanvasRectangleOptions = {
   y: number;
   width: number;
   height: number;
+  radius?: number;
   fillStyle?: string | CanvasGradient | CanvasPattern;
   strokeStyle?: string | CanvasGradient | CanvasPattern;
   lineWidth?: number;
@@ -97,7 +98,19 @@ export type CanvasPathOptions = {
   fillStyle?: string | CanvasGradient | CanvasPattern;
   strokeStyle?: string | CanvasGradient | CanvasPattern;
   lineWidth?: number;
+  lineCap?: CanvasLineCap;
+  lineJoin?: CanvasLineJoin;
+  miterLimit?: number;
   fillRule?: CanvasFillRule;
+};
+
+export type CanvasPolylineOptions = {
+  points: Array<[number, number]>;
+  strokeStyle?: string | CanvasGradient | CanvasPattern;
+  lineWidth?: number;
+  lineCap?: CanvasLineCap;
+  lineJoin?: CanvasLineJoin;
+  closePath?: boolean;
 };
 
 export type CanvasImageFormat = 'image/jpeg' | 'image/webp';

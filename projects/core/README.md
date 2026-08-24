@@ -1035,7 +1035,7 @@ adding collections or changing the database schema.
   - `resize`: resize the canvas, optionally fitting its element or parent and applying device-pixel-ratio scaling.
   - `clear`: clear the canvas and optionally fill it with a color.
   - `drawLine`: draw a line with stroke options.
-  - `drawRectangle`: draw a filled and/or stroked rectangle.
+  - `drawRectangle`: draw a filled and/or stroked rectangle, optionally with rounded corners.
   - `drawCircle`: draw a filled and/or stroked circle.
   - `drawText`: draw text with font and alignment options.
   - `drawImage`: draw an image source at a position and optional size.
@@ -1043,6 +1043,7 @@ adding collections or changing the database schema.
   - `putImageData`: write pixel data to the canvas.
   - `createGradient`: create a linear or radial gradient.
   - `drawPath`: draw or fill a `Path2D` path.
+  - `drawPolyline`: draw an ordered list of points as an open or closed stroked path.
   - `rotate`: rotate the current drawing transform.
   - `scale`: scale the current drawing transform.
   - `translate`: translate the current drawing transform.
@@ -1082,7 +1083,14 @@ adding collections or changing the database schema.
       { offset: 1, color: '#8b5cf6' },
     ],
   });
-  session.drawRectangle({ fillStyle: gradient, height: 80, width: 240, x: 40, y: 140 });
+  session.drawRectangle({
+    fillStyle: gradient,
+    height: 80,
+    radius: 16,
+    width: 240,
+    x: 40,
+    y: 140,
+  });
 
   const path = new Path2D();
   path.moveTo(40, 260);
@@ -1090,6 +1098,18 @@ adding collections or changing the database schema.
   path.lineTo(280, 260);
   path.closePath();
   session.drawPath(path, { fillStyle: '#1e3a5f', strokeStyle: '#7dd3fc', lineWidth: 2 });
+
+  session.drawPolyline({
+    points: [
+      [16, 280],
+      [80, 240],
+      [160, 280],
+    ],
+    strokeStyle: '#7dd3fc',
+    lineCap: 'round',
+    lineJoin: 'round',
+    lineWidth: 4,
+  });
 
   const pixels = session.getImageData({ x: 0, y: 0, width: 20, height: 20 });
   if (pixels) {
