@@ -1,6 +1,9 @@
 import { isType, requireBrowserEnv, toError } from '../../utils';
 import { AbstractBrowserUtils } from '../abstract-browser';
-import type { BrowserAudioContextWindow } from './browser-audio-context.type';
+import type {
+  BrowserAudioContextToneSequenceOptions,
+  BrowserAudioContextWindow,
+} from './browser-audio-context.type';
 import { BrowserAudioSession } from './browser-audio-session';
 
 /**
@@ -17,20 +20,20 @@ export class BrowserAudioContext extends AbstractBrowserUtils {
     super();
   }
 
-  static getInstance(): BrowserAudioContext {
-    if (!BrowserAudioContext.#instance) {
-      BrowserAudioContext.#instance = new BrowserAudioContext();
-    }
-
-    return BrowserAudioContext.#instance;
-  }
-
   static override isSupported(): boolean {
     requireBrowserEnv();
 
     return (
       isType('function', window, 'AudioContext') || isType('function', window, 'webkitAudioContext')
     );
+  }
+
+  static getInstance(): BrowserAudioContext {
+    if (!BrowserAudioContext.#instance) {
+      BrowserAudioContext.#instance = new BrowserAudioContext();
+    }
+
+    return BrowserAudioContext.#instance;
   }
 
   private get AudioContextConstructor(): typeof AudioContext | undefined {
@@ -118,6 +121,44 @@ export class BrowserAudioContext extends AbstractBrowserUtils {
     } catch (error) {
       console.error(toError(error, 'Could not decode audio data.'));
       return undefined;
+    }
+  }
+
+  async playTone(options: BrowserAudioContextToneSequenceOptions): Promise<boolean> {
+    const context = await this.ready();
+    if (!context || options.tones.length === 0) {
+      return false;
+    }
+
+    const startTime = context.currentTime;
+    let offsetMs = 0;
+
+    try {
+      for (const tone of options.tones) {
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+        const startAt = startTime + offsetMs / 1000;
+        const endAt = startAt + tone.durationMs / 1000;
+
+        oscillator.type = tone.type ?? 'sine';
+        oscillator.frequency.value = tone.frequency ?? 440;
+        oscillator.detune.value = tone.detune ?? 0;
+        gain.gain.value = tone.gain ?? 0.1;
+        oscillator.connect(gain);
+        gain.connect(context.destination);
+        oscillator.start(startAt);
+        oscillator.stop(endAt);
+
+        offsetMs += tone.durationMs + (tone.gapMs ?? 0);
+      }
+
+      await new Promise<void>((resolve) => {
+        window.setTimeout(resolve, offsetMs);
+      });
+      return true;
+    } catch (error) {
+      console.error(toError(error, 'Could not play tone sequence.'));
+      return false;
     }
   }
 

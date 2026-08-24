@@ -889,3 +889,15 @@ button {
     padding: 48px 20px;
   }
 }
+.audio-waveform {
+  display: block;
+  width: 100%;
+  height: 220px;
+}
+
+.audio-time {
+  margin: 8px 0 0;
+  color: var(--app-text-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}

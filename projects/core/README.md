@@ -139,16 +139,70 @@ npm install @trt-web/core
   - `isSupported`: check whether the Web Audio API is supported.
   - `getInstance`: get the shared audio context manager.
   - `ready`: resume the audio context when required.
+  - `getState`: read the current AudioContext state.
+  - `suspend`: suspend all audio processing in the shared context.
+  - `resume`: resume all audio processing in the shared context.
+  - `decodeAudioData`: decode an ArrayBuffer into an AudioBuffer.
   - `createAudioSession`: create an isolated audio playback session.
+  - `playTone`: play a sequence of oscillator tones.
   - `close`: close the shared audio context.
 
   ```ts
+  if (!BrowserAudioContext.isSupported()) {
+    throw new Error('Web Audio API is not supported.');
+  }
+
   const audioContext = BrowserAudioContext.getInstance();
-  await audioContext.ready();
-  const session = audioContext.createAudioSession(audioBuffer);
-  session.play();
-  session.stop();
+
+  const context = await audioContext.ready({ latencyHint: 'interactive' });
+  if (!context) {
+    throw new Error('Could not create AudioContext.');
+  }
+
+  console.log(audioContext.getState()); // running
+
+  await audioContext.suspend();
+  await audioContext.resume();
+
+  await audioContext.playTone({
+    tones: [
+      { frequency: 523, type: 'sine', gain: 0.08, durationMs: 90, gapMs: 40 },
+      { frequency: 659, type: 'sine', gain: 0.08, durationMs: 120 },
+    ],
+  });
+
+  const file = await fetch('/audio/example.mp3').then((response) => response.blob());
+  const audioBuffer = await audioContext.decodeAudioData(await file.arrayBuffer());
+  const session = audioBuffer ? audioContext.createAudioSession(audioBuffer) : undefined;
+  session?.play();
+  await new Promise((resolve) => setTimeout(resolve, (audioBuffer?.duration ?? 0) * 1000));
+  session?.stop();
+
   await audioContext.close();
+  ```
+
+- `BrowserAudioSession`
+  - `play`: play the audio buffer from the current position.
+  - `pause`: pause playback and preserve the current position.
+  - `resume`: resume playback from the paused position.
+  - `stop`: stop playback and reset the position to the beginning.
+  - `createAnalyser`: create an analyser for realtime audio data.
+  - `getWaveformData`: get waveform peaks from the audio buffer.
+  - `getFrequencyData`: get current frequency-domain data.
+  - `getTimeDomainData`: get current time-domain data.
+
+  ```ts
+  const session = audioContext.createAudioSession(audioBuffer);
+
+  session?.play();
+  session?.pause();
+  session?.resume();
+  session?.stop();
+
+  session?.createAnalyser({ fftSize: 2048 });
+  console.log(session?.getFrequencyData());
+  console.log(session?.getTimeDomainData());
+  console.log(session?.getWaveformData({ samples: 500 }));
   ```
 
 - `BrowserAI`

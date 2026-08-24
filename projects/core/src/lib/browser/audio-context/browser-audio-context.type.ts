@@ -8,14 +8,17 @@ export type BrowserAudioContextAnalyserOptions = {
   maxDecibels?: number;
   smoothingTimeConstant?: number;
 };
-export type BrowserAudioContextOscillatorOptions = {
+export type BrowserAudioContextToneConfig = {
   type?: OscillatorType;
   frequency?: number;
   detune?: number;
-};
-export type BrowserAudioContextToneOptions = BrowserAudioContextOscillatorOptions & {
   gain?: number;
-  durationMs?: number;
+  durationMs: number;
+  gapMs?: number;
+};
+
+export type BrowserAudioContextToneSequenceOptions = {
+  tones: BrowserAudioContextToneConfig[];
 };
 export type BrowserAudioWaveformOptions = {
   samples?: number;

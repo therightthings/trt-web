@@ -16,8 +16,8 @@ export type {
 export { BrowserAudioContext } from './audio-context/browser-audio-context';
 export type {
   BrowserAudioContextAnalyserOptions,
-  BrowserAudioContextOscillatorOptions,
-  BrowserAudioContextToneOptions,
+  BrowserAudioContextToneConfig,
+  BrowserAudioContextToneSequenceOptions,
   BrowserAudioContextWindow,
   BrowserAudioWaveformOptions,
 } from './audio-context/browser-audio-context.type';

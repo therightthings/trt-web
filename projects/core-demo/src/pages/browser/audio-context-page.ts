@@ -13,10 +13,12 @@ export const createAudioContextPage = (): HTMLElement => {
       <article class="card">
         <h2>Audio context</h2>
         <div class="demo-actions">
+          <button id="audio-support" type="button">Check support</button>
           <button id="audio-create" type="button">Create context</button>
           <button id="audio-context-state" type="button">Read context</button>
           <button id="audio-suspend" type="button">Suspend</button>
           <button id="audio-resume" type="button">Resume</button>
+          <button id="audio-tone" type="button">Play tone</button>
           <button id="audio-close" type="button">Close</button>
         </div>
       </article>
@@ -33,8 +35,11 @@ export const createAudioContextPage = (): HTMLElement => {
       <article class="card">
         <h2>Audio waveform</h2>
         <label>Audio file <input id="audio-file" type="file" accept="audio/*" /></label>
-        <canvas id="audio-waveform" width="800" height="220"></canvas>
+        <canvas id="audio-waveform" class="audio-waveform" height="220"></canvas>
+        <p id="audio-time" class="audio-time">0:00 / 0:00</p>
         <div class="demo-actions">
+          <button id="audio-file-pause" type="button">Pause audio</button>
+          <button id="audio-file-resume" type="button">Resume audio</button>
           <button id="audio-file-stop" type="button">Stop audio</button>
         </div>
       </article>
@@ -48,24 +53,48 @@ export const createAudioContextPage = (): HTMLElement => {
     result.textContent = typeof value === 'string' ? value : JSON.stringify(value);
   };
   const canvas = page.querySelector<HTMLCanvasElement>('#audio-waveform')!;
+  const timeDisplay = page.querySelector<HTMLElement>('#audio-time')!;
   const canvasContext = canvas.getContext('2d');
   let animationFrame: number | undefined;
   let waveform: Float32Array | undefined;
   let waveformDuration = 0;
   let waveformStartedAt = 0;
+  let waveformElapsed = 0;
   let audioSession: ReturnType<typeof audioContext.createAudioSession>;
+  const formatTime = (seconds: number): string => {
+    const totalSeconds = Math.max(0, Math.floor(seconds));
+    const minutes = Math.floor(totalSeconds / 60);
+    const remainder = String(totalSeconds % 60).padStart(2, '0');
+    return `${minutes}:${remainder}`;
+  };
+  const updateTimeDisplay = (currentTime: number): void => {
+    timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(waveformDuration)}`;
+  };
   const drawWaveform = () => {
     if (!canvasContext || !waveform) {
       return;
     }
 
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    const width = Math.max(1, Math.floor(canvas.clientWidth));
+    const height = Math.max(1, Math.floor(canvas.clientHeight));
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    const rootStyles = getComputedStyle(document.documentElement);
+    const accentColor = rootStyles.getPropertyValue('--app-accent-default').trim();
+    const playheadColor = rootStyles.getPropertyValue('--app-text-success').trim();
+
+    canvasContext.clearRect(0, 0, width, height);
+    canvasContext.strokeStyle = accentColor;
+    canvasContext.lineWidth = 2;
     canvasContext.beginPath();
     const currentWaveform = waveform;
     currentWaveform.forEach((value, index) => {
-      const x = (index / (currentWaveform.length - 1)) * canvas.width;
-      const amplitude = value * (canvas.height / 2);
-      const y = canvas.height / 2 - amplitude;
+      const x = (index / (currentWaveform.length - 1)) * width;
+      const amplitude = value * (height / 2);
+      const y = height / 2 - amplitude;
       if (index === 0) {
         canvasContext.moveTo(x, y);
       } else {
@@ -74,14 +103,21 @@ export const createAudioContextPage = (): HTMLElement => {
     });
     canvasContext.stroke();
 
-    const elapsed = (performance.now() - waveformStartedAt) / 1000;
-    const playheadX = Math.min(elapsed / waveformDuration, 1) * canvas.width;
+    const elapsed = Math.min(
+      waveformDuration,
+      waveformElapsed + (performance.now() - waveformStartedAt) / 1000,
+    );
+    updateTimeDisplay(elapsed);
+    const playheadX = Math.min(elapsed / waveformDuration, 1) * width;
+    canvasContext.strokeStyle = playheadColor;
+    canvasContext.lineWidth = 2;
     canvasContext.beginPath();
     canvasContext.moveTo(playheadX, 0);
-    canvasContext.lineTo(playheadX, canvas.height);
+    canvasContext.lineTo(playheadX, height);
     canvasContext.stroke();
 
     if (elapsed >= waveformDuration) {
+      waveformElapsed = waveformDuration;
       animationFrame = undefined;
       return;
     }
@@ -94,11 +130,20 @@ export const createAudioContextPage = (): HTMLElement => {
       animationFrame = undefined;
     }
     audioSession?.stop();
+    waveformElapsed = 0;
     waveformStartedAt = 0;
+    updateTimeDisplay(0);
   };
 
   page.querySelector('#audio-create')?.addEventListener('click', async () => {
     show((await audioContext.ready()) ? 'AudioContext created.' : 'Unsupported.');
+  });
+  page.querySelector('#audio-support')?.addEventListener('click', () => {
+    try {
+      show({ supported: BrowserAudioContext.isSupported(), state: audioContext.getState() });
+    } catch (error) {
+      show(error instanceof Error ? error.message : String(error));
+    }
   });
   page
     .querySelector('#audio-context-state')
@@ -109,6 +154,16 @@ export const createAudioContextPage = (): HTMLElement => {
   page
     .querySelector('#audio-resume')
     ?.addEventListener('click', async () => show(await audioContext.resume()));
+  page.querySelector('#audio-tone')?.addEventListener('click', async () => {
+    show(
+      await audioContext.playTone({
+        tones: [
+          { frequency: 523, type: 'sine', gain: 0.08, durationMs: 90, gapMs: 40 },
+          { frequency: 659, type: 'sine', gain: 0.08, durationMs: 120 },
+        ],
+      }),
+    );
+  });
   page.querySelector('#audio-close')?.addEventListener('click', async () => {
     await audioContext.close();
     show('AudioContext closed.');
@@ -144,6 +199,8 @@ export const createAudioContextPage = (): HTMLElement => {
     }
 
     waveformDuration = audioBuffer.duration;
+    waveformElapsed = 0;
+    updateTimeDisplay(0);
     await audioContext.ready();
     audioSession = audioContext.createAudioSession(audioBuffer);
     audioSession?.createAnalyser({ fftSize: 2048 });
@@ -159,6 +216,29 @@ export const createAudioContextPage = (): HTMLElement => {
   page.querySelector('#audio-file-stop')?.addEventListener('click', () => {
     stopWaveform();
     show('Audio stopped.');
+  });
+  page.querySelector('#audio-file-pause')?.addEventListener('click', () => {
+    if (animationFrame !== undefined) {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = undefined;
+    }
+    if (waveformStartedAt) {
+      waveformElapsed = Math.min(
+        waveformDuration,
+        waveformElapsed + (performance.now() - waveformStartedAt) / 1000,
+      );
+    }
+    waveformStartedAt = 0;
+    updateTimeDisplay(waveformElapsed);
+    show(audioSession?.pause() ? 'Audio paused.' : 'No audio is playing.');
+  });
+  page.querySelector('#audio-file-resume')?.addEventListener('click', () => {
+    const resumed = audioSession?.resume() ?? false;
+    if (resumed) {
+      waveformStartedAt = performance.now();
+      drawWaveform();
+    }
+    show(resumed ? 'Audio resumed.' : 'No audio session to resume.');
   });
 
   return page;
