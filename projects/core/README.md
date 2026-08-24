@@ -61,11 +61,13 @@ npm install @trt-web/core
   ```
 
 - `BrowserPermission`
+  - `supportedPermissions`: list permissions supported by the utility.
   - `getState`: check the state of a browser permission.
   - `request`: request a browser permission.
 
   ```ts
   const current = await BrowserPermission.getState('geolocation');
+  console.log(BrowserPermission.supportedPermissions()); // ['geolocation', 'notifications', ...]
   const requested = current === 'prompt' ? await BrowserPermission.request('geolocation') : current;
   console.log(current); // 'granted' | 'denied' | 'prompt' | 'unsupported'
   console.log(requested); // 'granted' when permission is granted
@@ -300,6 +302,8 @@ npm install @trt-web/core
   - `connect`: connect to the device's GATT server.
   - `disconnect`: disconnect from the current GATT server.
   - `isConnected`: check whether a GATT server is connected.
+  - `getDevice`: get the currently connected Bluetooth device.
+  - `getServer`: get the currently connected GATT server.
   - `getPrimaryService`: get a primary GATT service.
   - `getCharacteristic`: get a characteristic from a service.
   - `getCharacteristics`: list characteristics from a service.
@@ -313,6 +317,7 @@ npm install @trt-web/core
     filters: [{ services: ['heart_rate'] }],
   });
   await BrowserBluetooth.connect(device);
+  console.log(BrowserBluetooth.getDevice(), BrowserBluetooth.getServer());
   const value = await BrowserBluetooth.readValue({
     service: 'heart_rate',
     characteristic: 'heart_rate_measurement',
@@ -455,6 +460,7 @@ npm install @trt-web/core
   - `isSupported`: check whether network information is available.
   - `getState`: read online status and connection information.
   - `subscribe`: listen for network changes and return a subscription.
+  - `unsubscribe`: unsubscribe all active network subscriptions.
 
   ```ts
   const subscription = BrowserNetwork.subscribe((state) => {
@@ -462,6 +468,7 @@ npm install @trt-web/core
   });
 
   subscription.unsubscribe();
+  BrowserNetwork.unsubscribe(); // remove any remaining network subscriptions
   ```
 
 - `BrowserViewport`
@@ -530,6 +537,9 @@ npm install @trt-web/core
   - `isSupported`: check secure-context WebRTC support.
   - `isConnected`: check whether the peer connection is connected.
   - `createPeerConnection`: create and configure a peer connection.
+  - `addTrack`: add a media track to the peer connection.
+  - `removeTrack`: remove a sender from the peer connection.
+  - `configureVideoSender`: configure video bitrate and frame rate.
   - `createDataChannel`: create a data channel.
   - `createOffer`: create an SDP offer.
   - `createAnswer`: create an SDP answer.
@@ -538,6 +548,7 @@ npm install @trt-web/core
   - `addIceCandidate`: add a remote ICE candidate.
   - `getStats`: read connection statistics.
   - `restartIce`: request an ICE restart.
+  - `createConnectionFromOffer`: create a connection and apply a remote offer.
   - `close`: close the peer connection and remove listeners.
 
   This utility wraps the browser `RTCPeerConnection` API only. It does not provide
@@ -549,9 +560,26 @@ npm install @trt-web/core
     config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] },
     handlers: { onIceCandidate: (event) => console.log(event.candidate) },
   });
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+  const sender = BrowserPeerConnection.addTrack(stream.getVideoTracks()[0], stream);
+  await BrowserPeerConnection.configureVideoSender({
+    maxBitrate: 1_000_000,
+    maxFramerate: 30,
+  });
+  if (sender) {
+    BrowserPeerConnection.removeTrack(sender);
+  }
   const offer = await BrowserPeerConnection.createOffer();
   await BrowserPeerConnection.setLocalDescription(offer);
   BrowserPeerConnection.close();
+
+  if (offer) {
+    const connection = await BrowserPeerConnection.createConnectionFromOffer({
+      offer,
+      handlers: { onIceCandidate: (event) => console.log(event.candidate) },
+    });
+    connection?.close();
+  }
   ```
 
 - `BrowserSpeechToText`
@@ -591,6 +619,7 @@ npm install @trt-web/core
     console.log(state);
   });
   subscription.unsubscribe();
+  BrowserTabActivity.unsubscribe(); // remove any remaining tab subscriptions
   ```
 
 - `BrowserTheme`
@@ -634,8 +663,12 @@ npm install @trt-web/core
   ```
 
 - `BrowserWindow`
+  - `reload`: reload the current tab.
   - `goBack`: navigate backward in the current tab.
   - `goForward`: navigate forward in the current tab.
+  - `pushState`: add a history entry without reloading the page.
+  - `replaceState`: replace the current history entry without reloading the page.
+  - `historyState`: read the current history state.
   - `alert`: show a browser alert dialog.
   - `confirm`: show a browser confirmation dialog.
   - `prompt`: show a browser prompt dialog.
@@ -646,10 +679,15 @@ npm install @trt-web/core
 
   ```ts
   BrowserWindow.preload('/assets/app.js');
+  BrowserWindow.pushState({ section: 'settings' }, '', '/settings');
+  BrowserWindow.replaceState({ section: 'profile' }, '', '/profile');
+  console.log(BrowserWindow.historyState());
   const confirmed = BrowserWindow.confirm('Continue?');
   if (confirmed) {
     BrowserWindow.print();
   }
+  // Call reload when the current page should be loaded again.
+  // BrowserWindow.reload();
   ```
 
 - `BrowserWindowManager`
