@@ -22,6 +22,13 @@ export type {
   BrowserAudioWaveformOptions,
 } from './audio-context/browser-audio-context.type';
 export { BrowserAudioSession } from './audio-context/browser-audio-session';
+export { BrowserBattery } from './battery/browser-battery';
+export type {
+  BrowserBatteryManager,
+  BrowserBatteryNavigator,
+  BrowserBatteryState,
+  BrowserBatterySubscription,
+} from './battery/browser-battery.type';
 export { BrowserBluetooth } from './bluetooth/browser-bluetooth';
 export type {
   BrowserBluetoothApi,

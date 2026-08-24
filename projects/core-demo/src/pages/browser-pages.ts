@@ -1,6 +1,7 @@
 import {
   BrowserAI,
   BrowserAudioContext,
+  BrowserBattery,
   BrowserBluetooth,
   BrowserCamera,
   BrowserClipboard,
@@ -25,6 +26,7 @@ import {
 import { createDemoPage, type DemoPageConfig } from '../components/demo-page';
 import { createAiPage } from './browser/ai-page';
 import { createAudioContextPage } from './browser/audio-context-page';
+import { createBatteryPage } from './browser/battery-page';
 import { createBluetoothPage } from './browser/bluetooth-page';
 import { createCameraPage } from './browser/camera-page';
 import { createCookiePage } from './browser/cookie-page';
@@ -543,6 +545,12 @@ const pages: Record<string, DemoPageConfig> = {
     description: 'Read viewport state and subscribe to global resize changes.',
     methods: ['register()', 'getCurrentState()', 'isInRange()', 'subscribe()'],
   },
+  battery: {
+    title: 'BrowserBattery',
+    path: 'browser/battery',
+    description: 'Read battery status and subscribe to battery changes.',
+    methods: ['isSupported()', 'getState()', 'subscribe()'],
+  },
   'peer-connection': {
     title: 'BrowserPeerConnection',
     path: 'browser/peer-connection',
@@ -766,6 +774,7 @@ export const createBrowserPage = (pageId: string): HTMLElement | null => {
   if (pageId === 'vibration') return createVibrationPage();
   if (pageId === 'wake-lock') return createWakeLockPage();
   if (pageId === 'viewport') return createViewportPage();
+  if (pageId === 'battery') return createBatteryPage();
   if (pageId === 'peer-connection') return createPeerConnectionPage();
   if (pageId === 'window') return createWindowPage();
   if (pageId === 'window-manager') return createWindowManagerPage();

@@ -5,6 +5,7 @@ export type * from './lib/browser/static';
 export {
   BrowserAI,
   BrowserAudioContext,
+  BrowserBattery,
   BrowserBluetooth,
   BrowserCamera,
   BrowserClipboard,
