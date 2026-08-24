@@ -33,4 +33,15 @@ export {
   LocalStorage,
   SessionStorage,
 } from './lib/browser/static';
+export type {
+  CanvasBlobOptions,
+  CanvasCircleOptions,
+  CanvasContextOptions,
+  CanvasImageOptions,
+  CanvasLineOptions,
+  CanvasRectangleOptions,
+  CanvasResizeOptions,
+  CanvasTextOptions,
+} from './lib/dom-handler';
+export { Canvas, CanvasSession } from './lib/dom-handler';
 export { trt };

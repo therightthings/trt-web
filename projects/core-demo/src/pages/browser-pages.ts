@@ -50,6 +50,7 @@ import { createWindowManagerPage } from './browser/window-manager-page';
 import { createWindowPage } from './browser/window-page';
 import { createWorkerPage } from './browser/worker-page';
 import { createGenerateTimestampPage, createRangeDatePage } from './date-pages';
+import { createCanvasPage } from './dom/canvas-page';
 import { createGenerateRandomColorPage } from './dom/generate-random-color-page';
 import { createGetElementInfoPage } from './dom/get-element-info-page';
 import { createVarCssPage } from './dom/var-css-page';
@@ -302,6 +303,12 @@ const pages: Record<string, DemoPageConfig> = {
     path: 'dom-handler/generate-random-color',
     description: 'Generate random colors in hex or RGB format.',
     methods: ['generateRandomColor(config?)'],
+  },
+  canvas: {
+    title: 'Canvas',
+    path: 'dom-handler/canvas',
+    description: 'Create a CanvasSession and draw 2D graphics.',
+    methods: ['Canvas.isSupported()', 'Canvas.createSession()'],
   },
   'get-element-info': {
     title: 'getElementInfo',
@@ -621,6 +628,7 @@ export const groupPages: Record<string, GroupPageConfig> = {
     path: 'dom-handler',
     description: 'Choose a DOM utility to explore.',
     entries: [
+      ['canvas', 'Canvas'],
       ['generate-random-color', 'Generate Random Color'],
       ['get-element-info', 'Get Element Info'],
       ['var-css', 'CSS Variable'],
@@ -707,6 +715,7 @@ export const createBrowserPage = (pageId: string): HTMLElement | null => {
   if (pageId === 'get-image-size') return createGetImageSizePage();
   if (pageId === 'load-image') return createLoadImagePage();
   if (pageId === 'generate-random-color') return createGenerateRandomColorPage();
+  if (pageId === 'canvas') return createCanvasPage();
   if (pageId === 'get-element-info') return createGetElementInfoPage();
   if (pageId === 'var-css') return createVarCssPage();
   if (pageId === 'generate-timestamp') return createGenerateTimestampPage();

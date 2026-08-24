@@ -61,6 +61,7 @@ const menuItems: DemoMenuItem[] = [
   {
     label: 'dom',
     children: [
+      { label: 'canvas' },
       { label: 'generate-random-color' },
       { label: 'get-element-info' },
       { label: 'var-css' },

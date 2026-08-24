@@ -766,6 +766,88 @@ adding collections or changing the database schema.
 
 ### trt.dom
 
+- `Canvas`
+  - `isSupported`: check whether the HTML Canvas API is available.
+  - `createSession`: create an isolated `CanvasSession` for a canvas element.
+
+- `CanvasSession`
+  - `getContext`: get the session's 2D rendering context.
+  - `getSize`: read the canvas backing-store size.
+  - `resize`: resize the canvas, optionally fitting its element or parent and applying device-pixel-ratio scaling.
+  - `clear`: clear the canvas and optionally fill it with a color.
+  - `drawLine`: draw a line with stroke options.
+  - `drawRectangle`: draw a filled and/or stroked rectangle.
+  - `drawCircle`: draw a filled and/or stroked circle.
+  - `drawText`: draw text with font and alignment options.
+  - `drawImage`: draw an image source at a position and optional size.
+  - `getImageData`: read pixel data from a rectangular area.
+  - `putImageData`: write pixel data to the canvas.
+  - `createGradient`: create a linear or radial gradient.
+  - `drawPath`: draw or fill a `Path2D` path.
+  - `rotate`: rotate the current drawing transform.
+  - `scale`: scale the current drawing transform.
+  - `translate`: translate the current drawing transform.
+  - `flip`: flip the current drawing transform horizontally or vertically.
+  - `resetTransform`: reset the current drawing transform.
+  - `toBlob`: export the canvas as a `Blob`.
+  - `toDataUrl`: export the canvas as a data URL.
+
+  ```ts
+  import { Canvas } from '@trt-web/core';
+
+  const session = Canvas.createSession();
+  session.resize({ height: 180, width: 320 });
+  session.clear('#172236');
+  session.drawLine({
+    start: [16, 16],
+    end: [180, 80],
+    strokeStyle: '#7dd3fc',
+    lineWidth: 4,
+  });
+  session.drawText({
+    text: 'Canvas',
+    x: 16,
+    y: 120,
+    fillStyle: '#e8edf5',
+    font: '24px sans-serif',
+  });
+
+  const gradient = session.createGradient({
+    type: 'linear',
+    x0: 0,
+    y0: 0,
+    x1: 320,
+    y1: 180,
+    stops: [
+      { offset: 0, color: '#0ea5e9' },
+      { offset: 1, color: '#8b5cf6' },
+    ],
+  });
+  session.drawRectangle({ fillStyle: gradient, height: 80, width: 240, x: 40, y: 140 });
+
+  const path = new Path2D();
+  path.moveTo(40, 260);
+  path.lineTo(160, 190);
+  path.lineTo(280, 260);
+  path.closePath();
+  session.drawPath(path, { fillStyle: '#1e3a5f', strokeStyle: '#7dd3fc', lineWidth: 2 });
+
+  const pixels = session.getImageData({ x: 0, y: 0, width: 20, height: 20 });
+  if (pixels) {
+    session.putImageData(pixels, { x: 300, y: 20 });
+  }
+
+  session.translate(160, 90);
+  session.rotate(Math.PI / 8);
+  session.scale(1.1, 1.1);
+  session.flip('horizontal');
+  session.resetTransform();
+
+  const blob = await session.toBlob({ type: 'image/png' });
+  const dataUrl = session.toDataUrl('image/png');
+  console.log(blob, dataUrl); // Blob, 'data:image/png;base64,...'
+  ```
+
 - `generateRandomColor`: generate a random color value.
 
   ```ts

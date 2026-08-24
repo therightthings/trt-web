@@ -1,4 +1,4 @@
-import { BrowserAudioContext } from '@trt-web/core';
+import { BrowserAudioContext, Canvas } from '@trt-web/core';
 
 export const createAudioContextPage = (): HTMLElement => {
   const audioContext = BrowserAudioContext.getInstance();
@@ -53,8 +53,8 @@ export const createAudioContextPage = (): HTMLElement => {
     result.textContent = typeof value === 'string' ? value : JSON.stringify(value);
   };
   const canvas = page.querySelector<HTMLCanvasElement>('#audio-waveform')!;
+  const canvasSession = Canvas.createSession(canvas);
   const timeDisplay = page.querySelector<HTMLElement>('#audio-time')!;
-  const canvasContext = canvas.getContext('2d');
   let animationFrame: number | undefined;
   let waveform: Float32Array | undefined;
   let waveformDuration = 0;
@@ -71,37 +71,32 @@ export const createAudioContextPage = (): HTMLElement => {
     timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(waveformDuration)}`;
   };
   const drawWaveform = () => {
-    if (!canvasContext || !waveform) {
+    if (!waveform) {
       return;
     }
 
     const width = Math.max(1, Math.floor(canvas.clientWidth));
     const height = Math.max(1, Math.floor(canvas.clientHeight));
-    if (canvas.width !== width || canvas.height !== height) {
-      canvas.width = width;
-      canvas.height = height;
-    }
+    canvasSession.resize({ devicePixelRatio: 1, height, width });
 
     const rootStyles = getComputedStyle(document.documentElement);
     const accentColor = rootStyles.getPropertyValue('--app-accent-default').trim();
     const playheadColor = rootStyles.getPropertyValue('--app-text-success').trim();
 
-    canvasContext.clearRect(0, 0, width, height);
-    canvasContext.strokeStyle = accentColor;
-    canvasContext.lineWidth = 2;
-    canvasContext.beginPath();
+    canvasSession.clear();
+    const path = new Path2D();
     const currentWaveform = waveform;
     currentWaveform.forEach((value, index) => {
       const x = (index / (currentWaveform.length - 1)) * width;
       const amplitude = value * (height / 2);
       const y = height / 2 - amplitude;
       if (index === 0) {
-        canvasContext.moveTo(x, y);
+        path.moveTo(x, y);
       } else {
-        canvasContext.lineTo(x, y);
+        path.lineTo(x, y);
       }
     });
-    canvasContext.stroke();
+    canvasSession.drawPath(path, { lineWidth: 2, strokeStyle: accentColor });
 
     const elapsed = Math.min(
       waveformDuration,
@@ -109,12 +104,12 @@ export const createAudioContextPage = (): HTMLElement => {
     );
     updateTimeDisplay(elapsed);
     const playheadX = Math.min(elapsed / waveformDuration, 1) * width;
-    canvasContext.strokeStyle = playheadColor;
-    canvasContext.lineWidth = 2;
-    canvasContext.beginPath();
-    canvasContext.moveTo(playheadX, 0);
-    canvasContext.lineTo(playheadX, height);
-    canvasContext.stroke();
+    canvasSession.drawLine({
+      end: [playheadX, height],
+      lineWidth: 2,
+      start: [playheadX, 0],
+      strokeStyle: playheadColor,
+    });
 
     if (elapsed >= waveformDuration) {
       waveformElapsed = waveformDuration;
