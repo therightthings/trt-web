@@ -48,6 +48,7 @@ const menuItems: DemoMenuItem[] = [
       { label: 'tab-activity' },
       { label: 'vibration' },
       { label: 'wake-lock' },
+      { label: 'viewport' },
       { label: 'peer-connection' },
       { label: 'window' },
       { label: 'window-manager' },

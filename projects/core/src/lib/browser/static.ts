@@ -154,6 +154,18 @@ export { BrowserTheme } from './theme/browser-theme';
 export type { BrowserThemeMode } from './theme/browser-theme.type';
 export { BrowserVibration } from './vibration/browser-vibration';
 export type { BrowserVibratePattern } from './vibration/browser-vibration.type';
+export { BrowserViewport } from './viewport/browser-viewport';
+export type {
+  BrowserViewportConfig,
+  BrowserViewportDefaultRange,
+  BrowserViewportOrientation,
+  BrowserViewportRangeConfig,
+  BrowserViewportRangeName,
+  BrowserViewportSize,
+  BrowserViewportState,
+  BrowserViewportSubscribeOptions,
+  BrowserViewportSubscription,
+} from './viewport/browser-viewport.type';
 export { BrowserWakeLock } from './wake-lock/browser-wake-lock';
 export { BrowserWindow } from './window/browser-window';
 export type {

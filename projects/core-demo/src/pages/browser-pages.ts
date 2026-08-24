@@ -13,6 +13,7 @@ import {
   BrowserScreen,
   BrowserTabActivity,
   BrowserVibration,
+  BrowserViewport,
   BrowserWakeLock,
   BrowserWindow,
   Cookie,
@@ -45,6 +46,7 @@ import { createStoragePage } from './browser/storage-page';
 import { createTabActivityPage } from './browser/tab-activity-page';
 import { createTextToSpeechPage } from './browser/text-to-speech-page';
 import { createVibrationPage } from './browser/vibration-page';
+import { createViewportPage } from './browser/viewport-page';
 import { createWakeLockPage } from './browser/wake-lock-page';
 import { createWindowManagerPage } from './browser/window-manager-page';
 import { createWindowPage } from './browser/window-page';
@@ -535,6 +537,12 @@ const pages: Record<string, DemoPageConfig> = {
     description: 'Prevent the screen from sleeping while a task is active.',
     methods: ['isSupported()', 'isActive()', 'enable()', 'disable()'],
   },
+  viewport: {
+    title: 'BrowserViewport',
+    path: 'browser/viewport',
+    description: 'Read viewport state and subscribe to global resize changes.',
+    methods: ['register()', 'getCurrentState()', 'isInRange()', 'subscribe()'],
+  },
   'peer-connection': {
     title: 'BrowserPeerConnection',
     path: 'browser/peer-connection',
@@ -757,6 +765,7 @@ export const createBrowserPage = (pageId: string): HTMLElement | null => {
   if (pageId === 'tab-activity') return createTabActivityPage();
   if (pageId === 'vibration') return createVibrationPage();
   if (pageId === 'wake-lock') return createWakeLockPage();
+  if (pageId === 'viewport') return createViewportPage();
   if (pageId === 'peer-connection') return createPeerConnectionPage();
   if (pageId === 'window') return createWindowPage();
   if (pageId === 'window-manager') return createWindowManagerPage();

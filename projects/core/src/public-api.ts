@@ -25,6 +25,7 @@ export {
   BrowserTextToSpeech,
   BrowserTheme,
   BrowserVibration,
+  BrowserViewport,
   BrowserWakeLock,
   BrowserWindow,
   BrowserWindowManager,

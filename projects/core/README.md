@@ -436,6 +436,53 @@ npm install @trt-web/core
   subscription.unsubscribe();
   ```
 
+- `BrowserViewport`
+  - `register`: replace the global viewport range configuration.
+  - `getCurrentState`: read the current viewport size, orientation, and all matching ranges.
+  - `isInRange`: check whether a named range currently matches.
+  - `subscribe`: listen to resize changes with an independent subscription.
+
+  ```ts
+  import { BrowserViewport } from '@trt-web/core';
+
+  BrowserViewport.register({
+    phone: { max: 599 },
+    tablet: { min: 600, max: 1023 },
+    desktop: { min: 1024 },
+    wide: { min: 1440 },
+  });
+
+  console.log(BrowserViewport.getCurrentState());
+  // {
+  //   width: 1440,
+  //   height: 900,
+  //   orientation: 'landscape',
+  //   ranges: ['desktop', 'wide'],
+  // }
+
+  // Receive every viewport resize update.
+  const allSubscription = BrowserViewport.subscribe((state) => {
+    console.log(state.width, state.height, state.ranges);
+  });
+
+  // Receive updates only while the viewport matches the tablet range.
+  const tabletSubscription = BrowserViewport.subscribe(
+    (state) => {
+      console.log('Tablet viewport:', state.width, state.height);
+    },
+    { range: 'tablet' },
+  );
+
+  console.log(BrowserViewport.isInRange('tablet')); // false
+
+  allSubscription.unsubscribe();
+  tabletSubscription.unsubscribe();
+  ```
+
+  The `range` option filters callback notifications; it does not change the
+  viewport state returned by the callback. Omit it when the subscriber should
+  receive every resize update.
+
 - `BrowserNfc`
   - `isSupported`: check whether Web NFC is supported.
   - `isScanning`: check whether NFC scanning is active.
