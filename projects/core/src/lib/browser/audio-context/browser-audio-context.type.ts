@@ -20,6 +20,9 @@ export type BrowserAudioContextToneConfig = {
 export type BrowserAudioContextToneSequenceOptions = {
   tones: BrowserAudioContextToneConfig[];
 };
+export type BrowserAudioToneConfig = BrowserAudioContextToneConfig;
+export type BrowserAudioToneSessionOptions = BrowserAudioContextToneSequenceOptions;
+export type BrowserAudioToneSessionState = 'idle' | 'playing' | 'stopped';
 export type BrowserAudioWaveformOptions = {
   samples?: number;
   channel?: number;

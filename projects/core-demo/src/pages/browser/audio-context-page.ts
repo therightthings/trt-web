@@ -19,6 +19,9 @@ export const createAudioContextPage = (): HTMLElement => {
           <button id="audio-suspend" type="button">Suspend</button>
           <button id="audio-resume" type="button">Resume</button>
           <button id="audio-tone" type="button">Play tone</button>
+          <button id="audio-tone-session-create" type="button">Create tone session</button>
+          <button id="audio-tone-session-play" type="button">Play tone session</button>
+          <button id="audio-tone-session-stop" type="button">Stop tone session</button>
           <button id="audio-close" type="button">Close</button>
         </div>
       </article>
@@ -31,6 +34,11 @@ export const createAudioContextPage = (): HTMLElement => {
           <button id="audio-time-data" type="button">Time-domain data</button>
         </div>
         <p id="audio-result" class="demo-result">No action run yet.</p>
+      </article>
+      <article class="card">
+        <h2>Tone session analyser</h2>
+        <p>Read realtime frequency data from an oscillator tone session.</p>
+        <pre id="audio-tone-session-result" class="demo-result">No tone session created yet.</pre>
       </article>
       <article class="card">
         <h2>Audio waveform</h2>
@@ -61,6 +69,9 @@ export const createAudioContextPage = (): HTMLElement => {
   let waveformStartedAt = 0;
   let waveformElapsed = 0;
   let audioSession: ReturnType<typeof audioContext.createAudioSession>;
+  let toneSession: ReturnType<typeof audioContext.createToneSession>;
+  let toneAnimationFrame: number | undefined;
+  const toneResult = page.querySelector<HTMLElement>('#audio-tone-session-result')!;
   const formatTime = (seconds: number): string => {
     const totalSeconds = Math.max(0, Math.floor(seconds));
     const minutes = Math.floor(totalSeconds / 60);
@@ -129,6 +140,35 @@ export const createAudioContextPage = (): HTMLElement => {
     waveformStartedAt = 0;
     updateTimeDisplay(0);
   };
+  const stopToneVisualiser = (): void => {
+    if (toneAnimationFrame !== undefined) {
+      cancelAnimationFrame(toneAnimationFrame);
+      toneAnimationFrame = undefined;
+    }
+  };
+  const renderToneData = (): void => {
+    const data = toneSession?.getFrequencyData();
+    if (!data) {
+      toneResult.textContent = 'Create a tone session and analyser first.';
+      toneAnimationFrame = undefined;
+      return;
+    }
+
+    toneResult.textContent = JSON.stringify(
+      {
+        state: toneSession?.state,
+        length: data.length,
+        values: [...data.slice(0, 16)],
+      },
+      null,
+      2,
+    );
+    if (toneSession?.state !== 'playing') {
+      toneAnimationFrame = undefined;
+      return;
+    }
+    toneAnimationFrame = requestAnimationFrame(renderToneData);
+  };
 
   page.querySelector('#audio-create')?.addEventListener('click', async () => {
     show((await audioContext.ready()) ? 'AudioContext created.' : 'Unsupported.');
@@ -159,8 +199,49 @@ export const createAudioContextPage = (): HTMLElement => {
       }),
     );
   });
+  page.querySelector('#audio-tone-session-create')?.addEventListener('click', async () => {
+    if (!(await audioContext.ready())) {
+      toneResult.textContent = 'AudioContext is not supported.';
+      return;
+    }
+
+    stopToneVisualiser();
+    toneSession?.stop();
+    toneSession = audioContext.createToneSession({
+      tones: [
+        { frequency: 523, type: 'sine', gain: 0.08, durationMs: 300, gapMs: 40 },
+        { frequency: 659, type: 'sine', gain: 0.08, durationMs: 300 },
+      ],
+    });
+    toneSession?.createAnalyser({ fftSize: 256, smoothingTimeConstant: 0.8 });
+    toneResult.textContent = toneSession
+      ? JSON.stringify({ state: toneSession.state, analyser: 'created' }, null, 2)
+      : 'Could not create tone session.';
+  });
+  page.querySelector('#audio-tone-session-play')?.addEventListener('click', async () => {
+    if (!toneSession) {
+      toneResult.textContent = 'Create a tone session first.';
+      return;
+    }
+
+    const started = await toneSession.play();
+    if (started) {
+      stopToneVisualiser();
+      renderToneData();
+    }
+    toneResult.textContent = started ? 'Tone session is playing.' : 'Could not play tone session.';
+  });
+  page.querySelector('#audio-tone-session-stop')?.addEventListener('click', () => {
+    stopToneVisualiser();
+    toneSession?.stop();
+    toneResult.textContent = toneSession
+      ? JSON.stringify({ state: toneSession.state }, null, 2)
+      : 'No tone session to stop.';
+  });
   page.querySelector('#audio-close')?.addEventListener('click', async () => {
+    stopToneVisualiser();
     await audioContext.close();
+    toneSession = undefined;
     show('AudioContext closed.');
   });
   page.querySelector('#audio-analyser')?.addEventListener('click', () => {

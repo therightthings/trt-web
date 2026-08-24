@@ -70,6 +70,40 @@ npm install @trt-web/core
   }
   ```
 
+  Download progress can reuse the same `tag` so each notification belongs to
+  the same progress group. Set `renotify: true` when Chrome should alert again
+  after replacing the previous progress notification:
+
+  ```ts
+  const progressNotification = BrowserNotification.show('Downloading file', {
+    body: '45% completed',
+    tag: 'download-progress',
+    renotify: true,
+    icon: '/icons/download.png',
+  });
+
+  console.log(progressNotification?.getInfo().behavior.tag); // 'download-progress'
+  console.log(progressNotification?.getInfo().behavior.renotify); // true
+  ```
+
+  For an incoming call, use `requireInteraction: true` to keep the notification
+  visible until the user clicks or dismisses it:
+
+  ```ts
+  const callNotification = BrowserNotification.show('Incoming call', {
+    body: 'Alice is calling you.',
+    tag: 'call-123',
+    requireInteraction: true,
+    icon: '/icons/call.png',
+    data: { callId: 'call-123' },
+  });
+
+  callNotification?.addEventListener('click', () => {
+    window.focus();
+    window.location.assign('/calls/call-123');
+  });
+  ```
+
   `show` returns a `BrowserNotificationSession`, which exposes the standard
   notification properties, events, and `close()` method. Notification permission requests
   should be triggered by a user action such as a button click. For persistent
@@ -194,6 +228,7 @@ npm install @trt-web/core
   - `resume`: resume all audio processing in the shared context.
   - `decodeAudioData`: decode an ArrayBuffer into an AudioBuffer.
   - `createAudioSession`: create an isolated audio playback session.
+  - `createToneSession`: create an isolated oscillator tone session.
   - `playTone`: play a sequence of oscillator tones.
   - `close`: close the shared audio context.
 
@@ -229,6 +264,36 @@ npm install @trt-web/core
   session?.stop();
 
   await audioContext.close();
+  ```
+
+- `BrowserAudioTonesSession`
+  - `state`: read whether the tone session is idle, playing, or stopped.
+  - `play`: start the tone sequence and stop the previous sequence if needed.
+  - `stop`: stop the current oscillators and clean up audio nodes.
+  - `createAnalyser`: create an analyser for the tone output.
+  - `getAnalyser`: get the configured analyser node.
+  - `getFrequencyData`: read frequency-domain data from the tone output.
+  - `getTimeDomainData`: read time-domain data from the tone output.
+
+  ```ts
+  const toneSession = audioContext.createToneSession({
+    tones: [
+      { frequency: 523, type: 'sine', gain: 0.08, durationMs: 300, gapMs: 40 },
+      { frequency: 659, type: 'sine', gain: 0.08, durationMs: 300 },
+    ],
+  });
+
+  toneSession?.createAnalyser({ fftSize: 256, smoothingTimeConstant: 0.8 });
+  const started = await toneSession?.play();
+  const frequencyData = toneSession?.getFrequencyData();
+  const timeDomainData = toneSession?.getTimeDomainData();
+
+  console.log(started, toneSession?.state); // true 'playing'
+  console.log(frequencyData?.length); // analyser.frequencyBinCount
+  console.log(timeDomainData?.length); // analyser.fftSize
+
+  toneSession?.stop();
+  console.log(toneSession?.state); // 'stopped'
   ```
 
 - `BrowserAudioSession`

@@ -19,9 +19,13 @@ export type {
   BrowserAudioContextToneConfig,
   BrowserAudioContextToneSequenceOptions,
   BrowserAudioContextWindow,
+  BrowserAudioToneConfig,
+  BrowserAudioToneSessionOptions,
+  BrowserAudioToneSessionState,
   BrowserAudioWaveformOptions,
 } from './audio-context/browser-audio-context.type';
 export { BrowserAudioSession } from './audio-context/browser-audio-session';
+export { BrowserAudioTonesSession } from './audio-context/browser-audio-tones-session';
 export { BrowserBattery } from './battery/browser-battery';
 export type {
   BrowserBatteryManager,
