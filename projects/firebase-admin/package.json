@@ -33,7 +33,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@trt-web/core": "1.4.1",
+    "@trt-web/core": "1.4.2",
     "firebase-admin": "^14.1.0",
     "busboy": "^1.6.0",
     "node-cache": "^5.1.2",
