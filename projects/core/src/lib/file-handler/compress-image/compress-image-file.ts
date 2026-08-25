@@ -1,6 +1,6 @@
+import type { CanvasImageFormat } from '../../dom-handler';
+import { Canvas, canvasQualityByFormat } from '../../dom-handler';
 import { requireBrowserEnv } from '../../utils';
-import { CanvasImageFormat, canvasQualityByFormat } from '../canvas.type';
-import { canvasToBlob } from '../canvas-to-blob';
 import { fileToDataUrl } from '../file-to-data-url';
 import { loadImage } from '../load-image';
 
@@ -20,13 +20,6 @@ export async function compressImageFile(
   const dataUrl = await fileToDataUrl(file);
   const img = await loadImage(dataUrl);
 
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-
-  if (!ctx) {
-    throw new Error('Canvas not supported');
-  }
-
   let { width, height } = img;
   if (width > maxWidth) {
     const scale = maxWidth / width;
@@ -34,12 +27,21 @@ export async function compressImageFile(
     height = height * scale;
   }
 
-  canvas.width = width;
-  canvas.height = height;
+  const session = Canvas.createSession();
+  session.resize({
+    devicePixelRatio: 1,
+    height,
+    width,
+  });
 
-  ctx.drawImage(img, 0, 0, width, height);
+  if (!session.drawImage(img, { height, width })) {
+    throw new Error('Canvas not supported');
+  }
 
-  const blob = await canvasToBlob(canvas, outputFormat, quality);
+  const blob = await session.toBlob({ type: outputFormat, quality });
+  if (!blob) {
+    throw new Error('Compression failed');
+  }
 
   return new File([blob], file.name, {
     type: outputFormat,

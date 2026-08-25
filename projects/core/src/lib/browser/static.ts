@@ -1,13 +1,38 @@
 export type { BrowserSubscription } from '../utils/browser-subscription.type';
+export { BrowserAI } from './ai/browser-ai';
+export type {
+  BrowserAIAvailability,
+  BrowserAIDetection,
+  BrowserAIProgress,
+  BrowserAIProgressHandler,
+  BrowserAIProgressPhase,
+  BrowserAISummarizeOptions,
+  BrowserAISummarizerFormat,
+  BrowserAISummarizerLength,
+  BrowserAISummarizerType,
+  BrowserAISupportedFeatures,
+  BrowserAITranslateOptions,
+} from './ai/browser-ai.type';
 export { BrowserAudioContext } from './audio-context/browser-audio-context';
 export type {
   BrowserAudioContextAnalyserOptions,
-  BrowserAudioContextOscillatorOptions,
-  BrowserAudioContextToneOptions,
+  BrowserAudioContextToneConfig,
+  BrowserAudioContextToneSequenceOptions,
   BrowserAudioContextWindow,
+  BrowserAudioToneConfig,
+  BrowserAudioToneSessionOptions,
+  BrowserAudioToneSessionState,
   BrowserAudioWaveformOptions,
 } from './audio-context/browser-audio-context.type';
 export { BrowserAudioSession } from './audio-context/browser-audio-session';
+export { BrowserAudioTonesSession } from './audio-context/browser-audio-tones-session';
+export { BrowserBattery } from './battery/browser-battery';
+export type {
+  BrowserBatteryManager,
+  BrowserBatteryNavigator,
+  BrowserBatteryState,
+  BrowserBatterySubscription,
+} from './battery/browser-battery.type';
 export { BrowserBluetooth } from './bluetooth/browser-bluetooth';
 export type {
   BrowserBluetoothApi,
@@ -101,6 +126,16 @@ export type {
   BrowserNfcWriteMessage,
   BrowserNfcWriteOptions,
 } from './nfc/browser-nfc.type';
+export { BrowserNotification } from './notification/browser-notification';
+export type {
+  BrowserNotificationAction,
+  BrowserNotificationInfo,
+  BrowserNotificationInstance,
+  BrowserNotificationOptions,
+  BrowserNotificationPermission,
+  BrowserNotificationWindow,
+} from './notification/browser-notification.type';
+export { BrowserNotificationSession } from './notification/browser-notification-session';
 export { BrowserPeerConnection } from './peer-connection/browser-peer-connection';
 export type {
   BrowserPeerConnectionConfig,
@@ -140,6 +175,18 @@ export { BrowserTheme } from './theme/browser-theme';
 export type { BrowserThemeMode } from './theme/browser-theme.type';
 export { BrowserVibration } from './vibration/browser-vibration';
 export type { BrowserVibratePattern } from './vibration/browser-vibration.type';
+export { BrowserViewport } from './viewport/browser-viewport';
+export type {
+  BrowserViewportConfig,
+  BrowserViewportDefaultRange,
+  BrowserViewportOrientation,
+  BrowserViewportRangeConfig,
+  BrowserViewportRangeName,
+  BrowserViewportSize,
+  BrowserViewportState,
+  BrowserViewportSubscribeOptions,
+  BrowserViewportSubscription,
+} from './viewport/browser-viewport.type';
 export { BrowserWakeLock } from './wake-lock/browser-wake-lock';
 export { BrowserWindow } from './window/browser-window';
 export type {

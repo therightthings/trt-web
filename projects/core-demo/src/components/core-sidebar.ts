@@ -12,7 +12,9 @@ const menuItems: DemoMenuItem[] = [
   {
     label: 'browser',
     children: [
+      { label: 'ai', pageId: 'ai' },
       { label: 'audio-context' },
+      { label: 'battery' },
       { label: 'bluetooth' },
       { label: 'clipboard' },
       { label: 'cookie' },
@@ -31,6 +33,7 @@ const menuItems: DemoMenuItem[] = [
       },
       { label: 'nfc' },
       { label: 'network' },
+      { label: 'notification' },
       { label: 'permission' },
       { label: 'presentation' },
       { label: 'resource' },
@@ -47,6 +50,7 @@ const menuItems: DemoMenuItem[] = [
       { label: 'tab-activity' },
       { label: 'vibration' },
       { label: 'wake-lock' },
+      { label: 'viewport' },
       { label: 'peer-connection' },
       { label: 'window' },
       { label: 'window-manager' },
@@ -60,6 +64,7 @@ const menuItems: DemoMenuItem[] = [
   {
     label: 'dom',
     children: [
+      { label: 'canvas' },
       { label: 'generate-random-color' },
       { label: 'get-element-info' },
       { label: 'var-css' },

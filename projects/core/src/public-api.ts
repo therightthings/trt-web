@@ -3,7 +3,10 @@ import * as trt from './lib';
 export { createWorker, runWorker } from './lib/browser';
 export type * from './lib/browser/static';
 export {
+  BrowserAI,
   BrowserAudioContext,
+  BrowserAudioTonesSession,
+  BrowserBattery,
   BrowserBluetooth,
   BrowserCamera,
   BrowserClipboard,
@@ -13,6 +16,8 @@ export {
   BrowserMicrophone,
   BrowserNetwork,
   BrowserNfc,
+  BrowserNotification,
+  BrowserNotificationSession,
   BrowserPeerConnection,
   BrowserPermission,
   BrowserPresentation,
@@ -24,6 +29,7 @@ export {
   BrowserTextToSpeech,
   BrowserTheme,
   BrowserVibration,
+  BrowserViewport,
   BrowserWakeLock,
   BrowserWindow,
   BrowserWindowManager,
@@ -32,4 +38,15 @@ export {
   LocalStorage,
   SessionStorage,
 } from './lib/browser/static';
+export type {
+  CanvasBlobOptions,
+  CanvasCircleOptions,
+  CanvasContextOptions,
+  CanvasImageOptions,
+  CanvasLineOptions,
+  CanvasRectangleOptions,
+  CanvasResizeOptions,
+  CanvasTextOptions,
+} from './lib/dom-handler';
+export { Canvas, CanvasSession } from './lib/dom-handler';
 export { trt };

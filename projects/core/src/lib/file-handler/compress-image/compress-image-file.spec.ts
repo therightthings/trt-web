@@ -48,11 +48,12 @@ describe('compressImageFile', () => {
       callback(new Blob(['compressed'], { type: 'image/jpeg' }));
     });
     const drawImage = vi.fn();
-    const getContext = vi.fn(() => ({ drawImage }));
+    const getContext = vi.fn(() => ({ drawImage, restore: vi.fn(), save: vi.fn() }));
     const createElement = vi.fn(() => ({
       getContext,
       width: 0,
       height: 0,
+      style: { height: '', width: '' },
       toBlob,
     }));
 
@@ -90,11 +91,12 @@ describe('compressImageFile', () => {
       callback(new Blob(['compressed'], { type: 'image/webp' }));
     });
     const drawImage = vi.fn();
-    const getContext = vi.fn(() => ({ drawImage }));
+    const getContext = vi.fn(() => ({ drawImage, restore: vi.fn(), save: vi.fn() }));
     const createElement = vi.fn(() => ({
       getContext,
       width: 0,
       height: 0,
+      style: { height: '', width: '' },
       toBlob,
     }));
 
@@ -128,11 +130,12 @@ describe('compressImageFile', () => {
       callback(new Blob(['compressed'], { type: 'image/webp' }));
     });
     const drawImage = vi.fn();
-    const getContext = vi.fn(() => ({ drawImage }));
+    const getContext = vi.fn(() => ({ drawImage, restore: vi.fn(), save: vi.fn() }));
     const createElement = vi.fn(() => ({
       getContext,
       width: 0,
       height: 0,
+      style: { height: '', width: '' },
       toBlob,
     }));
 
@@ -165,11 +168,12 @@ describe('compressImageFile', () => {
       callback(new Blob(['compressed'], { type: 'image/webp' }));
     });
     const drawImage = vi.fn();
-    const getContext = vi.fn(() => ({ drawImage }));
+    const getContext = vi.fn(() => ({ drawImage, restore: vi.fn(), save: vi.fn() }));
     const createElement = vi.fn(() => ({
       getContext,
       width: 0,
       height: 0,
+      style: { height: '', width: '' },
       toBlob,
     }));
 
@@ -239,6 +243,9 @@ describe('compressImageFile', () => {
     vi.stubGlobal('document', {
       createElement: vi.fn(() => ({
         getContext: vi.fn(() => null),
+        height: 0,
+        style: { height: '', width: '' },
+        width: 0,
       })),
     });
 

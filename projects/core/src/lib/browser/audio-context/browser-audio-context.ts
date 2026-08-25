@@ -1,7 +1,11 @@
 import { isType, requireBrowserEnv, toError } from '../../utils';
 import { AbstractBrowserUtils } from '../abstract-browser';
-import type { BrowserAudioContextWindow } from './browser-audio-context.type';
+import type {
+  BrowserAudioContextToneSequenceOptions,
+  BrowserAudioContextWindow,
+} from './browser-audio-context.type';
 import { BrowserAudioSession } from './browser-audio-session';
+import { BrowserAudioTonesSession } from './browser-audio-tones-session';
 
 /**
  * Shared Web Audio context and audio session helpers.
@@ -12,17 +16,10 @@ import { BrowserAudioSession } from './browser-audio-session';
 export class BrowserAudioContext extends AbstractBrowserUtils {
   static #instance?: BrowserAudioContext;
   private audioContext?: AudioContext;
+  private readonly toneSessions = new Set<BrowserAudioTonesSession>();
 
   private constructor() {
     super();
-  }
-
-  static getInstance(): BrowserAudioContext {
-    if (!BrowserAudioContext.#instance) {
-      BrowserAudioContext.#instance = new BrowserAudioContext();
-    }
-
-    return BrowserAudioContext.#instance;
   }
 
   static override isSupported(): boolean {
@@ -31,6 +28,14 @@ export class BrowserAudioContext extends AbstractBrowserUtils {
     return (
       isType('function', window, 'AudioContext') || isType('function', window, 'webkitAudioContext')
     );
+  }
+
+  static getInstance(): BrowserAudioContext {
+    if (!BrowserAudioContext.#instance) {
+      BrowserAudioContext.#instance = new BrowserAudioContext();
+    }
+
+    return BrowserAudioContext.#instance;
   }
 
   private get AudioContextConstructor(): typeof AudioContext | undefined {
@@ -79,6 +84,20 @@ export class BrowserAudioContext extends AbstractBrowserUtils {
     return new BrowserAudioSession(this.audioContext, buffer);
   }
 
+  createToneSession(
+    options: BrowserAudioContextToneSequenceOptions,
+  ): BrowserAudioTonesSession | undefined {
+    if (!this.audioContext) {
+      return undefined;
+    }
+
+    const session = new BrowserAudioTonesSession(this.audioContext, options, () => {
+      this.toneSessions.delete(session);
+    });
+    this.toneSessions.add(session);
+    return session;
+  }
+
   async suspend(): Promise<boolean> {
     if (!this.audioContext) {
       return false;
@@ -121,12 +140,28 @@ export class BrowserAudioContext extends AbstractBrowserUtils {
     }
   }
 
+  async playTone(options: BrowserAudioContextToneSequenceOptions): Promise<boolean> {
+    if (!(await this.ready())) {
+      return false;
+    }
+
+    const session = this.createToneSession(options);
+    if (!session || !(await session.play())) {
+      return false;
+    }
+
+    await session.waitForCompletion();
+    return true;
+  }
+
   async close(): Promise<void> {
     if (!this.audioContext) {
       return;
     }
 
     try {
+      this.toneSessions.forEach((session) => session.stop());
+      this.toneSessions.clear();
       await this.audioContext.close();
     } catch (error) {
       console.error(toError(error, 'Could not close AudioContext.'));

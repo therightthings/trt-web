@@ -1,3 +1,4 @@
+import { Canvas } from '../../../dom-handler';
 import { isType, requireBrowserEnv } from '../../../utils';
 import { AbstractBrowserUtils } from '../../abstract-browser';
 import { BrowserMedia } from '../core/browser-media';
@@ -83,27 +84,29 @@ export class BrowserScreen extends AbstractBrowserUtils {
 
       await video.play();
 
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      const session = Canvas.createSession();
+      session.resize({
+        devicePixelRatio: 1,
+        height: video.videoHeight,
+        width: video.videoWidth,
+      });
 
-      if (!canvas.width || !canvas.height) {
+      if (!video.videoWidth || !video.videoHeight) {
         return undefined;
       }
 
-      const context = canvas.getContext('2d');
-      if (!context) {
+      if (
+        !session.drawImage(video, {
+          height: video.videoHeight,
+          width: video.videoWidth,
+        })
+      ) {
         return undefined;
       }
 
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      return await new Promise<Blob | undefined>((resolve) => {
-        canvas.toBlob(
-          (blob) => resolve(blob ?? undefined),
-          image?.type ?? 'image/png',
-          image?.quality,
-        );
+      return await session.toBlob({
+        quality: image?.quality,
+        type: image?.type ?? 'image/png',
       });
     } catch {
       return undefined;

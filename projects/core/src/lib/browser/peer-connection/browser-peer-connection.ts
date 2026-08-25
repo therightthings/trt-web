@@ -32,6 +32,10 @@ export class BrowserPeerConnection extends AbstractBrowserUtils {
     return this.peerConnection?.connectionState === 'connected';
   }
 
+  static getPeerConnection(): RTCPeerConnection | undefined {
+    return this.peerConnection;
+  }
+
   static createPeerConnection(
     options?: BrowserPeerConnectionOptions,
   ): RTCPeerConnection | undefined {

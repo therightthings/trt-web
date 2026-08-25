@@ -1,8 +1,6 @@
 import { toError } from '../../utils';
 import type {
   BrowserAudioContextAnalyserOptions,
-  BrowserAudioContextOscillatorOptions,
-  BrowserAudioContextToneOptions,
   BrowserAudioWaveformOptions,
 } from './browser-audio-context.type';
 
@@ -13,23 +11,15 @@ import type {
  */
 export class BrowserAudioSession {
   private analyser?: AnalyserNode;
-  private gainNode?: GainNode;
-  private mediaStreamSource?: MediaStreamAudioSourceNode;
-  private oscillator?: OscillatorNode;
   private bufferSource?: AudioBufferSourceNode;
-  private toneTimeout?: number;
+  private playbackOffset = 0;
+  private playbackStartedAt = 0;
+  private playing = false;
 
   constructor(
     private readonly audioContext: AudioContext,
     private readonly buffer: AudioBuffer,
   ) {}
-
-  createGain(value = 1): GainNode {
-    const gainNode = this.audioContext.createGain();
-    gainNode.gain.value = value;
-    this.gainNode = gainNode;
-    return gainNode;
-  }
 
   createAnalyser(options: BrowserAudioContextAnalyserOptions = {}): AnalyserNode {
     const analyser = this.audioContext.createAnalyser();
@@ -41,22 +31,6 @@ export class BrowserAudioSession {
     }
     this.analyser = analyser;
     return analyser;
-  }
-
-  createOscillator(options: BrowserAudioContextOscillatorOptions = {}): OscillatorNode {
-    const oscillator = this.audioContext.createOscillator();
-    oscillator.type = options.type ?? 'sine';
-    oscillator.frequency.value = options.frequency ?? 440;
-    oscillator.detune.value = options.detune ?? 0;
-    this.oscillator = oscillator;
-    return oscillator;
-  }
-
-  createBufferSource(): AudioBufferSourceNode {
-    const source = this.audioContext.createBufferSource();
-    source.buffer = this.buffer;
-    this.bufferSource = source;
-    return source;
   }
 
   getWaveformData(options: BrowserAudioWaveformOptions = {}): Float32Array | undefined {
@@ -86,41 +60,45 @@ export class BrowserAudioSession {
     return waveform;
   }
 
-  play(): void {
+  play(): boolean {
+    if (this.playing) {
+      return false;
+    }
+
+    if (this.playbackOffset >= this.buffer.duration) {
+      this.playbackOffset = 0;
+    }
+
     const source = this.createBufferSource();
     const output = this.analyser ?? this.audioContext.destination;
     source.connect(output);
     if (this.analyser) {
       this.analyser.connect(this.audioContext.destination);
     }
-    source.onended = () => this.cleanupBufferSource(source);
-    source.start();
-  }
-
-  async playTone(options: BrowserAudioContextToneOptions = {}): Promise<boolean> {
-    this.stop();
-    const gainNode = this.gainNode ?? this.createGain(options.gain ?? 0.1);
-    gainNode.gain.value = options.gain ?? 0.1;
-    const oscillator = this.createOscillator(options);
-    oscillator.connect(gainNode);
-    gainNode.connect(this.analyser ?? this.audioContext.destination);
-    if (this.analyser) this.analyser.connect(this.audioContext.destination);
-    oscillator.start();
-    if (options.durationMs && options.durationMs > 0) {
-      this.toneTimeout = window.setTimeout(() => this.stop(), options.durationMs);
-    }
+    source.onended = () => this.handlePlaybackEnded(source);
+    source.start(0, this.playbackOffset);
+    this.playbackStartedAt = this.audioContext.currentTime - this.playbackOffset;
+    this.playing = true;
     return true;
   }
 
-  connectMediaStream(stream: MediaStream): MediaStreamAudioSourceNode {
-    this.disconnectMediaStream();
-    const source = this.audioContext.createMediaStreamSource(stream);
-    this.mediaStreamSource = source;
-    return source;
+  pause(): boolean {
+    if (!this.playing || !this.bufferSource) {
+      return false;
+    }
+
+    this.playbackOffset = Math.min(
+      this.buffer.duration,
+      Math.max(0, this.audioContext.currentTime - this.playbackStartedAt),
+    );
+    this.playing = false;
+    this.stopNode(this.bufferSource, 'audio buffer source');
+    this.bufferSource = undefined;
+    return true;
   }
 
-  connectAnalyserToDestination(): void {
-    this.analyser?.connect(this.audioContext.destination);
+  resume(): boolean {
+    return this.play();
   }
 
   getFrequencyData(): Uint8Array | undefined {
@@ -138,25 +116,18 @@ export class BrowserAudioSession {
   }
 
   stop(): void {
-    if (this.toneTimeout !== undefined) {
-      window.clearTimeout(this.toneTimeout);
-      this.toneTimeout = undefined;
-    }
-    this.stopNode(this.oscillator, 'oscillator');
+    this.playing = false;
     this.stopNode(this.bufferSource, 'audio buffer source');
-    this.oscillator = undefined;
     this.bufferSource = undefined;
-    this.disconnectMediaStream();
+    this.playbackOffset = 0;
+    this.playbackStartedAt = 0;
   }
 
-  disconnectMediaStream(): void {
-    if (!this.mediaStreamSource) return;
-    try {
-      this.mediaStreamSource.disconnect();
-    } catch (error) {
-      console.error(toError(error, 'Could not disconnect media stream.'));
-    }
-    this.mediaStreamSource = undefined;
+  private createBufferSource(): AudioBufferSourceNode {
+    const source = this.audioContext.createBufferSource();
+    source.buffer = this.buffer;
+    this.bufferSource = source;
+    return source;
   }
 
   private cleanupBufferSource(source: AudioBufferSourceNode): void {
@@ -167,6 +138,17 @@ export class BrowserAudioSession {
       console.error(toError(error, 'Could not disconnect audio buffer source.'));
     }
     this.bufferSource = undefined;
+  }
+
+  private handlePlaybackEnded(source: AudioBufferSourceNode): void {
+    if (this.bufferSource !== source) {
+      return;
+    }
+
+    this.cleanupBufferSource(source);
+    this.playing = false;
+    this.playbackOffset = 0;
+    this.playbackStartedAt = 0;
   }
 
   private stopNode(node: AudioScheduledSourceNode | undefined, label: string): void {

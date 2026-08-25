@@ -1,5 +1,7 @@
 import {
+  BrowserAI,
   BrowserAudioContext,
+  BrowserBattery,
   BrowserBluetooth,
   BrowserCamera,
   BrowserClipboard,
@@ -8,10 +10,12 @@ import {
   BrowserMicrophone,
   BrowserNetwork,
   BrowserNfc,
+  BrowserNotification,
   BrowserPeerConnection,
   BrowserScreen,
   BrowserTabActivity,
   BrowserVibration,
+  BrowserViewport,
   BrowserWakeLock,
   BrowserWindow,
   Cookie,
@@ -21,7 +25,9 @@ import {
 } from '@trt-web/core';
 
 import { createDemoPage, type DemoPageConfig } from '../components/demo-page';
+import { createAiPage } from './browser/ai-page';
 import { createAudioContextPage } from './browser/audio-context-page';
+import { createBatteryPage } from './browser/battery-page';
 import { createBluetoothPage } from './browser/bluetooth-page';
 import { createCameraPage } from './browser/camera-page';
 import { createCookiePage } from './browser/cookie-page';
@@ -32,6 +38,7 @@ import { createLocationPage } from './browser/location-page';
 import { createMicrophonePage } from './browser/microphone-page';
 import { createNetworkPage } from './browser/network-page';
 import { createNfcPage } from './browser/nfc-page';
+import { createNotificationPage } from './browser/notification-page';
 import { createPeerConnectionPage } from './browser/peer-connection-page';
 import { createPermissionPage } from './browser/permission-page';
 import { createPresentationPage } from './browser/presentation-page';
@@ -43,11 +50,13 @@ import { createStoragePage } from './browser/storage-page';
 import { createTabActivityPage } from './browser/tab-activity-page';
 import { createTextToSpeechPage } from './browser/text-to-speech-page';
 import { createVibrationPage } from './browser/vibration-page';
+import { createViewportPage } from './browser/viewport-page';
 import { createWakeLockPage } from './browser/wake-lock-page';
 import { createWindowManagerPage } from './browser/window-manager-page';
 import { createWindowPage } from './browser/window-page';
 import { createWorkerPage } from './browser/worker-page';
 import { createGenerateTimestampPage, createRangeDatePage } from './date-pages';
+import { createCanvasPage } from './dom/canvas-page';
 import { createGenerateRandomColorPage } from './dom/generate-random-color-page';
 import { createGetElementInfoPage } from './dom/get-element-info-page';
 import { createVarCssPage } from './dom/var-css-page';
@@ -96,6 +105,7 @@ const demoActions: Record<
 };
 
 const supportChecks: Record<string, () => boolean> = {
+  ai: () => BrowserAI.isSupported(),
   'audio-context': () => BrowserAudioContext.isSupported(),
   bluetooth: () => BrowserBluetooth.isSupported(),
   camera: () => BrowserCamera.isSupported(),
@@ -105,6 +115,7 @@ const supportChecks: Record<string, () => boolean> = {
   'local-storage': () => LocalStorage.isSupported(),
   microphone: () => BrowserMicrophone.isSupported(),
   network: () => BrowserNetwork.isSupported(),
+  notification: () => BrowserNotification.isSupported(),
   nfc: () => BrowserNfc.isSupported(),
   screen: () => BrowserScreen.isSupported(),
   'session-storage': () => SessionStorage.isSupported(),
@@ -300,6 +311,12 @@ const pages: Record<string, DemoPageConfig> = {
     description: 'Generate random colors in hex or RGB format.',
     methods: ['generateRandomColor(config?)'],
   },
+  canvas: {
+    title: 'Canvas',
+    path: 'dom-handler/canvas',
+    description: 'Create a CanvasSession and draw 2D graphics.',
+    methods: ['Canvas.isSupported()', 'Canvas.createSession()'],
+  },
   'get-element-info': {
     title: 'getElementInfo',
     path: 'dom-handler/get-element-info',
@@ -328,7 +345,33 @@ const pages: Record<string, DemoPageConfig> = {
     title: 'BrowserAudioContext',
     path: 'browser/audio-context',
     description: 'Create, control and analyze audio using AudioContext.',
-    methods: ['isSupported()', 'getInstance()', 'ready()', 'createAudioSession()', 'close()'],
+    methods: [
+      'isSupported()',
+      'getInstance()',
+      'ready()',
+      'getState()',
+      'suspend()',
+      'resume()',
+      'decodeAudioData()',
+      'playTone()',
+      'createAudioSession()',
+      'close()',
+    ],
+  },
+  ai: {
+    title: 'BrowserAI',
+    path: 'browser/ai',
+    description: 'Use built-in browser AI for detection, summarization and translation.',
+    methods: [
+      'isSupported()',
+      'supportedFeatures()',
+      'detectAvailability()',
+      'summarizeAvailability()',
+      'translateAvailability()',
+      'detectLanguage()',
+      'summarize()',
+      'translate()',
+    ],
   },
   bluetooth: {
     title: 'BrowserBluetooth',
@@ -433,6 +476,18 @@ const pages: Record<string, DemoPageConfig> = {
     description: 'Read online state and subscribe to network changes.',
     methods: ['isSupported()', 'getState()', 'subscribe()', 'unsubscribe()'],
   },
+  notification: {
+    title: 'BrowserNotification',
+    path: 'browser/notification',
+    description: 'Request permission and display browser notifications.',
+    methods: [
+      'isSupported()',
+      'getPermission()',
+      'requestPermission()',
+      'getMaxActions()',
+      'show()',
+    ],
+  },
   nfc: {
     title: 'BrowserNfc',
     path: 'browser/nfc',
@@ -499,6 +554,18 @@ const pages: Record<string, DemoPageConfig> = {
     description: 'Prevent the screen from sleeping while a task is active.',
     methods: ['isSupported()', 'isActive()', 'enable()', 'disable()'],
   },
+  viewport: {
+    title: 'BrowserViewport',
+    path: 'browser/viewport',
+    description: 'Read viewport state and subscribe to global resize changes.',
+    methods: ['register()', 'getCurrentState()', 'isInRange()', 'subscribe()'],
+  },
+  battery: {
+    title: 'BrowserBattery',
+    path: 'browser/battery',
+    description: 'Read battery status and subscribe to battery changes.',
+    methods: ['isSupported()', 'getState()', 'subscribe()'],
+  },
   'peer-connection': {
     title: 'BrowserPeerConnection',
     path: 'browser/peer-connection',
@@ -543,6 +610,7 @@ export const groupPages: Record<string, GroupPageConfig> = {
     path: 'browser',
     description: 'Choose a browser utility to explore.',
     entries: [
+      ['ai', 'AI'],
       ['audio-context', 'Audio Context'],
       ['bluetooth', 'Bluetooth'],
       ['clipboard', 'Clipboard'],
@@ -557,6 +625,7 @@ export const groupPages: Record<string, GroupPageConfig> = {
       ['screen', 'Screen'],
       ['nfc', 'NFC'],
       ['network', 'Network'],
+      ['notification', 'Notification'],
       ['permission', 'Permission'],
       ['presentation', 'Presentation'],
       ['resource', 'Resource'],
@@ -591,6 +660,7 @@ export const groupPages: Record<string, GroupPageConfig> = {
     path: 'dom-handler',
     description: 'Choose a DOM utility to explore.',
     entries: [
+      ['canvas', 'Canvas'],
       ['generate-random-color', 'Generate Random Color'],
       ['get-element-info', 'Get Element Info'],
       ['var-css', 'CSS Variable'],
@@ -677,6 +747,7 @@ export const createBrowserPage = (pageId: string): HTMLElement | null => {
   if (pageId === 'get-image-size') return createGetImageSizePage();
   if (pageId === 'load-image') return createLoadImagePage();
   if (pageId === 'generate-random-color') return createGenerateRandomColorPage();
+  if (pageId === 'canvas') return createCanvasPage();
   if (pageId === 'get-element-info') return createGetElementInfoPage();
   if (pageId === 'var-css') return createVarCssPage();
   if (pageId === 'generate-timestamp') return createGenerateTimestampPage();
@@ -684,6 +755,10 @@ export const createBrowserPage = (pageId: string): HTMLElement | null => {
 
   if (pageId === 'audio-context') {
     return createAudioContextPage();
+  }
+
+  if (pageId === 'ai') {
+    return createAiPage();
   }
 
   if (pageId === 'bluetooth') {
@@ -704,6 +779,7 @@ export const createBrowserPage = (pageId: string): HTMLElement | null => {
 
   if (pageId === 'location') return createLocationPage();
   if (pageId === 'network') return createNetworkPage();
+  if (pageId === 'notification') return createNotificationPage();
   if (pageId === 'nfc') return createNfcPage();
   if (pageId === 'permission') return createPermissionPage();
   if (pageId === 'presentation') return createPresentationPage();
@@ -714,6 +790,8 @@ export const createBrowserPage = (pageId: string): HTMLElement | null => {
   if (pageId === 'tab-activity') return createTabActivityPage();
   if (pageId === 'vibration') return createVibrationPage();
   if (pageId === 'wake-lock') return createWakeLockPage();
+  if (pageId === 'viewport') return createViewportPage();
+  if (pageId === 'battery') return createBatteryPage();
   if (pageId === 'peer-connection') return createPeerConnectionPage();
   if (pageId === 'window') return createWindowPage();
   if (pageId === 'window-manager') return createWindowManagerPage();
