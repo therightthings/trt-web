@@ -4,10 +4,9 @@ Framework-free wrappers for browser APIs.
 
 ### Direct exports
 
-+- `Canvas`
-
-- `isSupported`: check whether the HTML Canvas API is available.
-- `createSession`: create an isolated `CanvasSession` for a canvas element.
+- `Canvas`
+  - `isSupported`: check whether the HTML Canvas API is available.
+  - `createSession`: create an isolated `CanvasSession` for a canvas element.
 
 - `CanvasSession`
   - `getContext`: get the session's 2D rendering context.

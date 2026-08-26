@@ -1,16 +1,16 @@
 import nx from '@nx/eslint-plugin';
-import { defineConfig } from 'eslint/config';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import { defineConfig } from 'eslint/config';
 
-import { angularConfig } from './projects/angular/eslint.config.mjs';
 import { angularDemoConfig } from './projects/angular-demo/eslint.config.mjs';
+import { angularConfig } from './projects/angular/eslint.config.mjs';
 import { browserConfig } from './projects/browser/eslint.config.mjs';
 import { coreConfig } from './projects/core/eslint.config.mjs';
 import { firebaseAdminConfig } from './projects/firebase-admin/eslint.config.mjs';
-import { reactConfig } from './projects/react/eslint.config.mjs';
 import { reactDemoConfig } from './projects/react-demo/eslint.config.mjs';
-import { vueConfig } from './projects/vue/eslint.config.mjs';
+import { reactConfig } from './projects/react/eslint.config.mjs';
 import { vueDemoConfig } from './projects/vue-demo/eslint.config.mjs';
+import { vueConfig } from './projects/vue/eslint.config.mjs';
 
 export default defineConfig([
   ...nx.configs['flat/base'],
@@ -29,7 +29,7 @@ export default defineConfig([
     ],
   },
   {
-    files: ['commitlint.config.cjs', 'prettier.config.mjs'],
+    files: ['commitlint.config.mjs', 'prettier.config.mjs'],
     languageOptions: {
       parserOptions: {
         tsconfigRootDir: import.meta.dirname,

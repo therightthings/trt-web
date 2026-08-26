@@ -1,8 +1,11 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 function listProjectScopes() {
-  const projectsDir = path.join(__dirname, 'projects');
+  const projectsDir = path.join(currentDirectory, 'projects');
   const entries = fs.readdirSync(projectsDir, { withFileTypes: true });
   const scopes = new Set([
     'ci',
@@ -37,7 +40,7 @@ function listProjectScopes() {
   return Array.from(scopes).sort();
 }
 
-module.exports = {
+export default {
   extends: ['@commitlint/config-angular'],
   ignores: [
     (commit) => commit.startsWith('Merge '),
