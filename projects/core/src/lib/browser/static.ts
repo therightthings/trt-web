@@ -147,6 +147,18 @@ export type {
   BrowserPeerConnectionOptions,
   BrowserPeerConnectionSessionDescriptionInit,
 } from './peer-connection/browser-peer-connection.type';
+export { BrowserPerformance } from './performance/browser-performance';
+export type {
+  BrowserPerformanceEntriesOptions,
+  BrowserPerformanceMeasureResult,
+  BrowserPerformanceMemory,
+  BrowserPerformanceMemoryMeasurement,
+  BrowserPerformanceNative,
+  BrowserPerformanceNavigationInfo,
+  BrowserPerformancePageAnalysis,
+  BrowserPerformanceResourceInfo,
+} from './performance/browser-performance.type';
+export { BrowserPerformanceSession } from './performance/browser-performance-session';
 export { BrowserPermission } from './permission/browser-permission';
 export type {
   BrowserPermissionName,

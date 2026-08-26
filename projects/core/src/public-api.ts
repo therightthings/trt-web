@@ -19,6 +19,8 @@ export {
   BrowserNotification,
   BrowserNotificationSession,
   BrowserPeerConnection,
+  BrowserPerformance,
+  BrowserPerformanceSession,
   BrowserPermission,
   BrowserPresentation,
   BrowserResource,

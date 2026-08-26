@@ -348,6 +348,36 @@ npm install @trt-web/core
   An unavailable infinite discharging time is normalized to
   `Number.MAX_SAFE_INTEGER`.
 
+- `BrowserPerformance`
+  - `isSupported`: check whether the Performance API is available.
+  - `createSession`: create a session exposing the native Performance properties and methods.
+  - `now`, `mark`, `measure`, `measureAsync`: measure browser-side work.
+  - `getEntries`, `getNavigationTiming`, `getResourceTiming`: read performance entries. `getEntries` accepts `{ name?, type? }`.
+  - `clearMarks`, `clearMeasures`: remove user timing entries.
+
+- `BrowserPerformanceSession`
+  - exposes `eventCounts`, `interactionCount`, `memory`, and `timeOrigin`.
+  - exposes `getNavigationTiming` and `getResourceTiming` using Navigation Timing Level 2 entries.
+  - `analyzePage`: return a normalized snapshot of current page navigation, resources, memory, and interaction data.
+  - exposes the native methods `clearMarks`, `clearMeasures`, `clearResourceTimings`, `getEntries`, `getEntriesByName`, `getEntriesByType`, `mark`, `measure`, `measureUserAgentSpecificMemory`, `now`, `setResourceTimingBufferSize`, and `toJSON`.
+
+  ```ts
+  const result = await BrowserPerformance.measureAsync('load-users', async () => {
+    return await loadUsers();
+  });
+
+  console.log(result?.value, result?.measure.duration);
+  // Output: [{ id: 1, name: 'Alice' }] 42.5
+  ```
+
+  ```ts
+  const performance = BrowserPerformance.createSession();
+
+  console.log(performance?.timeOrigin);
+  console.log(performance?.getEntriesByType('resource'));
+  console.log(await performance?.measureUserAgentSpecificMemory());
+  ```
+
 - `BrowserAI`
   - `isSupported`: check whether at least one supported built-in browser AI API is available.
   - `isLanguageDetectorSupported`: check whether the Language Detector API is available.
