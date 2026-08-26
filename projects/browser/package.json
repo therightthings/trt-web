@@ -6,6 +6,45 @@
   "module": "./src/public-api.js",
   "types": "./src/public-api.d.ts",
   "sideEffects": false,
+  "description": "Framework-free browser utilities for web applications.",
+  "keywords": [
+    "browser-utils",
+    "web-utils",
+    "browser-api",
+    "browser-ai",
+    "battery-status",
+    "canvas",
+    "clipboard",
+    "cookies",
+    "storage-utils",
+    "local-storage",
+    "session-storage",
+    "indexeddb",
+    "file-system-access",
+    "resource-loader",
+    "permissions",
+    "geolocation",
+    "camera",
+    "microphone",
+    "screen-capture",
+    "media-recorder",
+    "audio-context",
+    "bluetooth",
+    "nfc",
+    "speech-recognition",
+    "text-to-speech",
+    "notifications",
+    "web-share",
+    "web-rtc",
+    "performance-api",
+    "viewport",
+    "wake-lock",
+    "vibration",
+    "theme-detection",
+    "window-utils",
+    "window-manager",
+    "fullscreen"
+  ],
   "exports": {
     ".": {
       "types": "./src/public-api.d.ts",
@@ -13,10 +52,9 @@
     },
     "./package.json": "./package.json"
   },
-  "description": "Framework-free browser utilities for web applications.",
   "license": "Apache-2.0",
   "dependencies": {
-    "@trt-web/core": "^1.4.2",
+    "@trt-web/core": "^1.5.0",
     "tslib": "^2.3.0"
   }
 }

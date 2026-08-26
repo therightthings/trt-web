@@ -1,4 +1,4 @@
-import { type TimeConfig, toMs } from '@trt-web/core';
+import { TimeConfig, toMs } from '@trt-web/core';
 import NodeCache from 'node-cache';
 
 export class CacheService {

@@ -1,5 +1,4 @@
-import type { TimeConfig } from '@trt-web/core';
-import { requireBrowserEnv, stringify, toMs } from '@trt-web/core';
+import { requireBrowserEnv, stringify, TimeConfig, toMs } from '@trt-web/core';
 
 export interface CookieSetConfig {
   expiresIn?: number | TimeConfig;

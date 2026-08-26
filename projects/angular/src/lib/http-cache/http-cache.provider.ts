@@ -1,5 +1,5 @@
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
-import { type TimeConfig, toMs } from '@trt-web/core';
+import { TimeConfig, toMs } from '@trt-web/core';
 
 import { HttpCacheService } from './http-cache.service';
 

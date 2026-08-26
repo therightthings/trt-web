@@ -1,4 +1,4 @@
-import type { TimeConfig } from '@trt-web/core';
+import { TimeConfig } from '@trt-web/core';
 
 import { hashData } from '../utils/hash-data';
 import { CacheService } from './cache.service';

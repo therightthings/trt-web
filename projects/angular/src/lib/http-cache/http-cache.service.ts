@@ -1,6 +1,6 @@
 import { HttpContext, HttpEvent } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { type TimeConfig, toMs } from '@trt-web/core';
+import { TimeConfig, toMs } from '@trt-web/core';
 import { Observable } from 'rxjs';
 
 import {

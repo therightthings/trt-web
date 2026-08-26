@@ -1,4 +1,4 @@
-import { trt } from '@trt-web/core';
+import { requireBrowserEnv } from '@trt-web/core';
 
 import { CanvasSession } from './canvas-session';
 
@@ -10,12 +10,12 @@ import { CanvasSession } from './canvas-session';
  */
 export class Canvas {
   static isSupported(): boolean {
-    trt.utils.requireBrowserEnv();
+    requireBrowserEnv();
     return typeof HTMLCanvasElement !== 'undefined';
   }
 
   static createSession(canvas?: HTMLCanvasElement): CanvasSession {
-    trt.utils.requireBrowserEnv();
+    requireBrowserEnv();
     return new CanvasSession(canvas ?? document.createElement('canvas'));
   }
 }

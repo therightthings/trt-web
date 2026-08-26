@@ -1,6 +1,4 @@
-import type { FileSizeConfig } from '@trt-web/core';
-import { trt } from '@trt-web/core';
-import { requireBrowserEnv } from '@trt-web/core';
+import { FileSizeConfig, requireBrowserEnv, trt } from '@trt-web/core';
 
 type BrowserResourceDownloadConfig = {
   name?: string;

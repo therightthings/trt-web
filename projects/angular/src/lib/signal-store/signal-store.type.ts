@@ -1,4 +1,4 @@
-import type { TimeConfig } from '@trt-web/core';
+import { TimeConfig } from '@trt-web/core';
 
 export type IdType = string | number;
 

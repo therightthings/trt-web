@@ -1,4 +1,4 @@
-import type { TimeConfig } from '@trt-web/core';
+import { TimeConfig } from '@trt-web/core';
 import type { NextFunction, Request, Response } from 'express';
 
 import { CacheService } from './cache.service';

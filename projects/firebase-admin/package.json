@@ -1,6 +1,6 @@
 {
   "name": "@trt-web/firebase-admin",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": false,
   "description": "Shared Firebase Admin helpers for backend services",
   "repository": {
@@ -17,6 +17,9 @@
     "firestore",
     "messaging",
     "cache",
+    "cache-utils",
+    "http-cache",
+    "storage-utils",
     "backend",
     "express"
   ],
@@ -33,7 +36,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@trt-web/core": "1.4.2",
+    "@trt-web/core": "1.5.0",
     "firebase-admin": "^14.1.0",
     "busboy": "^1.6.0",
     "node-cache": "^5.1.2",
