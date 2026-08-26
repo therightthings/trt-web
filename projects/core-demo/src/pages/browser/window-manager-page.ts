@@ -1,4 +1,4 @@
-import { BrowserWindowManager } from '@trt-web/core';
+import { BrowserWindowManager } from '@trt-web/browser';
 
 export const createWindowManagerPage = (): HTMLElement => {
   const page = document.createElement('main');

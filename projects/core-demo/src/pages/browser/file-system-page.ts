@@ -1,4 +1,4 @@
-import { BrowserFileSystem } from '@trt-web/core';
+import { BrowserFileSystem } from '@trt-web/browser';
 
 export const createFileSystemPage = (): HTMLElement => {
   const page = document.createElement('main');

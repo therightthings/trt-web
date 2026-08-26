@@ -4,6 +4,7 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 import { angularConfig } from './projects/angular/eslint.config.mjs';
 import { angularDemoConfig } from './projects/angular-demo/eslint.config.mjs';
+import { browserConfig } from './projects/browser/eslint.config.mjs';
 import { coreConfig } from './projects/core/eslint.config.mjs';
 import { firebaseAdminConfig } from './projects/firebase-admin/eslint.config.mjs';
 import { reactConfig } from './projects/react/eslint.config.mjs';
@@ -97,6 +98,11 @@ export default defineConfig([
     basePath: 'projects/core',
     files: ['**/*.{json,ts}'],
     extends: [coreConfig],
+  },
+  {
+    basePath: 'projects/browser',
+    files: ['**/*.{json,ts}'],
+    extends: [browserConfig],
   },
   {
     basePath: 'projects/firebase-admin',

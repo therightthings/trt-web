@@ -1,4 +1,4 @@
-import { BrowserWakeLock } from '@trt-web/core';
+import { BrowserWakeLock } from '@trt-web/browser';
 export const createWakeLockPage = (): HTMLElement => {
   const page = document.createElement('main');
   page.className = 'content';

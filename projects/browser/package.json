@@ -1,0 +1,22 @@
+{
+  "name": "@trt-web/browser",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/public-api.js",
+  "module": "./src/public-api.js",
+  "types": "./src/public-api.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./src/public-api.d.ts",
+      "default": "./src/public-api.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "description": "Framework-free browser utilities for web applications.",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@trt-web/core": "^1.4.2",
+    "tslib": "^2.3.0"
+  }
+}

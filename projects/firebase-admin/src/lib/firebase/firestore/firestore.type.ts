@@ -1,6 +1,5 @@
+import type { TimeConfig } from '@trt-web/core';
 import { DocumentData, Timestamp, WhereFilterOp } from 'firebase-admin/firestore';
-
-import { TimeConfig } from '../../utils';
 
 export const firestoreLimit = {
   MAX_IN_VALUES: 30,

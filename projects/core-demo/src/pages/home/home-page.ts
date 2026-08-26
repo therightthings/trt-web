@@ -1,4 +1,4 @@
-import { BrowserClipboard } from '@trt-web/core';
+import { BrowserClipboard } from '@trt-web/browser';
 
 export const createHomePage = (): HTMLElement => {
   const content = document.createElement('main');

@@ -1,4 +1,5 @@
-import { BrowserPerformance, trt } from '@trt-web/core';
+import { BrowserPerformance } from '@trt-web/browser';
+import { trt } from '@trt-web/core';
 
 import { createToggleFullscreen } from '../../components/toggle-fullscreen';
 

@@ -1,7 +1,7 @@
 import { effect, Injectable, Signal, signal } from '@angular/core';
-import { IndexedDB, LocalStorage, SessionStorage } from '@trt-web/core';
+import { IndexedDB, LocalStorage, SessionStorage } from '@trt-web/browser';
+import { toMs } from '@trt-web/core';
 
-import { toMs } from '../utils';
 import {
   IdType,
   initialSignalStoreConfig,

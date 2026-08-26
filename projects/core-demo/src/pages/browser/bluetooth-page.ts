@@ -1,4 +1,4 @@
-import { BrowserBluetooth } from '@trt-web/core';
+import { BrowserBluetooth } from '@trt-web/browser';
 
 export const createBluetoothPage = (): HTMLElement => {
   const page = document.createElement('main');

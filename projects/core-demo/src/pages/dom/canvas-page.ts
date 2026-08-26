@@ -1,4 +1,4 @@
-import { Canvas } from '@trt-web/core';
+import { Canvas } from '@trt-web/browser';
 
 export const createCanvasPage = (): HTMLElement => {
   const page = document.createElement('main');

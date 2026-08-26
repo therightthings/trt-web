@@ -9,6 +9,7 @@
     "lint": "node --experimental-strip-types scripts/cli.ts lint",
     "serve": "node --experimental-strip-types scripts/cli.ts serve",
     "release:angular": "yarn build angular && cd dist/angular && yarn publish --access public",
+    "release:browser": "yarn build browser && cd dist/browser && yarn publish --access public",
     "release:core": "yarn build core && cd dist/core && yarn publish --access public",
     "release:firebase-admin": "yarn build firebase-admin && cd dist/firebase-admin && yarn publish --access public",
     "release:react": "yarn build react && cd dist/react && yarn publish --access public",

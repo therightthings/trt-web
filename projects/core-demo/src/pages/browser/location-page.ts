@@ -1,4 +1,4 @@
-import { BrowserLocation } from '@trt-web/core';
+import { BrowserLocation } from '@trt-web/browser';
 
 export const createLocationPage = (): HTMLElement => {
   const page = document.createElement('main');

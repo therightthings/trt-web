@@ -1,7 +1,6 @@
 import {
   BrowserAI,
   BrowserAudioContext,
-  BrowserBattery,
   BrowserBluetooth,
   BrowserCamera,
   BrowserClipboard,
@@ -16,14 +15,12 @@ import {
   BrowserScreen,
   BrowserTabActivity,
   BrowserVibration,
-  BrowserViewport,
   BrowserWakeLock,
-  BrowserWindow,
   Cookie,
   IndexedDB,
   LocalStorage,
   SessionStorage,
-} from '@trt-web/core';
+} from '@trt-web/browser';
 
 import { createDemoPage, type DemoPageConfig } from '../components/demo-page';
 import { createGroupPage, type GroupPageConfig } from './group-page';

@@ -1,4 +1,4 @@
-import { createWorker, runWorker } from '@trt-web/core';
+import { trt } from '@trt-web/core';
 export const createWorkerPage = (): HTMLElement => {
   const page = document.createElement('main');
   page.className = 'content';
@@ -6,10 +6,12 @@ export const createWorkerPage = (): HTMLElement => {
   const result = page.querySelector<HTMLElement>('#worker-result')!;
   page.querySelector('#worker-run')?.addEventListener('click', async () => {
     const number = Number(page.querySelector<HTMLInputElement>('#worker-number')!.value);
-    result.textContent = String(await runWorker((value: number) => value * value, number));
+    result.textContent = String(
+      await trt.worker.runWorker((value: number) => value * value, number),
+    );
   });
   page.querySelector('#worker-create')?.addEventListener('click', () => {
-    const worker = createWorker((value: string) => value.toUpperCase());
+    const worker = trt.worker.createWorker((value: string) => value.toUpperCase());
     worker.onmessage = (event: MessageEvent) => {
       result.textContent = JSON.stringify(event.data);
       worker.terminate();

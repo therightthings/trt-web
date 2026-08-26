@@ -1,4 +1,4 @@
-import { BrowserCamera } from '@trt-web/core';
+import { BrowserCamera } from '@trt-web/browser';
 
 export const createCameraPage = (): HTMLElement => {
   const page = document.createElement('main');

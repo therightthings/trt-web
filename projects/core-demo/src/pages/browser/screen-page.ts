@@ -1,4 +1,4 @@
-import { BrowserScreen } from '@trt-web/core';
+import { BrowserScreen } from '@trt-web/browser';
 
 export const createScreenPage = (): HTMLElement => {
   const page = document.createElement('main');

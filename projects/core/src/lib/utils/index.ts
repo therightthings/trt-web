@@ -1,4 +1,3 @@
-export type { BrowserSubscription } from './browser-subscription.type';
 export { checkCircularReferences } from './check-circular-references';
 export type { FileSizeConfig } from './file-size-config.type';
 export type { ValueType } from './is-type';

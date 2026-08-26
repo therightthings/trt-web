@@ -1,4 +1,4 @@
-import { BrowserTheme, LocalStorage } from '@trt-web/core';
+import { BrowserTheme, LocalStorage } from '@trt-web/browser';
 
 export type ThemeMode = 'dark' | 'light';
 

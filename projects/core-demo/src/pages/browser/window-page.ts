@@ -1,4 +1,4 @@
-import { BrowserWindow } from '@trt-web/core';
+import { BrowserWindow } from '@trt-web/browser';
 export const createWindowPage = (): HTMLElement => {
   const page = document.createElement('main');
   page.className = 'content';

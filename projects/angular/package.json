@@ -25,6 +25,7 @@
   "type": "module",
   "dependencies": {
     "@angular/aria": "^22.0.4",
+    "@trt-web/browser": "^0.1.0",
     "@trt-web/core": "^1.4.2",
     "tslib": "^2.3.0"
   },

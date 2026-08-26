@@ -1,4 +1,4 @@
-import { BrowserNfc } from '@trt-web/core';
+import { BrowserNfc } from '@trt-web/browser';
 
 export const createNfcPage = (): HTMLElement => {
   const page = document.createElement('main');

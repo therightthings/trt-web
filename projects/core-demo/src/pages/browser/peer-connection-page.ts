@@ -1,4 +1,4 @@
-import { BrowserPeerConnection } from '@trt-web/core';
+import { BrowserPeerConnection } from '@trt-web/browser';
 
 export const createPeerConnectionPage = (): HTMLElement => {
   const page = document.createElement('main');

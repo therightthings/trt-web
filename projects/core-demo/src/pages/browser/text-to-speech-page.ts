@@ -1,4 +1,4 @@
-import { BrowserTextToSpeech } from '@trt-web/core';
+import { BrowserTextToSpeech } from '@trt-web/browser';
 
 export const createTextToSpeechPage = (): HTMLElement => {
   const page = document.createElement('main');

@@ -1,4 +1,4 @@
-import { BrowserAI } from '@trt-web/core';
+import { BrowserAI } from '@trt-web/browser';
 
 export const createAiPage = (): HTMLElement => {
   const page = document.createElement('main');

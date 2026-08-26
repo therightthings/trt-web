@@ -1,6 +1,5 @@
+import { type TimeConfig, toMs } from '@trt-web/core';
 import NodeCache from 'node-cache';
-
-import { TimeConfig, toMs } from '../utils';
 
 export class CacheService {
   static config = {

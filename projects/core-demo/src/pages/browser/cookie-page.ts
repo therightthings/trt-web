@@ -1,4 +1,4 @@
-import { Cookie } from '@trt-web/core';
+import { Cookie } from '@trt-web/browser';
 
 export const createCookiePage = (): HTMLElement => {
   const page = document.createElement('main');

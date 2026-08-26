@@ -1,4 +1,4 @@
-import { LocalStorage } from '@trt-web/core';
+import { LocalStorage } from '@trt-web/browser';
 
 import { createThemeSwitcher } from './theme-switcher';
 
