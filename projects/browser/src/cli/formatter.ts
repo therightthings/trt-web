@@ -12,40 +12,6 @@ function color(code: number, value: string): string {
   return `\u001b[${code}m${value}\u001b[0m`;
 }
 
-export function printHelp(): void {
-  const commands = [
-    ['trt-browser list', 'Lists all browser utilities.', '[aliases: --list]'],
-    ['trt-browser search <term>', 'Searches utilities by name or description.', ''],
-    ['trt-browser info <utility>', 'Shows details for a browser utility.', ''],
-  ];
-  const options = [
-    ['--help, -h', 'Shows a help message for this command in the console.'],
-    ['--version, -v', 'Outputs the @trt-web/browser version.'],
-  ];
-
-  const commandLines = commands.map(([command, description, alias]) => {
-    return `  ${command.padEnd(30)}${description.padEnd(48)}${alias}`;
-  });
-  const optionLines = options.map(([option, description]) => {
-    return `  ${option.padEnd(18)}${description}`;
-  });
-
-  console.log(
-    [
-      'trt-browser',
-      '',
-      'Commands:',
-      ...commandLines,
-      '',
-      'Options:',
-      ...optionLines,
-      '',
-      'For more information, see the @trt-web/browser documentation.',
-      '',
-    ].join('\n'),
-  );
-}
-
 export function printUtilities(utilities: BrowserCliUtility[]): void {
   if (utilities.length === 0) {
     console.log('No browser utilities found.');
@@ -89,18 +55,16 @@ export function printUtilities(utilities: BrowserCliUtility[]): void {
 export function printUtilityInfo(utility: BrowserCliUtility): void {
   console.log(`${color(96, utility.name)}\n${utility.description}`);
 
-  if (!utility.methods?.length) {
-    return;
-  }
-
   if (utility.example) {
     console.log(`\n${color(93, 'Example:')}\n`);
     printCodeBlock(utility.example);
   }
 
-  console.log(`\n${color(93, 'Methods:')}`);
+  if (utility.methods.length > 0) {
+    console.log(`\n${color(93, 'Methods:')}`);
+  }
   for (const method of utility.methods) {
-    console.log(`  ${color(32, '•')} ${color(97, method.signature ?? method.name)}`);
+    console.log(`  ${color(32, '•')} ${color(97, method.signature)}`);
     if (method.description !== 'Public utility method.') {
       console.log(`    ${color(90, method.description)}`);
     }
@@ -114,7 +78,7 @@ function printCodeBlock(code: string): void {
 }
 
 function formatCodeLine(line: string): string {
-  const commentIndex = line.indexOf('//');
+  const commentIndex = findCommentIndex(line);
   if (commentIndex < 0) {
     return highlightTypeScript(
       line,
@@ -126,4 +90,32 @@ function formatCodeLine(line: string): string {
     line.slice(0, commentIndex),
     browserUtilities.map((utility) => utility.name),
   )}${color(90, line.slice(commentIndex))}`;
+}
+
+function findCommentIndex(line: string): number {
+  let quote: '"' | "'" | '`' | undefined;
+  let escaped = false;
+
+  for (let index = 0; index < line.length - 1; index += 1) {
+    const character = line[index];
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (character === '\\' && quote) {
+      escaped = true;
+      continue;
+    }
+    if (quote) {
+      if (character === quote) quote = undefined;
+      continue;
+    }
+    if (character === '"' || character === "'" || character === '`') {
+      quote = character;
+      continue;
+    }
+    if (character === '/' && line[index + 1] === '/') return index;
+  }
+
+  return -1;
 }

@@ -1,13 +1,12 @@
 export type BrowserCliUtility = {
   name: string;
   description: string;
-  methods?: BrowserCliMethod[];
+  methods: BrowserCliMethod[];
   example?: string;
 };
 
 export type BrowserCliMethod = {
   name: string;
-  signature?: string;
+  signature: string;
   description: string;
-  example?: string;
 };

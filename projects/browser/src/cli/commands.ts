@@ -2,9 +2,9 @@ import { Command } from 'commander';
 import enquirer from 'enquirer';
 
 import { printUtilities, printUtilityInfo } from './formatter.js';
-import { browserUtilities } from './registry.js';
+import { browserUtilities, readBrowserPackageVersion } from './registry.js';
 
-const browserPackageVersion = '1.0.0';
+const browserPackageVersion = readBrowserPackageVersion();
 
 export async function runCli(args: string[]): Promise<void> {
   const program = new Command();
@@ -23,18 +23,6 @@ export async function runCli(args: string[]): Promise<void> {
     });
 
   program
-    .command('search <term>')
-    .description('search utilities by name or description')
-    .action((term: string) => {
-      const normalizedTerm = term.toLowerCase();
-      printUtilities(
-        browserUtilities.filter((utility) =>
-          `${utility.name} ${utility.description}`.toLowerCase().includes(normalizedTerm),
-        ),
-      );
-    });
-
-  program
     .command('info <utility>')
     .description('show utility methods and README example')
     .action((name: string) => {
@@ -42,7 +30,9 @@ export async function runCli(args: string[]): Promise<void> {
         (item) => item.name.toLowerCase() === name.toLowerCase(),
       );
       if (!utility) {
-        throw new Error(`Unknown browser utility: ${name}`);
+        console.error(`Unknown browser utility: ${name}`);
+        process.exitCode = 1;
+        return;
       }
 
       printUtilityInfo(utility);
@@ -91,12 +81,20 @@ async function selectUtility(): Promise<void> {
 
 async function waitForDetailAction(): Promise<'back' | 'exit'> {
   console.log('\nEsc: exit · ←: back to utility list');
+  if (!process.stdin.isTTY) {
+    return 'exit';
+  }
+
   process.stdin.setRawMode(true);
   process.stdin.resume();
   process.stdin.setEncoding('utf8');
 
   return await new Promise<'back' | 'exit'>((resolve) => {
+    let completed = false;
     const onData = (input: string): void => {
+      if (completed) {
+        return;
+      }
       if (input === '\u001b' || input === '\u0003') {
         cleanup();
         resolve('exit');
@@ -110,6 +108,7 @@ async function waitForDetailAction(): Promise<'back' | 'exit'> {
     };
 
     const cleanup = (): void => {
+      completed = true;
       process.stdin.off('data', onData);
       process.stdin.setRawMode(false);
       process.stdin.pause();

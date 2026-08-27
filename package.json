@@ -6,6 +6,8 @@
   "scripts": {
     "prepare": "npx husky",
     "build": "node --experimental-strip-types scripts/cli.ts build",
+    "build:cli": "node --experimental-strip-types scripts/cli.ts build:cli",
+    "cli:browser": "node dist/browser/src/cli.js",
     "lint": "node --experimental-strip-types scripts/cli.ts lint",
     "serve": "node --experimental-strip-types scripts/cli.ts serve",
     "release:angular": "yarn build angular && cd dist/angular && yarn publish --access public",
