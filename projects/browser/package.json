@@ -57,6 +57,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@trt-web/cli": "^1.0.0",
     "@trt-web/core": "^1.5.0",
     "commander": "^15.0.0",
     "enquirer": "^2.4.1",

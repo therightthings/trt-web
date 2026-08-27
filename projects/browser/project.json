@@ -15,6 +15,16 @@
         "assets": ["projects/browser/*.md"]
       }
     },
+    "cli": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/browser",
+        "main": "projects/browser/src/cli.ts",
+        "tsConfig": "projects/browser/tsconfig.cli.json",
+        "assets": ["projects/browser/README.md", "projects/browser/package.json"]
+      }
+    },
     "lint": { "executor": "@nx/eslint:lint" },
     "test": {
       "executor": "@nx/vitest:test",

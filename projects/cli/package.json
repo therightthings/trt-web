@@ -1,0 +1,15 @@
+{
+  "name": "@trt-web/cli",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/public-api.js",
+  "module": "./src/public-api.js",
+  "types": "./src/public-api.d.ts",
+  "sideEffects": false,
+  "description": "Reusable CLI, terminal formatting, and code highlighting utilities.",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "commander": "^15.0.0",
+    "enquirer": "^2.4.1"
+  }
+}

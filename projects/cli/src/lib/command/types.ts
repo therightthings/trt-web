@@ -3,6 +3,7 @@ export type BrowserCliUtility = {
   description: string;
   methods: BrowserCliMethod[];
   example?: string;
+  language?: string;
 };
 
 export type BrowserCliMethod = {

@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.lib.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc/browser-cli",
+    "rootDir": "./",
+    "baseUrl": ".",
+    "types": ["node"],
+    "paths": {
+      "@trt-web/cli": ["../../dist/cli/src/public-api"]
+    }
+  },
+  "include": ["src/cli.ts"]
+}

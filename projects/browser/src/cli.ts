@@ -1,5 +1,7 @@
-#!/usr/bin/env node
+import { TrtCommand } from '@trt-web/cli';
 
-import { runCli } from './cli/commands.js';
-
-await runCli(process.argv.slice(2));
+await TrtCommand.startCli({
+  readmePath: '../README.md',
+  packageJsonPath: '../package.json',
+  name: 'trt-browser',
+});

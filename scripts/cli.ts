@@ -44,6 +44,21 @@ async function runBuild(
 }
 
 async function runBuildCli(projectArg: string | undefined) {
+  const cliBuildStatus = await runNx(repoRoot, ['run', 'cli:build', '--skip-nx-cache']);
+  if (cliBuildStatus !== 0) {
+    return cliBuildStatus;
+  }
+
+  const linkStatus = await runCommand('yarn', ['link'], path.join(repoRoot, 'dist', 'cli'));
+  if (linkStatus !== 0) {
+    return linkStatus;
+  }
+
+  const workspaceLinkStatus = await runCommand('yarn', ['link', '@trt-web/cli'], repoRoot);
+  if (workspaceLinkStatus !== 0) {
+    return workspaceLinkStatus;
+  }
+
   const projects = (await listProjects(projectsDir)).filter((project) => project.hasCli);
   if (projects.length === 0) {
     throw new Error('No projects with CLI support were found.');
@@ -72,7 +87,8 @@ async function runBuildCli(projectArg: string | undefined) {
     throw new Error(`CLI project not found: ${projectArg}`);
   }
 
-  return runNx(repoRoot, ['run', `${project.name}:build`, '--skip-nx-cache']);
+  const target = project.name === 'browser' ? 'cli' : 'build';
+  return runNx(repoRoot, ['run', `${project.name}:${target}`, '--skip-nx-cache']);
 }
 
 async function runLint(
