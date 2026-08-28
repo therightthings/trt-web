@@ -11,7 +11,8 @@
       "options": {
         "outputPath": "dist/cli",
         "main": "projects/cli/src/public-api.ts",
-        "tsConfig": "projects/cli/tsconfig.lib.json"
+        "tsConfig": "projects/cli/tsconfig.lib.json",
+        "assets": ["projects/cli/src/assets/styles.css", "projects/cli/src/assets/scripts.js"]
       }
     },
     "lint": { "executor": "@nx/eslint:lint" },

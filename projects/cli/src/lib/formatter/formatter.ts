@@ -1,6 +1,6 @@
 import { CodeHighlighter } from '../code-highlighter/code-highlighter.js';
 import type { CodeTheme, CodeThemeDetail } from '../code-highlighter/code-highlighter.type.js';
-import type { BrowserCliUtility } from '../command/types.js';
+import type { BrowserCliUtility } from '../command/commands.type.js';
 import { color } from '../utils/color.js';
 
 export class CliFormatter {

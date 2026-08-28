@@ -2,17 +2,20 @@ import { Command } from 'commander';
 import enquirer from 'enquirer';
 
 import type { CodeTheme, CodeThemeDetail } from '../code-highlighter/code-highlighter.type.js';
+import { DocGenerator } from '../doc-generator/doc-generator.js';
+import type { DocGeneratorConfig } from '../doc-generator/doc-generator.type.js';
 import { CliFormatter } from '../formatter/formatter.js';
 import { color } from '../utils/color.js';
-import { ParsedReadmeNode,parseReadme } from '../utils/parse-readme.js';
+import { ParsedReadmeNode, parseReadme } from '../utils/parse-readme.js';
 import { readFile } from '../utils/read-file.js';
-import { BrowserCliMethod, BrowserCliUtility } from './types.js';
+import { BrowserCliMethod, BrowserCliUtility } from './commands.type.js';
 
 export type CliConfig = {
   readmePath: string;
   packageJsonPath: string;
   name?: string;
   codeTheme?: CodeTheme | CodeThemeDetail | 'none';
+  docs?: Omit<DocGeneratorConfig, 'readmePath'>;
 };
 
 export class TrtCommand {
@@ -79,6 +82,22 @@ export class TrtCommand {
         }
 
         CliFormatter.printUtilityInfo(utility, utilities, config.codeTheme);
+      });
+
+    program
+      .command('docs')
+      .description('build a static HTML documentation site from README')
+      .action(() => {
+        if (!config.docs) {
+          console.error('Documentation output is not configured.');
+          process.exitCode = 1;
+          return;
+        }
+
+        DocGenerator.generate({
+          readmePath: config.readmePath,
+          ...config.docs,
+        });
       });
 
     program.action(async (_options, command) => {

@@ -26,6 +26,7 @@ export default defineConfig([
       '**/package.json',
       '**/vitest.config.*',
       '**/vitest.config.*.timestamp*',
+      'projects/cli/src/assets/**',
     ],
   },
   {
