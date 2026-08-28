@@ -77,13 +77,15 @@ export class CliFormatter {
     theme: CodeTheme | CodeThemeDetail | 'none' = 'vs-code-dark-modern',
   ): void {
     for (const line of code.split('\n')) {
-      const highlightedLine =
-        language === 'ts' || language === 'js'
-          ? CodeHighlighter.highlight(
-              { content: line, language },
-              { utilityNames: utilities.map((utility) => utility.name), theme },
-            )
-          : line;
+      let highlightedLine = line;
+
+      if (CodeHighlighter.isLanguageSupported(language)) {
+        highlightedLine = CodeHighlighter.highlight(
+          { content: line, language },
+          { utilityNames: utilities.map((utility) => utility.name), theme },
+        );
+      }
+
       console.log(highlightedLine);
     }
   }

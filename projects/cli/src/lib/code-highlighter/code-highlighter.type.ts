@@ -1,6 +1,6 @@
 export type CodeTheme = 'vs-code-dark-modern';
 
-export type CodeLanguage = 'ts' | 'js';
+export type CodeLanguage = 'ts' | 'js' | 'html' | 'css' | 'scss' | 'bash';
 
 export type CodeColor = readonly [red: number, green: number, blue: number];
 

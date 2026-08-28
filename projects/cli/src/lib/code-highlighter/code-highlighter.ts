@@ -3,10 +3,15 @@ import { KEYWORD_MAP, THEME_MAP } from './code-highlighter.config.js';
 import type {
   CodeHighlightOptions,
   CodeHighlightSource,
+  CodeLanguage,
   CodeThemeDetail,
 } from './code-highlighter.type.js';
 
 export class CodeHighlighter {
+  static isLanguageSupported(language: string): language is CodeLanguage {
+    return language in KEYWORD_MAP;
+  }
+
   static isColorSupported(): boolean {
     return Boolean(process.stdout.isTTY && !process.env['NO_COLOR']);
   }
@@ -33,7 +38,7 @@ export class CodeHighlighter {
     const keywords = languageConfig.keywords.map(this.escapeRegExp).join('|');
     const builtInTypes = languageConfig.types.map(this.escapeRegExp).join('|') || '(?!)';
     const tokenPattern = new RegExp(
-      `(\\/\\/.*$|"(?:\\\\.|[^"\\\\])*"|'(?:\\\\.|[^'\\\\])*'|\\x60(?:\\\\.|[^\\x60\\\\])*\\x60)|\\b(${names})\\b|\\b(${keywords})\\b|\\b(\\d+(?:\\.\\d+)?)\\b|\\b(${builtInTypes})\\b|\\b([A-Z][A-Za-z0-9_$]*)\\b|(=>)|\\b([A-Za-z_$][\\w$]*)(?=\\s*\\()|\\b([A-Za-z_$][\\w$]*)\\b`,
+      `(\\/\\/.*$|<!--.*?-->|\\/\\*[\\s\\S]*?\\*\\/|(?:^|\\s)#.*$|"(?:\\\\.|[^"\\\\])*"|'(?:\\\\.|[^'\\\\])*'|\\x60(?:\\\\.|[^\\x60\\\\])*\\x60)|\\b(${names})\\b|\\b(${keywords})\\b|\\b(\\d+(?:\\.\\d+)?)\\b|\\b(${builtInTypes})\\b|\\b([A-Z][A-Za-z0-9_$]*)\\b|(=>)|\\b([A-Za-z_$][\\w$]*)(?=\\s*\\()|\\b([A-Za-z_$][\\w$]*)\\b`,
       'g',
     );
 
@@ -52,7 +57,12 @@ export class CodeHighlighter {
         variable?: string,
       ) => {
         if (stringLiteral) {
-          if (token.startsWith('//')) {
+          if (
+            token.startsWith('//') ||
+            token.startsWith('/*') ||
+            token.startsWith('<!--') ||
+            token.trimStart().startsWith('#')
+          ) {
             return color(colors.comment, token);
           }
           return color(colors.string, token);
