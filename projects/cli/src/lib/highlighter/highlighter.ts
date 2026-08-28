@@ -1,13 +1,13 @@
 import { color } from '../utils/color.js';
-import { KEYWORD_MAP, THEME_MAP } from './code-highlighter.config.js';
+import { KEYWORD_MAP, THEME_MAP } from './highlighter.config.js';
 import type {
   CodeHighlightOptions,
   CodeHighlightSource,
   CodeLanguage,
   CodeThemeDetail,
-} from './code-highlighter.type.js';
+} from './highlighter.type.js';
 
-export class CodeHighlighter {
+export class Highlighter {
   static isLanguageSupported(language: string): language is CodeLanguage {
     return language in KEYWORD_MAP;
   }

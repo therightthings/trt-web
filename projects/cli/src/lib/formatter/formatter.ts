@@ -1,6 +1,6 @@
-import { CodeHighlighter } from '../code-highlighter/code-highlighter.js';
-import type { CodeTheme, CodeThemeDetail } from '../code-highlighter/code-highlighter.type.js';
 import type { BrowserCliUtility } from '../command/commands.type.js';
+import { Highlighter } from '../highlighter/highlighter.js';
+import type { CodeTheme, CodeThemeDetail } from '../highlighter/highlighter.type.js';
 import { color } from '../utils/color.js';
 
 export class CliFormatter {
@@ -79,8 +79,8 @@ export class CliFormatter {
     for (const line of code.split('\n')) {
       let highlightedLine = line;
 
-      if (CodeHighlighter.isLanguageSupported(language)) {
-        highlightedLine = CodeHighlighter.highlight(
+      if (Highlighter.isLanguageSupported(language)) {
+        highlightedLine = Highlighter.highlight(
           { content: line, language },
           { utilityNames: utilities.map((utility) => utility.name), theme },
         );

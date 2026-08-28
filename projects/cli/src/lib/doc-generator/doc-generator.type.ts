@@ -1,4 +1,4 @@
-import type { CodeTheme, CodeThemeDetail } from '../code-highlighter/code-highlighter.type.js';
+import type { CodeTheme, CodeThemeDetail } from '../highlighter/highlighter.type.js';
 
 export type DocGeneratorConfig = {
   readmePath: string;

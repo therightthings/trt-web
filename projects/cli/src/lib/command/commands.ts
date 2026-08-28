@@ -1,10 +1,10 @@
 import { Command } from 'commander';
 import enquirer from 'enquirer';
 
-import type { CodeTheme, CodeThemeDetail } from '../code-highlighter/code-highlighter.type.js';
 import { DocGenerator } from '../doc-generator/doc-generator.js';
 import type { DocGeneratorConfig } from '../doc-generator/doc-generator.type.js';
 import { CliFormatter } from '../formatter/formatter.js';
+import type { CodeTheme, CodeThemeDetail } from '../highlighter/highlighter.type.js';
 import { color } from '../utils/color.js';
 import { ParsedReadmeNode, parseReadme } from '../utils/parse-readme.js';
 import { readFile } from '../utils/read-file.js';

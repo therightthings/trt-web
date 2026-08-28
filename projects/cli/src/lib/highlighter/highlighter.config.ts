@@ -1,4 +1,4 @@
-import type { CodeLanguage, CodeThemeDetail } from './code-highlighter.type.js';
+import type { CodeLanguage, CodeThemeDetail } from './highlighter.type.js';
 
 export const THEME_MAP = {
   'vs-code-dark-modern': {
