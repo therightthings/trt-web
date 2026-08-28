@@ -5,7 +5,7 @@ await TrtCommand.startCli({
   packageJsonPath: '../package.json',
   name: 'trt-browser',
   docs: {
-    outputPath: './dist/docs',
+    outputPath: './dist/docs/browser',
     title: '@trt-web/browser',
   },
 });
