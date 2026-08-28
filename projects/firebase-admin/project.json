@@ -10,6 +10,7 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "format": ["esm"],
         "outputPath": "dist/firebase-admin",
         "tsConfig": "projects/firebase-admin/tsconfig.lib.json",
         "packageJson": "projects/firebase-admin/package.json",

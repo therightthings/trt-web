@@ -6,6 +6,12 @@ export type BrowserCliUtility = {
   language?: string;
 };
 
+export type BrowserCliGroup = {
+  name: string;
+  description: string;
+  utilities: BrowserCliUtility[];
+};
+
 export type BrowserCliMethod = {
   name: string;
   signature: string;

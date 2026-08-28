@@ -8,7 +8,27 @@ import { CliFormatter } from '../formatter/formatter.js';
 import { color } from '../utils/color.js';
 import { ParsedReadmeNode, parseReadme } from '../utils/parse-readme.js';
 import { readFile } from '../utils/read-file.js';
-import { BrowserCliMethod, BrowserCliUtility } from './commands.type.js';
+import { BrowserCliGroup, BrowserCliMethod, BrowserCliUtility } from './commands.type.js';
+
+const EXIT_CLI = 'exit-cli';
+
+const promptKeys = {
+  pageup: 'pageUp',
+  pagedown: 'pageDown',
+  home: 'home',
+  end: 'end',
+  cancel: 'cancel',
+  delete: 'deleteForward',
+  down: 'down',
+  enter: 'submit',
+  return: 'submit',
+  escape: 'cancel',
+  left: 'left',
+  right: 'right',
+  tab: 'next',
+  up: 'up',
+  q: 'exitCli',
+};
 
 export type CliConfig = {
   readmePath: string;
@@ -25,7 +45,8 @@ export class TrtCommand {
       version?: string;
       description?: string;
     };
-    const utilities = this.mapReadmeToUtilities(readme);
+    const groups = this.mapReadmeToGroups(readme);
+    const utilities = groups.flatMap((group) => group.utilities);
     const program = new Command();
 
     program.configureHelp({
@@ -67,7 +88,7 @@ export class TrtCommand {
       .command('list')
       .description('list and interactively select a browser utility')
       .action(async () => {
-        await this.selectUtility(utilities, config.codeTheme);
+        await this.selectGroups(groups, config.codeTheme);
       });
 
     program
@@ -102,7 +123,7 @@ export class TrtCommand {
 
     program.action(async (_options, command) => {
       if (command.opts().list) {
-        await this.selectUtility(utilities, config.codeTheme);
+        await this.selectGroups(groups, config.codeTheme);
       } else if (process.argv.slice(2).length === 0) {
         program.help();
       }
@@ -111,54 +132,78 @@ export class TrtCommand {
     await program.parseAsync(['node', config.name ?? 'trt-cli', ...process.argv.slice(2)]);
   }
 
-  private static mapReadmeToUtilities(readme: string): BrowserCliUtility[] {
-    const utilityNodes: ParsedReadmeNode[] = [];
-    const visit = (node: ParsedReadmeNode): void => {
-      if (node.level === 2) {
-        utilityNodes.push(node);
-        return;
+  private static mapReadmeToGroups(readme: string): BrowserCliGroup[] {
+    const roots = parseReadme(readme);
+    const groups: BrowserCliGroup[] = [];
+    for (const root of roots) {
+      const directUtilities = root.children.filter((node) => this.isUtilityNode(node));
+      if (directUtilities.length > 0) {
+        groups.push({
+          name: root.title,
+          description: root.content,
+          utilities: directUtilities.map((node) => this.mapUtility(node)),
+        });
+        continue;
       }
-      node.children.forEach(visit);
+
+      for (const groupNode of root.children) {
+        const utilityNodes = groupNode.children.filter((node) => this.isUtilityNode(node));
+        if (utilityNodes.length > 0) {
+          groups.push({
+            name: groupNode.title,
+            description: groupNode.content,
+            utilities: utilityNodes.map((node) => this.mapUtility(node)),
+          });
+        }
+      }
+    }
+    return groups;
+  }
+
+  private static mapUtility(node: ParsedReadmeNode): BrowserCliUtility {
+    const methodsNode = node.children.find((child) => child.title.toLowerCase() === 'methods');
+    const examplesNode = node.children.find((child) => child.title.toLowerCase() === 'examples');
+    const methods: BrowserCliMethod[] = methodsNode
+      ? methodsNode.content
+          .split(/\r?\n/)
+          .map((line) => line.match(/^\s*- `([^`]+)`: (.+)$/))
+          .filter((match): match is RegExpMatchArray => match !== null)
+          .map((match) => ({
+            name: match[1].replace(/\(.*$/, ''),
+            signature: match[1],
+            description: match[2],
+          }))
+      : [];
+    const example = examplesNode?.codeBlocks[0];
+
+    return {
+      name: node.title,
+      description: node.content,
+      methods,
+      example: example?.code,
+      language: example?.language,
     };
-    parseReadme(readme).forEach(visit);
+  }
 
-    return utilityNodes.map((node) => {
-      const methodsNode = node.children.find((child) => child.title.toLowerCase() === 'methods');
-      const examplesNode = node.children.find((child) => child.title.toLowerCase() === 'examples');
-      const methods: BrowserCliMethod[] = methodsNode
-        ? methodsNode.content
-            .split(/\r?\n/)
-            .map((line) => line.match(/^\s*- `([^`]+)`: (.+)$/))
-            .filter((match): match is RegExpMatchArray => match !== null)
-            .map((match) => ({
-              name: match[1].replace(/\(.*$/, ''),
-              signature: match[1],
-              description: match[2],
-            }))
-        : [];
-      const example = examplesNode?.codeBlocks[0];
-
-      return {
-        name: node.title,
-        description: node.content,
-        methods,
-        example: example?.code,
-        language: example?.language,
-      };
+  private static isUtilityNode(node: ParsedReadmeNode): boolean {
+    return node.children.some((child) => {
+      return child.title.toLowerCase() === 'methods' || child.title.toLowerCase() === 'examples';
     });
   }
 
   private static async selectUtility(
     utilities: BrowserCliUtility[],
     theme?: CodeTheme | CodeThemeDetail | 'none',
-  ): Promise<void> {
+    allowBackToGroup = false,
+  ): Promise<'back' | 'exit'> {
     if (!process.stdin.isTTY || !process.stdout.isTTY) {
       CliFormatter.printUtilities(utilities);
-      return;
+      return 'exit';
     }
 
     while (true) {
-      const result = await enquirer.prompt<{ selected: string }>({
+      let backRequested = false;
+      const prompt = {
         type: 'select',
         name: 'selected',
         message: 'Select a browser utility',
@@ -167,7 +212,30 @@ export class TrtCommand {
           message: `${color(96, utility.name)}${color(90, ':')} ${color(90, utility.description)}`,
           value: utility.name,
         })),
-      });
+        actions: {
+          keys: {
+            ...promptKeys,
+            left: allowBackToGroup ? 'back' : 'left',
+          },
+        },
+        async back(this: { cancel: (error: Error) => Promise<void> }): Promise<void> {
+          backRequested = true;
+          await this.cancel(new Error('back'));
+        },
+        async exitCli(this: { cancel: (error: Error) => Promise<void> }): Promise<void> {
+          await this.cancel(new Error(EXIT_CLI));
+        },
+      };
+
+      let result: { selected: string };
+      try {
+        result = await enquirer.prompt<{ selected: string }>(prompt);
+      } catch {
+        if (backRequested) {
+          return 'back';
+        }
+        return 'exit';
+      }
 
       const utility = utilities.find((item) => item.name === result.selected);
       if (utility) {
@@ -176,7 +244,57 @@ export class TrtCommand {
 
       const action = await this.waitForDetailAction();
       if (action === 'exit') {
+        return 'exit';
+      }
+    }
+  }
+
+  private static async selectGroups(
+    groups: BrowserCliGroup[],
+    theme?: CodeTheme | CodeThemeDetail | 'none',
+  ): Promise<void> {
+    if (!process.stdin.isTTY || !process.stdout.isTTY) {
+      CliFormatter.printUtilities(groups.flatMap((group) => group.utilities));
+      return;
+    }
+
+    if (groups.length === 1 && groups[0].name.startsWith('@')) {
+      await this.selectUtility(groups[0].utilities, theme);
+      return;
+    }
+
+    while (true) {
+      let result: { selected: string };
+      try {
+        const prompt = {
+          type: 'select',
+          name: 'selected',
+          message: 'Select a utility group',
+          choices: groups.map((group) => ({
+            name: group.name,
+            message: `${color(96, group.name)}${color(90, ':')} ${color(90, group.description)}`,
+            value: group.name,
+          })),
+          actions: {
+            keys: {
+              ...promptKeys,
+              left: 'exitCli',
+            },
+          },
+          async exitCli(this: { cancel: (error: Error) => Promise<void> }): Promise<void> {
+            await this.cancel(new Error(EXIT_CLI));
+          },
+        };
+        result = await enquirer.prompt<{ selected: string }>(prompt);
+      } catch {
         return;
+      }
+      const group = groups.find((item) => item.name === result.selected);
+      if (group) {
+        const action = await this.selectUtility(group.utilities, theme, true);
+        if (action === 'exit') {
+          return;
+        }
       }
     }
   }

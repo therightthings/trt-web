@@ -24,9 +24,13 @@
   ],
   "license": "Apache-2.0",
   "type": "module",
+  "bin": {
+    "trt-angular": "./src/cli.js"
+  },
   "dependencies": {
     "@angular/aria": "^22.0.4",
     "@trt-web/browser": "^0.1.0",
+    "@trt-web/cli": "^1.0.0",
     "@trt-web/core": "^1.5.0",
     "tslib": "^2.3.0"
   },

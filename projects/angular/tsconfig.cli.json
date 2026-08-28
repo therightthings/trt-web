@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.lib.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/browser-cli",
+    "outDir": "../../dist/angular-cli",
     "module": "ESNext",
     "rootDir": "./",
     "baseUrl": ".",

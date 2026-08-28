@@ -9,6 +9,7 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "format": ["esm"],
         "outputPath": "dist/core",
         "main": "projects/core/src/public-api.ts",
         "tsConfig": "projects/core/tsconfig.lib.json",

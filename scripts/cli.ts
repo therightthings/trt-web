@@ -87,8 +87,7 @@ async function runBuildCli(projectArg: string | undefined) {
     throw new Error(`CLI project not found: ${projectArg}`);
   }
 
-  const target = project.name === 'browser' ? 'cli' : 'build';
-  return runNx(repoRoot, ['run', `${project.name}:${target}`, '--skip-nx-cache']);
+  return runNx(repoRoot, ['run', `${project.name}:cli`, '--skip-nx-cache']);
 }
 
 async function runLint(

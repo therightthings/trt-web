@@ -9,6 +9,7 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "format": ["esm"],
         "outputPath": "dist/browser",
         "main": "projects/browser/src/public-api.ts",
         "tsConfig": "projects/browser/tsconfig.lib.json",
@@ -19,7 +20,8 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/browser",
+        "format": ["esm"],
+        "outputPath": "dist/browser-cli",
         "main": "projects/browser/src/cli.ts",
         "tsConfig": "projects/browser/tsconfig.cli.json",
         "assets": ["projects/browser/README.md", "projects/browser/package.json"]
