@@ -22,7 +22,7 @@ export class Highlighter {
 
   static highlight(payload: CodeHighlightSource, options?: CodeHighlightOptions): string {
     const { content = '', language = 'ts' } = payload;
-    const { utilityNames = [], theme = 'vs-code-dark-modern' } = options ?? {};
+    const { utilityNames = [], theme = 'vs-code-dark-modern', output = 'terminal' } = options ?? {};
 
     if (theme === 'none') {
       return content;
@@ -63,45 +63,67 @@ export class Highlighter {
             token.startsWith('<!--') ||
             token.trimStart().startsWith('#')
           ) {
-            return color(colors.comment, token);
+            return this.renderToken('comment', colors.comment, token, output);
           }
-          return color(colors.string, token);
+          return this.renderToken('string', colors.string, token, output);
         }
 
         if (utilityName) {
-          return color(colors.utility, token);
+          return this.renderToken('utility', colors.utility, token, output);
         }
 
         if (keyword) {
-          return color(colors.keyword, token);
+          return this.renderToken('keyword', colors.keyword, token, output);
         }
 
         if (numberLiteral) {
-          return color(colors.number, token);
+          return this.renderToken('number', colors.number, token, output);
         }
 
         if (typeName) {
-          return color(colors.type, token);
+          return this.renderToken('type', colors.type, token, output);
         }
 
         if (namedType) {
-          return color(colors.type, token);
+          return this.renderToken('type', colors.type, token, output);
         }
 
         if (arrow) {
-          return color(colors.operator, token);
+          return this.renderToken('operator', colors.operator, token, output);
         }
 
         if (identifier) {
-          return color(colors.method, token);
+          return this.renderToken('method', colors.method, token, output);
         }
 
         if (variable) {
-          return color(colors.variable, token);
+          return this.renderToken('variable', colors.variable, token, output);
         }
 
         return token;
       },
     );
+  }
+
+  private static renderToken(
+    tokenType: keyof CodeThemeDetail,
+    tokenColor: CodeThemeDetail[keyof CodeThemeDetail],
+    token: string,
+    output: 'terminal' | 'html',
+  ): string {
+    if (output === 'terminal') {
+      return color(tokenColor, token);
+    }
+
+    return `<span class="token-${tokenType}">${this.escapeHtml(token)}</span>`;
+  }
+
+  private static escapeHtml(value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 }

@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { Highlighter } from '../highlighter/highlighter.js';
 import { minifyHtml } from '../utils/minify-html.js';
 import type { ParsedReadmeNode } from '../utils/parse-readme.js';
 import { parseReadme } from '../utils/parse-readme.js';
@@ -154,7 +155,7 @@ export class DocGenerator {
     }
     const utilities = document.groups
       .flatMap((group) => group.utilities)
-      .map((utility) => this.renderUtility(utility))
+      .map((utility) => this.renderUtility(utility, document, config))
       .join('');
 
     return /*html*/ `
@@ -205,7 +206,14 @@ export class DocGenerator {
     </button>`;
   }
 
-  private static renderUtility(utility: DocUtility): string {
+  private static renderUtility(
+    utility: DocUtility,
+    document: { groups: DocGroup[] },
+    config: DocGeneratorConfig,
+  ): string {
+    const utilityNames = document.groups
+      .flatMap((group) => group.utilities)
+      .map((item) => item.title);
     let methods = '';
     for (const method of utility.methods) {
       methods += /*html*/ `
@@ -217,18 +225,18 @@ export class DocGenerator {
 
     let examples = '';
     for (const codeBlock of utility.codeBlocks) {
-      examples += this.renderCodeBlock(codeBlock.code);
+      examples += this.renderCodeBlock(codeBlock.code, codeBlock.language, utilityNames, config);
     }
     for (const example of utility.examples) {
       if (example.title) {
         examples += `<h4>${this.escapeHtml(example.title)}</h4>`;
       }
-      examples += this.renderCodeBlock(example.code);
+      examples += this.renderCodeBlock(example.code, example.language, utilityNames, config);
     }
 
     let sections = '';
     for (const section of utility.sections) {
-      sections += this.renderSection(section);
+      sections += this.renderSection(section, utilityNames, config);
     }
 
     return /*html*/ `
@@ -241,22 +249,39 @@ export class DocGenerator {
       </article>`;
   }
 
-  private static renderCodeBlock(code: string): string {
-    let output = '';
-    for (const line of code.split('\n')) {
-      output += `${this.escapeHtml(line)}\n`;
+  private static renderCodeBlock(
+    code: string,
+    language: string | undefined,
+    utilityNames: readonly string[],
+    config: DocGeneratorConfig,
+  ): string {
+    if (language && Highlighter.isLanguageSupported(language)) {
+      const highlighted = Highlighter.highlight(
+        { content: code, language },
+        {
+          output: 'html',
+          theme: config.codeTheme,
+          utilityNames,
+        },
+      );
+
+      return `<pre><code>${highlighted}</code></pre>`;
     }
 
-    return `<pre><code>${output}</code></pre>`;
+    return `<pre><code>${this.escapeHtml(code)}</code></pre>`;
   }
 
-  private static renderSection(node: ParsedReadmeNode): string {
+  private static renderSection(
+    node: ParsedReadmeNode,
+    utilityNames: readonly string[],
+    config: DocGeneratorConfig,
+  ): string {
     let content = node.content ? `<p>${this.escapeHtml(node.content)}</p>` : '';
     for (const codeBlock of node.codeBlocks) {
-      content += this.renderCodeBlock(codeBlock.code);
+      content += this.renderCodeBlock(codeBlock.code, codeBlock.language, utilityNames, config);
     }
     for (const child of node.children) {
-      content += this.renderSection(child);
+      content += this.renderSection(child, utilityNames, config);
     }
 
     return `<section><h3>${this.escapeHtml(node.title)}</h3>${content}</section>`;

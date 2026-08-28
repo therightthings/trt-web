@@ -24,4 +24,5 @@ export type CodeHighlightSource = {
 export type CodeHighlightOptions = {
   utilityNames?: readonly string[];
   theme?: CodeTheme | CodeThemeDetail | 'none';
+  output?: 'terminal' | 'html';
 };

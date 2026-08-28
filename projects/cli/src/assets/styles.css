@@ -365,6 +365,33 @@ nav {
 .utility pre {
   font-family: ui-monospace, monospace;
 }
+.token-utility {
+  color: rgb(79 193 255);
+}
+.token-keyword {
+  color: rgb(197 134 192);
+}
+.token-method {
+  color: rgb(220 220 170);
+}
+.token-string {
+  color: rgb(206 145 120);
+}
+.token-type {
+  color: rgb(78 201 176);
+}
+.token-number {
+  color: rgb(181 206 168);
+}
+.token-operator {
+  color: rgb(244 135 113);
+}
+.token-variable {
+  color: rgb(156 220 254);
+}
+.token-comment {
+  color: rgb(106 153 85);
+}
 .utility pre {
   padding: 18px;
   overflow: auto;
