@@ -31,6 +31,24 @@ Provides Express middleware and in-memory cache helpers for HTTP responses.
 
 #### Examples
 
+- Basic usage
+
+```ts
+const cache = CacheService.getInstance(); // singleton pattern
+cache.set('profile:42', { id: 42 }, 60);
+const profile = cache.get<{ id: number }>('profile:42');
+```
+
+- Advance usage
+
+```ts
+const cache = CacheService.getInstance();
+cache.set('profile:42', { id: 42 }, 60);
+const profile = cache.get<{ id: number }>('profile:42');
+```
+
+- Expert usage
+
 ```ts
 const cache = CacheService.getInstance();
 cache.set('profile:42', { id: 42 }, 60);

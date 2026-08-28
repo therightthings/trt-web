@@ -237,6 +237,12 @@ nav {
   flex: 0 1 auto;
   max-width: calc(100% - 84px);
   padding: 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -335,6 +341,12 @@ nav {
 .utility h3 {
   margin-top: 28px;
   color: var(--accent);
+  text-align: left;
+}
+.utility h4 {
+  margin: 20px 0 8px;
+  color: var(--muted);
+  text-align: left;
 }
 .utility p {
   color: var(--muted);

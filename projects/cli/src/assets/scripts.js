@@ -36,11 +36,14 @@ function updateToggleAll() {
   toggleAll.textContent = expanded ? 'Collapse all' : 'Expand all';
 }
 groups.forEach((group) => {
+  const title = group.querySelector('.group-title');
   const button = group.querySelector('.group-toggle');
-  button.onclick = () => {
+  const toggle = () => {
     setGroupExpanded(group, button.getAttribute('aria-expanded') !== 'true');
     updateToggleAll();
   };
+  title.onclick = toggle;
+  button.onclick = toggle;
 });
 toggleAll.onclick = () => {
   const expand = toggleAll.textContent === 'Expand all';

@@ -38,6 +38,20 @@ Prevents repeated user actions while an asynchronous task is running.
 <button actionLock (click)="save()">Save</button>
 ```
 
+### AutoFocusDirective
+
+Automatically focuses the host element when it is initialized.
+
+#### Methods
+
+- `ngOnInit`: focus the host element when the directive initializes.
+
+#### Examples
+
+```html
+<input autofocus />
+```
+
 ### FreeDraggingDirective
 
 Makes an element draggable within the document.
@@ -46,7 +60,7 @@ Makes an element draggable within the document.
 
 - `pointerdown`: start dragging from the host element.
 - `pointermove`: update the element position while dragging.
-- `pointerup`: stop dragging.
+- `pointerup`: stop dragging and release the pointer interaction.
 
 #### Examples
 
@@ -60,8 +74,9 @@ Tracks Angular lifecycle hooks for diagnostics.
 
 #### Methods
 
-- `ngOnInit`: track initialization.
-- `ngOnDestroy`: track destruction.
+- `ngOnChanges`: track input changes when they occur.
+- `ngOnInit`: track component or directive initialization.
+- `ngOnDestroy`: track component or directive destruction.
 
 #### Examples
 
@@ -76,7 +91,7 @@ Blocks whitespace input in form controls.
 
 #### Methods
 
-- `keydown`: prevent whitespace key input.
+- `keydown`: prevent whitespace key input in the host control.
 
 #### Examples
 
@@ -90,7 +105,7 @@ Provides typed template context support.
 
 #### Methods
 
-- `ngTemplateContextGuard`: narrow the template context type.
+- `ngTemplateContextGuard`: narrow the template context type for Angular's template checker.
 
 #### Examples
 
@@ -108,8 +123,12 @@ Accordion disclosure wrappers.
 
 #### Methods
 
-- `TrtAccordion`: provide an accordion container.
-- `TrtAccordionItem`: provide an accordion item.
+- `TrtAccordion`: provide the accessible accordion container and state.
+- `TrtAccordionItem`: provide an expandable accordion item.
+- `TrtAccordionGroup`: group related accordion items.
+- `TrtAccordionTrigger`: control the expanded state of an accordion item.
+- `TrtAccordionPanel`: provide the expandable accordion panel.
+- `TrtAccordionContent`: provide content inside an accordion panel.
 
 #### Examples
 
@@ -123,9 +142,9 @@ Combobox and popup wrappers.
 
 #### Methods
 
-- `TrtCombobox`: provide combobox behavior.
-- `TrtComboboxWidget`: connect the combobox widget.
-- `TrtComboboxPopup`: render the popup content.
+- `TrtCombobox`: provide combobox state and interaction behavior.
+- `TrtComboboxWidget`: connect the combobox input widget to the state.
+- `TrtComboboxPopup`: render and associate the popup content.
 
 #### Examples
 
@@ -139,8 +158,8 @@ Listbox and option wrappers.
 
 #### Methods
 
-- `TrtListbox`: provide listbox behavior.
-- `TrtOption`: provide a selectable option.
+- `TrtListbox`: provide listbox keyboard navigation and selection behavior.
+- `TrtOption`: provide a selectable listbox option.
 
 #### Examples
 
@@ -154,9 +173,10 @@ Grid navigation and selection wrappers.
 
 #### Methods
 
-- `TrtGrid`: provide grid behavior.
-- `TrtGridRow`: provide a grid row.
-- `TrtGridCell`: provide a grid cell.
+- `TrtGrid`: provide grid navigation and selection behavior.
+- `TrtGridRow`: provide an accessible grid row.
+- `TrtGridCell`: provide an accessible grid cell.
+- `TrtGridCellWidget`: provide the interactive widget inside a grid cell.
 
 #### Examples
 
@@ -170,9 +190,11 @@ Menu and menubar wrappers.
 
 #### Methods
 
-- `TrtMenu`: provide menu behavior.
-- `TrtMenuItem`: provide a menu item.
-- `TrtMenuTrigger`: connect a menu trigger.
+- `TrtMenu`: provide menu and keyboard navigation behavior.
+- `TrtMenuItem`: provide an actionable menu item.
+- `TrtMenuTrigger`: connect a trigger to menu visibility.
+- `TrtMenuBar`: provide menubar navigation behavior.
+- `TrtMenuContent`: provide the menu content container.
 
 #### Examples
 
@@ -186,9 +208,11 @@ Tabs, tab list, and tab panel wrappers.
 
 #### Methods
 
-- `TrtTabs`: provide tab behavior.
-- `TrtTab`: provide a tab.
-- `TrtTabPanel`: provide tab content.
+- `TrtTabs`: provide tab selection behavior.
+- `TrtTab`: provide a selectable tab.
+- `TrtTabPanel`: provide the content associated with a tab.
+- `TrtTabList`: provide the tab list and keyboard navigation container.
+- `TrtTabContent`: provide tab content associated with a tab panel.
 
 #### Examples
 
@@ -202,8 +226,9 @@ Toolbar and widget wrappers.
 
 #### Methods
 
-- `TrtToolbar`: provide toolbar behavior.
-- `TrtToolbarWidget`: provide a toolbar widget.
+- `TrtToolbar`: provide toolbar keyboard navigation behavior.
+- `TrtToolbarWidget`: provide a toolbar widget and focus target.
+- `TrtToolbarWidgetGroup`: group related toolbar widgets.
 
 #### Examples
 
@@ -217,9 +242,9 @@ Tree and tree item wrappers.
 
 #### Methods
 
-- `TrtTree`: provide tree behavior.
-- `TrtTreeItem`: provide a tree item.
-- `TrtTreeItemGroup`: provide a tree item group.
+- `TrtTree`: provide tree navigation and expansion behavior.
+- `TrtTreeItem`: provide an expandable or selectable tree item.
+- `TrtTreeItemGroup`: provide a group of child tree items.
 
 #### Examples
 
@@ -239,9 +264,9 @@ Configure and manage cached HTTP responses.
 
 #### Methods
 
-- `provideHttpCache`: configure the cache provider.
-- `httpCacheInterceptor`: cache HTTP responses through an interceptor.
-- `HttpCacheService`: manage cached responses and invalidation.
+- `provideHttpCache`: register the HTTP cache provider with optional configuration.
+- `httpCacheInterceptor`: intercept HTTP requests and serve or store cacheable responses.
+- `HttpCacheService`: create cache contexts and manage cached responses and invalidation.
 
 #### Examples
 
@@ -259,9 +284,9 @@ Observable request-state and lifecycle helpers.
 
 #### Methods
 
-- `autoRefresh`: refresh values on a schedule or trigger.
-- `toRequestState`: map an observable to a request-state object.
-- `injectDestroy$`: create a destroy notifier for cleanup.
+- `autoRefresh`: refresh an observable value on a schedule or external trigger.
+- `toRequestState`: map an observable into loading, success, and error request states.
+- `injectDestroy`: create a lifecycle-bound destroy notifier for RxJS cleanup.
 
 #### Examples
 
@@ -271,13 +296,15 @@ const state$ = source$.pipe(toRequestState());
 
 ## Pipes
 
+Reusable Angular pipes for safe template value transformation.
+
 ### SafePipe
 
 Safely transforms values for Angular templates.
 
 #### Methods
 
-- `transform`: safely transform a template value.
+- `transform`: safely transform a value for use in an Angular template.
 
 #### Examples
 
@@ -295,10 +322,10 @@ Utilities for inspecting and logging form errors.
 
 #### Methods
 
-- `fieldHasErrorType`: check for a specific control error.
-- `fieldHasErrors`: check whether a control or group has errors.
-- `logFormErrors`: log nested form validation errors.
-- `vnPhoneNumberValidator`: validate Vietnamese phone numbers.
+- `fieldHasErrorType`: check whether a named form field has a specific validation error.
+- `fieldHasErrors`: check whether a named form field has one or more validation errors.
+- `logFormErrors`: recursively log validation errors from a control or nested form group.
+- `vnPhoneNumberValidator`: validate a Vietnamese phone number format.
 
 #### Examples
 
@@ -308,14 +335,16 @@ control.addValidators(vnPhoneNumberValidator());
 
 ## Signal Store
 
+Signal-based state management with optional local, session, and IndexedDB persistence.
+
 ### SignalStore
 
 Signal-based state store with optional persistence helpers.
 
 #### Methods
 
-- `configure`: configure the store and its storage adapter.
-- `reset`: reset the store state.
+- `configure`: configure the store, persistence type, key, and synchronization behavior.
+- `reset`: reset the store state and remove its persisted snapshot when configured.
 
 #### Examples
 

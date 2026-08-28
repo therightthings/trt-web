@@ -19,8 +19,10 @@ type DocUtility = {
   title: string;
   description: string;
   methods: DocMethod[];
-  example?: string;
-  language?: string;
+  examples: Array<{ title?: string; code: string; language?: string }>;
+  codeBlocks: Array<{ code: string; language?: string }>;
+  sections: ParsedReadmeNode[];
+  hasExamplesSection: boolean;
 };
 
 type DocGroup = {
@@ -49,12 +51,6 @@ export class DocGenerator {
     if (roots.length > 0) {
       const groups: DocGroup[] = [];
       for (const root of roots) {
-        const hasDirectUtilities = root.children.some((child) => this.isUtility(child));
-        if (hasDirectUtilities) {
-          groups.push(this.createGroup(root));
-          continue;
-        }
-
         for (const child of root.children) {
           if (child.level === root.level + 1 && !this.isSection(child)) {
             groups.push(this.createGroup(child));
@@ -71,10 +67,13 @@ export class DocGenerator {
 
   private static createGroup(node: ParsedReadmeNode): DocGroup {
     const utilities = node.children
-      .filter((child) => child.level === node.level + 1 && this.isUtility(child))
+      .filter(
+        (child) =>
+          child.level === node.level + 1 && !this.isSection(child) && this.isUtility(child),
+      )
       .map((child) => this.createUtility(child));
 
-    if (node.level === 2) {
+    if (this.isUtility(node) && utilities.length === 0) {
       utilities.push(this.createUtility(node));
     }
 
@@ -83,7 +82,7 @@ export class DocGenerator {
       title: node.title,
       description: node.content,
       utilities,
-      showTitle: node.level !== 1,
+      showTitle: node.level !== 1 && !this.isUtility(node),
     };
   }
 
@@ -101,14 +100,30 @@ export class DocGenerator {
       }
     }
 
-    const example = examplesNode?.codeBlocks[0];
+    const exampleTitles =
+      examplesNode?.content
+        .split(/\r?\n/)
+        .map((line) => line.match(/^\s*-\s+(.+?)\s*$/)?.[1])
+        .filter((title): title is string => Boolean(title)) ?? [];
+    const examples =
+      examplesNode?.codeBlocks.map((codeBlock, index) => ({
+        title: exampleTitles[index],
+        code: codeBlock.code,
+        language: codeBlock.language,
+      })) ?? [];
+    const codeBlocks = node.codeBlocks.map((codeBlock) => ({
+      code: codeBlock.code,
+      language: codeBlock.language,
+    }));
     return {
       id: this.toId(node.title),
       title: node.title,
       description: node.content,
       methods,
-      example: example?.code,
-      language: example?.language,
+      examples,
+      codeBlocks,
+      sections: node.children.filter((child) => !this.isSection(child)),
+      hasExamplesSection: Boolean(examplesNode),
     };
   }
 
@@ -125,7 +140,7 @@ export class DocGenerator {
         groups += /*html*/ `
         <section class="group" data-group="${this.toId(group.title)}">
           <div class="group-header">
-            <span class="group-title">${this.escapeHtml(group.title)}</span>
+            <button class="group-title" type="button">${this.escapeHtml(group.title)}</button>
             <span class="group-count">${group.utilities.length}</span>
             <button class="group-toggle" type="button" aria-label="Toggle ${this.escapeHtml(group.title)}" aria-expanded="false">
               <span aria-hidden="true">+</span>
@@ -200,22 +215,51 @@ export class DocGenerator {
       </li>`;
     }
 
-    let example = '';
-    if (utility.example) {
-      const lines = utility.example.split('\n');
-      for (const line of lines) {
-        example += `${this.escapeHtml(line)}\n`;
+    let examples = '';
+    for (const codeBlock of utility.codeBlocks) {
+      examples += this.renderCodeBlock(codeBlock.code);
+    }
+    for (const example of utility.examples) {
+      if (example.title) {
+        examples += `<h4>${this.escapeHtml(example.title)}</h4>`;
       }
+      examples += this.renderCodeBlock(example.code);
+    }
+
+    let sections = '';
+    for (const section of utility.sections) {
+      sections += this.renderSection(section);
     }
 
     return /*html*/ `
       <article class="utility" id="utility-${utility.id}" data-search="${this.escapeHtml(`${utility.title} ${utility.description} ${utility.methods.map((method) => method.signature).join(' ')}`.toLowerCase())}">
         <h2>${this.escapeHtml(utility.title)}</h2>
         <p>${this.escapeHtml(utility.description)}</p>
-        ${example ? `<h3>Examples</h3><pre><code>${example}</code></pre>` : ''}${
+        ${examples ? `${utility.hasExamplesSection ? '<h3>Examples</h3>' : ''}${examples}` : ''}${sections}${
           methods ? `<h3>Methods</h3><ul>${methods}</ul>` : ''
         }
       </article>`;
+  }
+
+  private static renderCodeBlock(code: string): string {
+    let output = '';
+    for (const line of code.split('\n')) {
+      output += `${this.escapeHtml(line)}\n`;
+    }
+
+    return `<pre><code>${output}</code></pre>`;
+  }
+
+  private static renderSection(node: ParsedReadmeNode): string {
+    let content = node.content ? `<p>${this.escapeHtml(node.content)}</p>` : '';
+    for (const codeBlock of node.codeBlocks) {
+      content += this.renderCodeBlock(codeBlock.code);
+    }
+    for (const child of node.children) {
+      content += this.renderSection(child);
+    }
+
+    return `<section><h3>${this.escapeHtml(node.title)}</h3>${content}</section>`;
   }
 
   private static getOutputFile(outputPath: string): string {
@@ -231,9 +275,15 @@ export class DocGenerator {
   }
 
   private static isUtility(node: ParsedReadmeNode): boolean {
-    return node.children.some((child) => {
-      return this.isSection(child);
-    });
+    if (node.codeBlocks.length > 0) {
+      return true;
+    }
+
+    if (node.children.length === 0 && node.content.length > 0) {
+      return true;
+    }
+
+    return node.children.some((child) => this.isSection(child));
   }
 
   private static findSection(
