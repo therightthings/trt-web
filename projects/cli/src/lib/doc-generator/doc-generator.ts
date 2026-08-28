@@ -27,6 +27,7 @@ type DocGroup = {
   title: string;
   description: string;
   utilities: DocUtility[];
+  showTitle: boolean;
 };
 
 export class DocGenerator {
@@ -45,7 +46,21 @@ export class DocGenerator {
   private static createDocument(nodes: ParsedReadmeNode[]): { groups: DocGroup[] } {
     const roots = nodes.filter((node) => node.level === 1);
     if (roots.length > 0) {
-      return { groups: roots.map((node) => this.createGroup(node)) };
+      const groups: DocGroup[] = [];
+      for (const root of roots) {
+        const hasDirectUtilities = root.children.some((child) => this.isUtility(child));
+        if (hasDirectUtilities) {
+          groups.push(this.createGroup(root));
+          continue;
+        }
+
+        for (const child of root.children) {
+          if (child.level === root.level + 1 && !this.isSection(child)) {
+            groups.push(this.createGroup(child));
+          }
+        }
+      }
+      return { groups };
     }
 
     return {
@@ -55,7 +70,7 @@ export class DocGenerator {
 
   private static createGroup(node: ParsedReadmeNode): DocGroup {
     const utilities = node.children
-      .filter((child) => child.level === node.level + 1 && !this.isSection(child))
+      .filter((child) => child.level === node.level + 1 && this.isUtility(child))
       .map((child) => this.createUtility(child));
 
     if (node.level === 2) {
@@ -67,12 +82,13 @@ export class DocGenerator {
       title: node.title,
       description: node.content,
       utilities,
+      showTitle: node.level !== 1,
     };
   }
 
   private static createUtility(node: ParsedReadmeNode): DocUtility {
-    const methodsNode = node.children.find((child) => child.title.toLowerCase() === 'methods');
-    const examplesNode = node.children.find((child) => child.title.toLowerCase() === 'examples');
+    const methodsNode = this.findSection(node, 'methods');
+    const examplesNode = this.findSection(node, 'examples');
     const methods: DocMethod[] = [];
 
     if (methodsNode) {
@@ -100,10 +116,22 @@ export class DocGenerator {
     config: DocGeneratorConfig,
   ): string {
     const title = config.title ?? 'Documentation';
-    const groups = document.groups
-      .flatMap((group) => group.utilities)
-      .map((utility) => this.renderUtilityLink(utility))
-      .join('');
+    let groups = '';
+    for (const group of document.groups) {
+      const links = group.utilities.map((utility) => this.renderUtilityLink(utility)).join('');
+      if (group.showTitle) {
+        groups += /*html*/ `
+        <section class="group">
+          <button class="group-title" type="button">
+            <span>${this.escapeHtml(group.title)}</span>
+            <span>${group.utilities.length}</span>
+          </button>
+          <div class="group-utilities">${links}</div>
+        </section>`;
+      } else {
+        groups += links;
+      }
+    }
     const utilities = document.groups
       .flatMap((group) => group.utilities)
       .map((utility) => this.renderUtility(utility))
@@ -126,14 +154,15 @@ export class DocGenerator {
     </header>
     <aside class="sidebar">
       <div class="brand">
-        <strong>${this.escapeHtml(title)}</strong>
-        <button id="desktop-theme-toggle" type="button">◐</button>
+        <div class="brand-header">
+          <strong>${this.escapeHtml(title)}</strong>
+          <button id="desktop-theme-toggle" type="button">◐</button>
+        </div>
+        <input id="search" type="search" placeholder="Search utilities...">
       </div>
-      <input id="search" type="search" placeholder="Search utilities...">
       <nav>${groups}</nav>
     </aside>
     <main class="main">
-      <h1>${this.escapeHtml(title)}</h1>
       <section id="content">${utilities}</section>
     </main>
     <script>${this.scripts()}</script>
@@ -169,7 +198,6 @@ export class DocGenerator {
 
     return /*html*/ `
       <article class="utility" id="utility-${utility.id}" data-search="${this.escapeHtml(`${utility.title} ${utility.description} ${utility.methods.map((method) => method.signature).join(' ')}`.toLowerCase())}">
-        <p class="eyebrow">Utility</p>
         <h2>${this.escapeHtml(utility.title)}</h2>
         <p>${this.escapeHtml(utility.description)}</p>
         ${example ? `<h3>Examples</h3><pre><code>${example}</code></pre>` : ''}${
@@ -188,6 +216,19 @@ export class DocGenerator {
   private static isSection(node: ParsedReadmeNode): boolean {
     const title = node.title.toLowerCase();
     return title === 'methods' || title === 'examples';
+  }
+
+  private static isUtility(node: ParsedReadmeNode): boolean {
+    return node.children.some((child) => {
+      return this.isSection(child);
+    });
+  }
+
+  private static findSection(
+    node: ParsedReadmeNode,
+    title: 'methods' | 'examples',
+  ): ParsedReadmeNode | undefined {
+    return node.children.find((child) => child.title.toLowerCase() === title);
   }
 
   private static toId(value: string): string {

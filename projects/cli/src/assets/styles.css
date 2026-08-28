@@ -66,13 +66,26 @@ body {
   left: 0;
   z-index: 1000;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   font-size: 22px;
   color: var(--accent);
-  margin: -24px -24px 24px;
-  padding: 24px;
+  margin: -24px -24px 0px;
+  padding: 12px 24px;
   background: var(--sidebar);
+}
+.brand-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.brand-header strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .brand button,
 .mobile-header button {
@@ -83,9 +96,8 @@ body {
   cursor: pointer;
 }
 #search {
-  position: sticky;
-  top: 72px;
-  z-index: 1;
+  position: relative;
+  background: var(--sidebar);
   width: 100%;
   padding: 12px;
   border: 1px solid var(--border);
@@ -93,7 +105,10 @@ body {
   background: var(--bg);
   color: var(--text);
   font: inherit;
-  margin-bottom: 1px;
+  margin: 16px 0 0;
+}
+nav {
+  padding-top: 0px;
 }
 .group {
   margin-top: 24px;
@@ -144,7 +159,6 @@ body {
 .utility {
   display: none;
   padding: 24px;
-  margin: 24px 0;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
