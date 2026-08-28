@@ -18,6 +18,17 @@
         "assets": ["projects/firebase-admin/*.md"]
       }
     },
+    "cli": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/firebase-admin-cli",
+        "main": "projects/firebase-admin/src/cli.ts",
+        "tsConfig": "projects/firebase-admin/tsconfig.cli.json",
+        "assets": ["projects/firebase-admin/README.md", "projects/firebase-admin/package.json"]
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },

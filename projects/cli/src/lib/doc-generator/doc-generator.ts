@@ -7,6 +7,7 @@ import type { ParsedReadmeNode } from '../utils/parse-readme.js';
 import { parseReadme } from '../utils/parse-readme.js';
 import { readFile } from '../utils/read-file.js';
 import type { DocGeneratorConfig } from './doc-generator.type.js';
+import { Icons } from './icons.js';
 
 type DocMethod = {
   signature: string;
@@ -116,17 +117,21 @@ export class DocGenerator {
     config: DocGeneratorConfig,
   ): string {
     const title = config.title ?? 'Documentation';
+    const favicon = `data:image/svg+xml;base64,${Buffer.from(Icons.brandIcon).toString('base64')}`;
     let groups = '';
     for (const group of document.groups) {
       const links = group.utilities.map((utility) => this.renderUtilityLink(utility)).join('');
       if (group.showTitle) {
         groups += /*html*/ `
-        <section class="group">
-          <button class="group-title" type="button">
-            <span>${this.escapeHtml(group.title)}</span>
-            <span>${group.utilities.length}</span>
-          </button>
-          <div class="group-utilities">${links}</div>
+        <section class="group" data-group="${this.toId(group.title)}">
+          <div class="group-header">
+            <span class="group-title">${this.escapeHtml(group.title)}</span>
+            <span class="group-count">${group.utilities.length}</span>
+            <button class="group-toggle" type="button" aria-label="Toggle ${this.escapeHtml(group.title)}" aria-expanded="false">
+              <span aria-hidden="true">+</span>
+            </button>
+          </div>
+          <div class="group-utilities hidden">${links}</div>
         </section>`;
       } else {
         groups += links;
@@ -143,23 +148,30 @@ export class DocGenerator {
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="${favicon}">
     <title>${this.escapeHtml(title)}</title>
     <style>${this.styles()}</style>
   </head>
   <body>
     <header class="mobile-header">
-      <button id="menu-toggle" type="button">☰</button>
+      <button id="menu-toggle" type="button" aria-label="Open menu">${Icons.menuIcon}</button>
       <strong>${this.escapeHtml(title)}</strong>
-      <button id="theme-toggle" type="button">◐</button>
+      <button id="theme-toggle" type="button" aria-label="Toggle theme"><span class="theme-moon">${Icons.themeIcon}</span><span class="theme-sun">${Icons.sunIcon}</span></button>
     </header>
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-header">
+          <span class="brand-icon">${Icons.brandIcon}</span>
           <strong>${this.escapeHtml(title)}</strong>
-          <button id="desktop-theme-toggle" type="button">◐</button>
+          <button id="desktop-theme-toggle" type="button" aria-label="Toggle theme"><span class="theme-moon">${Icons.themeIcon}</span><span class="theme-sun">${Icons.sunIcon}</span></button>
         </div>
-        <input id="search" type="search" placeholder="Search utilities...">
+        <div class="search-box">
+          <span class="search-icon">${Icons.searchIcon}</span>
+          <input id="search" placeholder="Search utilities..." autocomplete="off">
+          <button id="search-clear" type="button" aria-label="Clear search" hidden>${Icons.clearIcon}</button>
+        </div>
       </div>
+      <button id="toggle-all" class="toggle-all" type="button">Expand all</button>
       <nav>${groups}</nav>
     </aside>
     <main class="main">

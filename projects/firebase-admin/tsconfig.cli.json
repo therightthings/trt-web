@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.lib.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist/firebase-admin-cli",
+    "module": "ESNext",
+    "rootDir": "./",
+    "baseUrl": ".",
+    "types": ["node"],
+    "paths": {
+      "@trt-web/cli": ["../../dist/cli/src/public-api"]
+    }
+  },
+  "include": ["src/cli.ts"]
+}
