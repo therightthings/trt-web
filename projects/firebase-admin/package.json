@@ -1,6 +1,6 @@
 {
   "name": "@trt-web/firebase-admin",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "private": false,
   "description": "Firebase Admin utilities for authentication, Firestore, storage, messaging, and backend services.",
   "repository": {
@@ -39,8 +39,8 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@trt-web/cli": "^1.0.1",
-    "@trt-web/core": "1.6.1",
+    "@trt-web/cli": "^1.0.2",
+    "@trt-web/core": "1.6.2",
     "firebase-admin": "^14.1.0",
     "busboy": "^1.6.0",
     "node-cache": "^5.1.2",
