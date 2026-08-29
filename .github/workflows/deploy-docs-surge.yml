@@ -3,7 +3,7 @@ name: Deploy package docs
 on:
   workflow_dispatch:
   push:
-    branches: [dev, main, feature/more-core-browser-utils]
+    branches: [dev, main]
     paths:
       - 'projects/core/README.md'
       - 'projects/browser/README.md'
