@@ -1,6 +1,6 @@
 # @trt-web/core
 
-- Shared building blocks for cleaner web apps
+Framework-agnostic TypeScript utilities for everyday web application development.
 
 ## Installation
 

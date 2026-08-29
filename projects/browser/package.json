@@ -1,6 +1,6 @@
 {
   "name": "@trt-web/browser",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "main": "./src/public-api.js",
   "module": "./src/public-api.js",
@@ -58,7 +58,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@trt-web/cli": "^1.0.0",
-    "@trt-web/core": "^1.6.0",
+    "@trt-web/core": "^1.6.1",
     "commander": "^15.0.0",
     "enquirer": "^2.4.1",
     "tslib": "^2.3.0"

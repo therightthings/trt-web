@@ -1,6 +1,6 @@
 # @trt-web/browser
 
-Framework-free wrappers for browser APIs.
+Framework-free wrappers for modern browser APIs and web platform features.
 
 ## BrowserAI
 

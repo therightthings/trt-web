@@ -1,6 +1,6 @@
 # @trt-web/angular
 
-Shared building blocks for cleaner Angular web apps.
+Reusable Angular directives, pipes, services, and reactive utilities.
 
 ## Installation
 

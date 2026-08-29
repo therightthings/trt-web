@@ -1,6 +1,6 @@
 # @trt-web/firebase-admin
 
-Shared Firebase Admin helpers for backend services.
+Firebase Admin utilities for authentication, Firestore, storage, messaging, and backend services.
 
 ## Installation
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { TrtCommand } from '@trt-web/cli';
 
 async function bootstrap(): Promise<void> {

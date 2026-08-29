@@ -1,6 +1,6 @@
 # @trt-web/cli
 
-Reusable CLI helpers for README-driven terminal commands and static HTML documentation.
+README-driven CLI and static documentation tools for TypeScript libraries.
 
 ## Installation
 
