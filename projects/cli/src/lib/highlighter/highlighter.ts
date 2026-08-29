@@ -37,8 +37,11 @@ export class Highlighter {
     const languageConfig = KEYWORD_MAP[language];
     const keywords = languageConfig.keywords.map(this.escapeRegExp).join('|');
     const builtInTypes = languageConfig.types.map(this.escapeRegExp).join('|') || '(?!)';
+    const commands = languageConfig.commands?.map(this.escapeRegExp).join('|') || '(?!)';
+    const bashOption =
+      language === 'bash' ? '(?:--[A-Za-z][\\w-]*|-[A-Za-z])(?![A-Za-z0-9_-])' : '(?!)';
     const tokenPattern = new RegExp(
-      `(\\/\\/.*$|<!--.*?-->|\\/\\*[\\s\\S]*?\\*\\/|(?:^|\\s)#.*$|"(?:\\\\.|[^"\\\\])*"|'(?:\\\\.|[^'\\\\])*'|\\x60(?:\\\\.|[^\\x60\\\\])*\\x60)|\\b(${names})\\b|\\b(${keywords})\\b|\\b(\\d+(?:\\.\\d+)?)\\b|\\b(${builtInTypes})\\b|\\b([A-Z][A-Za-z0-9_$]*)\\b|(=>)|\\b([A-Za-z_$][\\w$]*)(?=\\s*\\()|\\b([A-Za-z_$][\\w$]*)\\b`,
+      `(\\/\\/.*$|<!--.*?-->|\\/\\*[\\s\\S]*?\\*\\/|(?:^|\\s)#.*$|"(?:\\\\.|[^"\\\\])*"|'(?:\\\\.|[^'\\\\])*'|\\x60(?:\\\\.|[^\\x60\\\\])*\\x60)|\\b(${names})\\b|\\b(${keywords})\\b|\\b(${commands})\\b|(${bashOption})|\\b(\\d+(?:\\.\\d+)?)\\b|\\b(${builtInTypes})\\b|\\b([A-Z][A-Za-z0-9_$]*)\\b|(=>)|\\b([A-Za-z_$][\\w$]*)(?=\\s*\\()|\\b([A-Za-z_$][\\w$]*)\\b`,
       'g',
     );
 
@@ -49,6 +52,8 @@ export class Highlighter {
         stringLiteral?: string,
         utilityName?: string,
         keyword?: string,
+        command?: string,
+        option?: string,
         numberLiteral?: string,
         typeName?: string,
         namedType?: string,
@@ -74,6 +79,14 @@ export class Highlighter {
 
         if (keyword) {
           return this.renderToken('keyword', colors.keyword, token, output);
+        }
+
+        if (command) {
+          return this.renderToken('method', colors.method, token, output);
+        }
+
+        if (option) {
+          return this.renderToken('operator', colors.operator, token, output);
         }
 
         if (numberLiteral) {

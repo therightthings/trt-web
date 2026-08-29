@@ -16,7 +16,11 @@ export const THEME_MAP = {
 
 export const KEYWORD_MAP: Record<
   CodeLanguage,
-  { keywords: readonly string[]; types: readonly string[] }
+  {
+    keywords: readonly string[];
+    types: readonly string[];
+    commands?: readonly string[];
+  }
 > = {
   ts: {
     keywords: [
@@ -189,5 +193,6 @@ export const KEYWORD_MAP: Record<
       'return',
     ],
     types: [],
+    commands: ['bun', 'cd', 'cp', 'echo', 'git', 'mkdir', 'node', 'npm', 'rm', 'yarn'],
   },
 };

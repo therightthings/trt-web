@@ -156,17 +156,6 @@ read or write a CSS custom property.
 
 #### Examples
 
-- Basic
-
-```ts
-import { trt } from '@trt-web/core';
-
-trt.dom.varCSS('--brand-color', '#2563eb');
-console.log(trt.dom.varCSS('--brand-color')); // '#2563eb'
-```
-
-- Advanced
-
 ```ts
 import { trt } from '@trt-web/core';
 
