@@ -18,6 +18,7 @@ export default defineConfig([
   ...nx.configs['flat/javascript'],
   {
     ignores: [
+      '**/*.json',
       '**/dist',
       '**/out-tsc',
       '**/.angular',
