@@ -49,7 +49,7 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "@trt-web/cli": "^1.0.0",
+    "@trt-web/cli": "^1.0.1",
     "tslib": "^2.3.0"
   }
 }

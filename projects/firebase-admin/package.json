@@ -39,7 +39,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@trt-web/cli": "^1.0.0",
+    "@trt-web/cli": "^1.0.1",
     "@trt-web/core": "1.6.1",
     "firebase-admin": "^14.1.0",
     "busboy": "^1.6.0",
