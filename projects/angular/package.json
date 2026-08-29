@@ -1,6 +1,6 @@
 {
   "name": "@trt-web/angular",
-  "version": "1.1.7",
+  "version": "1.2.0",
   "private": false,
   "description": "Shared building blocks for cleaner Angular web apps",
   "repository": {
@@ -31,7 +31,7 @@
     "@angular/aria": "^22.0.4",
     "@trt-web/browser": "^0.1.0",
     "@trt-web/cli": "^1.0.0",
-    "@trt-web/core": "^1.5.0",
+    "@trt-web/core": "^1.6.0",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {

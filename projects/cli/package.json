@@ -1,13 +1,40 @@
 {
   "name": "@trt-web/cli",
   "version": "1.0.0",
+  "private": false,
   "type": "module",
   "main": "./src/public-api.js",
   "module": "./src/public-api.js",
   "types": "./src/public-api.d.ts",
   "sideEffects": false,
   "description": "Reusable CLI, terminal formatting, and code highlighting utilities.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/therightthings/trt-web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/therightthings/trt-web/issues"
+  },
+  "homepage": "https://github.com/therightthings/trt-web#readme",
+  "keywords": [
+    "cli",
+    "command-line",
+    "terminal",
+    "typescript",
+    "syntax-highlighter",
+    "code-highlighter",
+    "readme-parser",
+    "documentation-generator",
+    "static-documentation"
+  ],
   "license": "Apache-2.0",
+  "exports": {
+    ".": {
+      "types": "./src/public-api.d.ts",
+      "default": "./src/public-api.js"
+    },
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "commander": "^15.0.0",
     "enquirer": "^2.4.1"

@@ -13,7 +13,12 @@
         "outputPath": "dist/cli",
         "main": "projects/cli/src/public-api.ts",
         "tsConfig": "projects/cli/tsconfig.lib.json",
-        "assets": ["projects/cli/src/assets/styles.css", "projects/cli/src/assets/scripts.js"]
+        "assets": [
+          "projects/cli/src/assets/styles.css",
+          "projects/cli/src/assets/scripts.js",
+          "projects/cli/README.md",
+          "projects/cli/package.json"
+        ]
       }
     },
     "lint": { "executor": "@nx/eslint:lint" },
