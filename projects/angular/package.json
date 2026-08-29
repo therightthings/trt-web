@@ -2,7 +2,7 @@
   "name": "@trt-web/angular",
   "version": "1.2.0",
   "private": false,
-  "description": "Shared building blocks for cleaner Angular web apps",
+  "description": "Reusable Angular directives, pipes, services, and reactive utilities.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/therightthings/trt-web.git"
@@ -13,14 +13,18 @@
   "homepage": "https://github.com/therightthings/trt-web#readme",
   "keywords": [
     "angular",
-    "ngx",
-    "rxjs",
-    "store",
-    "signal",
+    "angular-library",
     "directives",
     "pipes",
+    "angular-aria",
+    "accessibility",
+    "rxjs",
+    "signals",
+    "reactive-forms",
+    "signal-store",
     "http-cache",
-    "indexeddb-storage"
+    "indexeddb-storage",
+    "state-management"
   ],
   "license": "Apache-2.0",
   "type": "module",

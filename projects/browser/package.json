@@ -9,7 +9,7 @@
   "bin": {
     "trt-browser": "./src/cli.js"
   },
-  "description": "Framework-free browser utilities for web applications.",
+  "description": "Framework-free wrappers for modern browser APIs and web platform features.",
   "keywords": [
     "browser-utils",
     "web-utils",

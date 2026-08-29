@@ -16,7 +16,7 @@
     },
     "./package.json": "./package.json"
   },
-  "description": "Shared building blocks for cleaner Angular web apps",
+  "description": "Framework-agnostic TypeScript utilities for everyday web application development.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/therightthings/trt-web.git"
@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/therightthings/trt-web#readme",
   "keywords": [
+    "typescript-utils",
     "dom-utils",
     "file-utils",
     "image-utils",
@@ -41,7 +42,6 @@
     "search-key",
     "search-utils",
     "sort-order",
-    "sort-utils",
     "ranking",
     "bayesian",
     "haversine",

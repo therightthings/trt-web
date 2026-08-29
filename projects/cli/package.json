@@ -7,7 +7,7 @@
   "module": "./src/public-api.js",
   "types": "./src/public-api.d.ts",
   "sideEffects": false,
-  "description": "Reusable CLI, terminal formatting, and code highlighting utilities.",
+  "description": "README-driven CLI and static documentation tools for TypeScript libraries.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/therightthings/trt-web.git"
@@ -22,10 +22,11 @@
     "terminal",
     "typescript",
     "syntax-highlighter",
-    "code-highlighter",
     "readme-parser",
     "documentation-generator",
-    "static-documentation"
+    "static-documentation",
+    "html-documentation",
+    "package-tools"
   ],
   "license": "Apache-2.0",
   "exports": {
