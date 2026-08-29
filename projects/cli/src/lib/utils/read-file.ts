@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, realpathSync } from 'node:fs';
 import path from 'node:path';
 
 export function readFile(
@@ -8,6 +8,7 @@ export function readFile(
   },
 ) {
   const { encoding = 'utf8' } = config ?? {};
-  const entryDirectory = path.dirname(path.resolve(process.argv[1] ?? process.cwd()));
+  const entryPath = process.argv[1] ? realpathSync(process.argv[1]) : process.cwd();
+  const entryDirectory = path.dirname(path.resolve(entryPath));
   return readFileSync(path.resolve(entryDirectory, filePath), encoding);
 }
