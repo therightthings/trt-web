@@ -1,4 +1,4 @@
-import { BrowserPresentation } from '@trt-web/core';
+import { BrowserPresentation } from '@trt-web/browser';
 
 export const createPresentationPage = (): HTMLElement => {
   const page = document.createElement('main');

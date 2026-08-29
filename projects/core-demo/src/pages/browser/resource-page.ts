@@ -1,4 +1,4 @@
-import { BrowserResource } from '@trt-web/core';
+import { BrowserResource } from '@trt-web/browser';
 
 export const createResourcePage = (): HTMLElement => {
   const page = document.createElement('main');

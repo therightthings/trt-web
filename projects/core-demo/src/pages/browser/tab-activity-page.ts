@@ -1,4 +1,4 @@
-import { type BrowserSubscription, BrowserTabActivity } from '@trt-web/core';
+import { type BrowserSubscription, BrowserTabActivity } from '@trt-web/browser';
 export const createTabActivityPage = (): HTMLElement => {
   const page = document.createElement('main');
   page.className = 'content';

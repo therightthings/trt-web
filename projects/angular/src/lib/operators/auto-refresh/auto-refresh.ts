@@ -1,7 +1,7 @@
+import { toMs } from '@trt-web/core';
 import { defer, EMPTY, Observable, switchMap, timer } from 'rxjs';
 import { expand } from 'rxjs/operators';
 
-import { toMs } from '../../utils';
 import { AutoRefreshConfig, AutoRefreshContext } from './auto-refresh.type';
 
 export function autoRefresh<T>(

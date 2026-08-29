@@ -1,11 +1,14 @@
 {
   "name": "@trt-web/core",
-  "version": "1.4.2",
+  "version": "1.6.2",
   "type": "module",
   "main": "./src/public-api.js",
   "module": "./src/public-api.js",
   "types": "./src/public-api.d.ts",
   "sideEffects": false,
+  "bin": {
+    "trt-core": "./src/cli.js"
+  },
   "exports": {
     ".": {
       "types": "./src/public-api.d.ts",
@@ -13,7 +16,7 @@
     },
     "./package.json": "./package.json"
   },
-  "description": "Shared building blocks for cleaner Angular web apps",
+  "description": "Framework-agnostic TypeScript utilities for everyday web application development.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/therightthings/trt-web.git"
@@ -23,28 +26,11 @@
   },
   "homepage": "https://github.com/therightthings/trt-web#readme",
   "keywords": [
-    "browser-utils",
+    "typescript-utils",
     "dom-utils",
-    "web-utils",
-    "resource-utils",
-    "resource-loader",
     "file-utils",
     "image-utils",
-    "file-download",
     "worker-utils",
-    "storage-helper",
-    "storage-utils",
-    "local-storage",
-    "session-storage",
-    "indexeddb",
-    "cookies",
-    "cache-utils",
-    "clipboard",
-    "permissions",
-    "geolocation",
-    "fullscreen",
-    "picture-in-picture",
-    "web-share",
     "string-utils",
     "date-utils",
     "number-utils",
@@ -56,7 +42,6 @@
     "search-key",
     "search-utils",
     "sort-order",
-    "sort-utils",
     "ranking",
     "bayesian",
     "haversine",
@@ -64,6 +49,7 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
+    "@trt-web/cli": "^1.0.2",
     "tslib": "^2.3.0"
   }
 }

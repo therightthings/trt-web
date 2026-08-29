@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.lib.base.json",
+  "compilerOptions": { "lib": ["es2020", "dom"] },
+  "files": [],
+  "include": [],
+  "references": [
+    { "path": "./tsconfig.lib.json" },
+    { "path": "./tsconfig.spec.json" },
+    { "path": "./tsconfig.cli.json" }
+  ]
+}

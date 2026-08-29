@@ -1,4 +1,4 @@
-import { IndexedDB } from '@trt-web/core';
+import { IndexedDB } from '@trt-web/browser';
 
 type DemoRecord = { id: string; name: string; updatedAt: string };
 

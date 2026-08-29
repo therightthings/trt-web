@@ -1,4 +1,4 @@
-import { BrowserNotification } from '@trt-web/core';
+import { BrowserNotification } from '@trt-web/browser';
 
 export const createNotificationPage = (): HTMLElement => {
   const page = document.createElement('main');

@@ -1,4 +1,4 @@
-import { BrowserEnvironment } from '@trt-web/core';
+import { BrowserEnvironment } from '@trt-web/browser';
 
 export const createEnvironmentPage = (): HTMLElement => {
   const page = document.createElement('main');

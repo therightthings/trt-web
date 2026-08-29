@@ -1,4 +1,5 @@
-import { BrowserAudioContext, Canvas } from '@trt-web/core';
+import { BrowserAudioContext } from '@trt-web/browser';
+import { Canvas } from '@trt-web/browser';
 
 export const createAudioContextPage = (): HTMLElement => {
   const audioContext = BrowserAudioContext.getInstance();

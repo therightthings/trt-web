@@ -1,4 +1,4 @@
-import { BrowserViewport } from '@trt-web/core';
+import { BrowserViewport } from '@trt-web/browser';
 
 export const createViewportPage = (): HTMLElement => {
   const page = document.createElement('main');

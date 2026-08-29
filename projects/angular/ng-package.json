@@ -1,7 +1,12 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/angular",
-  "allowedNonPeerDependencies": ["@angular/aria", "@trt-web/core"],
+  "allowedNonPeerDependencies": [
+    "@angular/aria",
+    "@trt-web/browser",
+    "@trt-web/cli",
+    "@trt-web/core"
+  ],
   "assets": [
     {
       "glob": "aria-base-styles.css",

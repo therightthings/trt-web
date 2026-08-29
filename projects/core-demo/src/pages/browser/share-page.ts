@@ -1,4 +1,4 @@
-import { BrowserShare } from '@trt-web/core';
+import { BrowserShare } from '@trt-web/browser';
 
 export const createSharePage = (): HTMLElement => {
   const page = document.createElement('main');

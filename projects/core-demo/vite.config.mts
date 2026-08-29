@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@trt-web/core': path.resolve(import.meta.dirname, '../../dist/core/src/public-api.js'),
+      '@trt-web/browser': path.resolve(import.meta.dirname, '../../dist/browser/src/public-api.js'),
     },
   },
   server: {

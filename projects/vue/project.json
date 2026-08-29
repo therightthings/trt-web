@@ -10,6 +10,7 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "format": ["esm"],
         "outputPath": "dist/vue",
         "main": "projects/vue/src/public-api.ts",
         "tsConfig": "projects/vue/tsconfig.lib.json",

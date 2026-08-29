@@ -1,4 +1,4 @@
-import { BrowserBattery } from '@trt-web/core';
+import { BrowserBattery } from '@trt-web/browser';
 
 export const createBatteryPage = (): HTMLElement => {
   const page = document.createElement('main');

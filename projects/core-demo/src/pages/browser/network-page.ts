@@ -1,4 +1,4 @@
-import { BrowserNetwork, type BrowserSubscription } from '@trt-web/core';
+import { BrowserNetwork, type BrowserSubscription } from '@trt-web/browser';
 
 export const createNetworkPage = (): HTMLElement => {
   const page = document.createElement('main');

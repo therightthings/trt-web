@@ -1,5 +1,5 @@
-import type { BrowserPermissionName } from '@trt-web/core';
-import { BrowserPermission } from '@trt-web/core';
+import type { BrowserPermissionName } from '@trt-web/browser';
+import { BrowserPermission } from '@trt-web/browser';
 
 export const createPermissionPage = (): HTMLElement => {
   const page = document.createElement('main');

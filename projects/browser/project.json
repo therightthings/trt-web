@@ -1,0 +1,36 @@
+{
+  "name": "browser",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "projects/browser/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/browser",
+        "main": "projects/browser/src/public-api.ts",
+        "tsConfig": "projects/browser/tsconfig.lib.json",
+        "assets": ["projects/browser/*.md"]
+      }
+    },
+    "cli": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/browser-cli",
+        "main": "projects/browser/src/cli.ts",
+        "tsConfig": "projects/browser/tsconfig.cli.json",
+        "assets": ["projects/browser/README.md", "projects/browser/package.json"]
+      }
+    },
+    "lint": { "executor": "@nx/eslint:lint" },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "options": { "configFile": "projects/browser/vitest.config.mts" }
+    }
+  }
+}

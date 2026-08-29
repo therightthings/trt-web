@@ -186,8 +186,8 @@ const getUtilityTestCases = (pageId: string): DemoTestCase[] | undefined => {
   return cases[pageId];
 };
 
-const renderPage = (pageId: string) => {
-  const page = createBrowserPage(pageId);
+const renderPage = async (pageId: string) => {
+  const page = await createBrowserPage(pageId);
   if (page) {
     if (!groupPageIds.has(pageId)) {
       page.querySelector('.hero h1')?.remove();
@@ -222,12 +222,12 @@ const renderPage = (pageId: string) => {
   }
 };
 
-const renderHashPage = () => {
+const renderHashPage = async () => {
   const path = window.location.hash.slice(2);
   const pageId = getBrowserPageId(path);
 
   if (pageId) {
-    renderPage(pageId);
+    await renderPage(pageId);
   } else if (!path && content.className !== 'home-content') {
     const home = createHomePage();
     content.replaceWith(home);
@@ -265,6 +265,6 @@ drawerOverlay.addEventListener('click', closeDrawer);
 app.append(mobileHeader, sidebar, drawerOverlay, content);
 window.addEventListener('hashchange', () => {
   closeDrawer();
-  renderHashPage();
+  void renderHashPage();
 });
-renderHashPage();
+void renderHashPage();

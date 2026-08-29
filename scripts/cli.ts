@@ -6,6 +6,7 @@ import { Command } from 'commander';
 import { runAffectedCircular, runAffectedSpell, runDeadcodeForProjects } from './affected.ts';
 import { runCommand, runNx } from './exec.ts';
 import {
+  chooseProject,
   listProjects,
   resolveBuildTarget,
   resolveDeadcodeTarget,
@@ -40,6 +41,53 @@ async function runBuild(
   }
 
   return runNx(repoRoot, ['build', target.project.name]);
+}
+
+async function runBuildCli(projectArg: string | undefined) {
+  const cliBuildStatus = await runNx(repoRoot, ['run', 'cli:build', '--skip-nx-cache']);
+  if (cliBuildStatus !== 0) {
+    return cliBuildStatus;
+  }
+
+  const linkStatus = await runCommand('yarn', ['link'], path.join(repoRoot, 'dist', 'cli'));
+  if (linkStatus !== 0) {
+    return linkStatus;
+  }
+
+  const workspaceLinkStatus = await runCommand('yarn', ['link', '@trt-web/cli'], repoRoot);
+  if (workspaceLinkStatus !== 0) {
+    return workspaceLinkStatus;
+  }
+
+  const projects = (await listProjects(projectsDir)).filter((project) => project.hasCli);
+  if (projects.length === 0) {
+    throw new Error('No projects with CLI support were found.');
+  }
+
+  const selected = projectArg
+    ? projects.find((project) => project.name === projectArg || project.folder === projectArg)
+    : undefined;
+  let project = selected;
+  if (!project && projects.length === 1) {
+    project = projects[0];
+  }
+  if (!project && (!process.stdin.isTTY || !process.stdout.isTTY)) {
+    project = projects[0];
+  }
+  if (!project) {
+    const selectedName = await chooseProject({
+      projects,
+      title: 'Select a CLI project to build:',
+      disablePrivatePackages: false,
+    });
+    project = projects.find((item) => item.name === selectedName);
+  }
+
+  if (!project) {
+    throw new Error(`CLI project not found: ${projectArg}`);
+  }
+
+  return runNx(repoRoot, ['run', `${project.name}:cli`, '--skip-nx-cache']);
 }
 
 async function runLint(
@@ -189,6 +237,11 @@ program
   .action((projectArg: string | undefined, options: { project?: string; all?: boolean }) =>
     runAction(() => runBuild(projectArg, options)),
   );
+
+program
+  .command('build:cli [project]')
+  .description('Build a project with CLI support without using the Nx cache.')
+  .action((projectArg: string | undefined) => runAction(() => runBuildCli(projectArg)));
 
 program
   .command('lint [project]')

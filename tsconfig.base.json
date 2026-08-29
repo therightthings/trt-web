@@ -11,7 +11,9 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "paths": {
+      "@trt-web/cli": ["./projects/cli/src/public-api.ts"],
       "@trt-web/core": ["./projects/core/src/public-api.ts"],
+      "@trt-web/browser": ["./projects/browser/src/public-api.ts"],
       "@trt-web/angular": ["./projects/angular/src/public-api.ts"],
       "@trt-web/react": ["./projects/react/src/public-api.ts"],
       "@trt-web/vue": ["./projects/vue/src/public-api.ts"],

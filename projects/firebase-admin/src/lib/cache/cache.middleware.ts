@@ -1,6 +1,6 @@
+import { TimeConfig } from '@trt-web/core';
 import type { NextFunction, Request, Response } from 'express';
 
-import { TimeConfig } from '../utils';
 import { CacheService } from './cache.service';
 import { NetworkCacheService } from './network-cache.service';
 

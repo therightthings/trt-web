@@ -10,6 +10,7 @@ export type WorkspaceProject = {
   private: boolean;
   publishable: boolean;
   hasPackageJson: boolean;
+  hasCli: boolean;
   hasServeTarget: boolean;
   hasLintTarget: boolean;
   testable: boolean;
@@ -41,11 +42,12 @@ export async function listProjects(projectsDir: string): Promise<WorkspaceProjec
     try {
       const projectRaw = await readFile(projectJsonPath, 'utf8');
       let hasPackageJson = false;
-      let packageJson: { private?: boolean } | undefined;
+      let packageJson: { private?: boolean; bin?: string | Record<string, string> } | undefined;
 
       try {
         packageJson = JSON.parse(await readFile(packageJsonPath, 'utf8')) as {
           private?: boolean;
+          bin?: string | Record<string, string>;
         };
         hasPackageJson = true;
       } catch {
@@ -66,6 +68,7 @@ export async function listProjects(projectsDir: string): Promise<WorkspaceProjec
         private: privateProject,
         publishable: !privateProject,
         hasPackageJson,
+        hasCli: Boolean(packageJson?.bin),
         hasServeTarget,
         hasLintTarget: Boolean(projectJson.targets?.lint),
         testable: Boolean(projectJson.targets?.test),

@@ -1,8 +1,8 @@
 import { HttpContext, HttpEvent } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
+import { TimeConfig, toMs } from '@trt-web/core';
 import { Observable } from 'rxjs';
 
-import { TimeConfig, toMs } from '../utils';
 import {
   HTTP_CACHE_GROUP_TOKEN,
   HTTP_CACHE_ID_TOKEN,

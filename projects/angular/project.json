@@ -16,6 +16,17 @@
         "project": "projects/angular/ng-package.json"
       }
     },
+    "cli": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/angular-cli",
+        "main": "projects/angular/src/cli.ts",
+        "tsConfig": "projects/angular/tsconfig.cli.json",
+        "assets": ["projects/angular/README.md", "projects/angular/package.json"]
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },

@@ -1,4 +1,4 @@
-import { LocalStorage, SessionStorage } from '@trt-web/core';
+import { LocalStorage, SessionStorage } from '@trt-web/browser';
 
 export const createStoragePage = (kind: 'local' | 'session'): HTMLElement => {
   const storage = kind === 'local' ? LocalStorage : SessionStorage;

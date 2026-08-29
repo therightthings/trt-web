@@ -1,4 +1,4 @@
-import { BrowserMicrophone } from '@trt-web/core';
+import { BrowserMicrophone } from '@trt-web/browser';
 
 export const createMicrophonePage = (): HTMLElement => {
   const page = document.createElement('main');

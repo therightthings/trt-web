@@ -1,0 +1,136 @@
+name: Deploy package docs
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev, main]
+    paths:
+      - 'projects/core/README.md'
+      - 'projects/browser/README.md'
+      - 'projects/angular/README.md'
+      - 'projects/firebase-admin/README.md'
+
+concurrency:
+  group: deploy-docs-surge
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SURGE_DOMAIN_BASE: ${{ vars.SURGE_DOMAIN_BASE }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: yarn.lock
+
+      - name: Enable Yarn
+        run: corepack prepare yarn@1.22.22 --activate
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --non-interactive
+
+      - name: Detect changed documentation
+        id: changed
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "changed=manual" >> "$GITHUB_OUTPUT"
+            echo "projects=core browser angular firebase-admin" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          changed_files="$(git diff --name-only HEAD^ HEAD)"
+          projects=()
+
+          for project in core browser angular firebase-admin; do
+            if grep -q "^projects/${project}/README.md$" <<< "$changed_files"; then
+              projects+=("$project")
+            fi
+          done
+
+          if [[ "${#projects[@]}" -eq 0 ]]; then
+            echo "No package README changed."
+            echo "changed=" >> "$GITHUB_OUTPUT"
+            echo "projects=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "changed=${projects[*]}" >> "$GITHUB_OUTPUT"
+          echo "projects=core browser angular firebase-admin" >> "$GITHUB_OUTPUT"
+
+      - name: Build documentation
+        if: steps.changed.outputs.projects != ''
+        shell: bash
+        env:
+          PROJECTS: ${{ steps.changed.outputs.projects }}
+          CHANGED_PROJECTS: ${{ steps.changed.outputs.changed }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p dist/docs
+
+          for project in $PROJECTS; do
+            echo "Building documentation for ${project}"
+            yarn build:cli "$project"
+            node "dist/${project}-cli/src/cli.js" docs
+          done
+
+      - name: Validate Surge configuration
+        if: steps.changed.outputs.projects != ''
+        run: |
+          if [[ -z "$SURGE_DOMAIN_BASE" ]]; then
+            echo "Missing repository variable SURGE_DOMAIN_BASE."
+            exit 1
+          fi
+
+      - name: Deploy to Surge
+        id: deploy
+        if: steps.changed.outputs.projects != ''
+        shell: bash
+        env:
+          PROJECTS: ${{ steps.changed.outputs.changed }}
+          SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          for project in $PROJECTS; do
+            domain="${project}.${SURGE_DOMAIN_BASE}"
+            echo "Deploying ${project} to https://${domain}"
+            npx --yes surge "dist/docs/${project}" "$domain"
+          done
+
+      - name: Write deployment summary
+        if: always()
+        env:
+          PROJECTS: ${{ steps.changed.outputs.projects }}
+          CHANGED_PROJECTS: ${{ steps.changed.outputs.changed }}
+          DEPLOY_RESULT: ${{ steps.deploy.outcome || 'skipped' }}
+        run: |
+          {
+            echo "## Documentation deployment"
+            echo
+            echo "- Status: **${DEPLOY_RESULT}**"
+            echo "- Domain base: ${SURGE_DOMAIN_BASE:-not configured}"
+            echo "- Changed README packages: ${CHANGED_PROJECTS:-none}"
+            if [[ -n "${CHANGED_PROJECTS:-}" && -n "${SURGE_DOMAIN_BASE:-}" ]]; then
+              for project in $CHANGED_PROJECTS; do
+                echo "- https://${project}.${SURGE_DOMAIN_BASE}/"
+              done
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

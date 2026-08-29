@@ -1,7 +1,7 @@
 import { JsonPipe } from '@angular/common';
 import { Component, inject, Injectable, signal } from '@angular/core';
 import { SignalStore } from '@trt-web/angular';
-import { BrowserResource } from '@trt-web/core';
+import { BrowserResource } from '@trt-web/browser';
 
 import { ApiPreferencesComponent } from '../../shared/components/api-preferences.component';
 import { CodeSampleComponent } from '../../shared/components/code-sample.component';

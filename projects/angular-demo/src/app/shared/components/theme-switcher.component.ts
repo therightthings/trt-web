@@ -1,5 +1,5 @@
 import { Component, computed, DOCUMENT, effect, inject, OnDestroy, signal } from '@angular/core';
-import { LocalStorage } from '@trt-web/core';
+import { LocalStorage } from '@trt-web/browser';
 
 import { STORAGE_KEY } from '../constants/storage-key';
 import { IconModule } from '../icons/font-awesome.module';

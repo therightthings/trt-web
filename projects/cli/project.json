@@ -1,0 +1,30 @@
+{
+  "name": "cli",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "projects/cli/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/cli",
+        "main": "projects/cli/src/public-api.ts",
+        "tsConfig": "projects/cli/tsconfig.lib.json",
+        "assets": [
+          "projects/cli/src/assets/styles.css",
+          "projects/cli/src/assets/scripts.js",
+          "projects/cli/README.md",
+          "projects/cli/package.json"
+        ]
+      }
+    },
+    "lint": { "executor": "@nx/eslint:lint" },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "options": { "configFile": "projects/cli/vitest.config.mts" }
+    }
+  }
+}

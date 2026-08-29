@@ -1,7 +1,6 @@
 import {
   BrowserAI,
   BrowserAudioContext,
-  BrowserBattery,
   BrowserBluetooth,
   BrowserCamera,
   BrowserClipboard,
@@ -12,77 +11,19 @@ import {
   BrowserNfc,
   BrowserNotification,
   BrowserPeerConnection,
+  BrowserPerformance,
   BrowserScreen,
   BrowserTabActivity,
   BrowserVibration,
-  BrowserViewport,
   BrowserWakeLock,
-  BrowserWindow,
   Cookie,
   IndexedDB,
   LocalStorage,
   SessionStorage,
-} from '@trt-web/core';
+} from '@trt-web/browser';
 
 import { createDemoPage, type DemoPageConfig } from '../components/demo-page';
-import { createAiPage } from './browser/ai-page';
-import { createAudioContextPage } from './browser/audio-context-page';
-import { createBatteryPage } from './browser/battery-page';
-import { createBluetoothPage } from './browser/bluetooth-page';
-import { createCameraPage } from './browser/camera-page';
-import { createCookiePage } from './browser/cookie-page';
-import { createEnvironmentPage } from './browser/environment-page';
-import { createFileSystemPage } from './browser/file-system-page';
-import { createIndexedDbPage } from './browser/indexed-db-page';
-import { createLocationPage } from './browser/location-page';
-import { createMicrophonePage } from './browser/microphone-page';
-import { createNetworkPage } from './browser/network-page';
-import { createNfcPage } from './browser/nfc-page';
-import { createNotificationPage } from './browser/notification-page';
-import { createPeerConnectionPage } from './browser/peer-connection-page';
-import { createPermissionPage } from './browser/permission-page';
-import { createPresentationPage } from './browser/presentation-page';
-import { createResourcePage } from './browser/resource-page';
-import { createScreenPage } from './browser/screen-page';
-import { createSharePage } from './browser/share-page';
-import { createSpeechToTextPage } from './browser/speech-to-text-page';
-import { createStoragePage } from './browser/storage-page';
-import { createTabActivityPage } from './browser/tab-activity-page';
-import { createTextToSpeechPage } from './browser/text-to-speech-page';
-import { createVibrationPage } from './browser/vibration-page';
-import { createViewportPage } from './browser/viewport-page';
-import { createWakeLockPage } from './browser/wake-lock-page';
-import { createWindowManagerPage } from './browser/window-manager-page';
-import { createWindowPage } from './browser/window-page';
-import { createWorkerPage } from './browser/worker-page';
-import { createGenerateTimestampPage, createRangeDatePage } from './date-pages';
-import { createCanvasPage } from './dom/canvas-page';
-import { createGenerateRandomColorPage } from './dom/generate-random-color-page';
-import { createGetElementInfoPage } from './dom/get-element-info-page';
-import { createVarCssPage } from './dom/var-css-page';
-import { createCompressImagePage } from './file/compress-image-page';
-import { createConvertFileSizePage } from './file/convert-file-size-page';
-import { createFileToDataUrlPage } from './file/file-to-data-url-page';
-import { createFileToObjectUrlPage } from './file/file-to-object-url-page';
-import { createGetImageSizePage } from './file/get-image-size-page';
-import { createLoadImagePage } from './file/load-image-page';
 import { createGroupPage, type GroupPageConfig } from './group-page';
-import { createBayesianRatingPage } from './number/bayesian-rating-page';
-import { createFormatViewCountPage } from './number/format-view-count-page';
-import { createHaversineDistancePage } from './number/haversine-distance-page';
-import { createRandomNumberPage } from './number/random-number-page';
-import { createCleanObjectPage } from './object/clean-object-page';
-import { createRemoveDuplicateObjectsPage } from './object/remove-duplicate-objects-page';
-import { createDebouncePage } from './rate-limit/debounce-page';
-import { createThrottlePage } from './rate-limit/throttle-page';
-import { createWaitPage } from './rate-limit/wait-page';
-import { createCapitalizePage } from './string/capitalize-page';
-import { createGenerateHashPage } from './string/generate-hash-page';
-import { createGenerateIdPage } from './string/generate-id-page';
-import { createGenerateRandomStringPage } from './string/generate-random-string-page';
-import { createGenerateSortOrderKeyPage } from './string/generate-sort-order-key-page';
-import { createRemoveTonesPage } from './string/remove-tones-page';
-import { createSearchKeyPage } from './string/search-key-page';
 
 const demoActions: Record<
   string,
@@ -115,6 +56,7 @@ const supportChecks: Record<string, () => boolean> = {
   'local-storage': () => LocalStorage.isSupported(),
   microphone: () => BrowserMicrophone.isSupported(),
   network: () => BrowserNetwork.isSupported(),
+  performance: () => BrowserPerformance.isSupported(),
   notification: () => BrowserNotification.isSupported(),
   nfc: () => BrowserNfc.isSupported(),
   screen: () => BrowserScreen.isSupported(),
@@ -476,6 +418,22 @@ const pages: Record<string, DemoPageConfig> = {
     description: 'Read online state and subscribe to network changes.',
     methods: ['isSupported()', 'getState()', 'subscribe()', 'unsubscribe()'],
   },
+  performance: {
+    title: 'BrowserPerformance',
+    path: 'browser/performance',
+    description: 'Measure tasks and inspect browser performance timing data.',
+    methods: [
+      'isSupported()',
+      'createSession()',
+      'now()',
+      'mark()',
+      'measure()',
+      'measureAsync()',
+      'getEntries()',
+      'getNavigationTiming()',
+      'getResourceTiming()',
+    ],
+  },
   notification: {
     title: 'BrowserNotification',
     path: 'browser/notification',
@@ -625,6 +583,7 @@ export const groupPages: Record<string, GroupPageConfig> = {
       ['screen', 'Screen'],
       ['nfc', 'NFC'],
       ['network', 'Network'],
+      ['performance', 'Performance'],
       ['notification', 'Notification'],
       ['permission', 'Permission'],
       ['presentation', 'Presentation'],
@@ -722,103 +681,98 @@ export const groupPages: Record<string, GroupPageConfig> = {
   },
 };
 
-export const createBrowserPage = (pageId: string): HTMLElement | null => {
-  if (groupPages[pageId]) return createGroupPage(groupPages[pageId]);
-  if (pageId === 'capitalize') return createCapitalizePage();
-  if (pageId === 'generate-hash') return createGenerateHashPage();
-  if (pageId === 'generate-id') return createGenerateIdPage();
-  if (pageId === 'generate-random-string') return createGenerateRandomStringPage();
-  if (pageId === 'generate-sort-order-key') return createGenerateSortOrderKeyPage();
-  if (pageId === 'remove-tones') return createRemoveTonesPage();
-  if (pageId === 'search-key') return createSearchKeyPage();
-  if (pageId === 'debounce') return createDebouncePage();
-  if (pageId === 'throttle') return createThrottlePage();
-  if (pageId === 'wait') return createWaitPage();
-  if (pageId === 'clean-obj') return createCleanObjectPage();
-  if (pageId === 'remove-duplicate-objects') return createRemoveDuplicateObjectsPage();
-  if (pageId === 'bayesian-rating') return createBayesianRatingPage();
-  if (pageId === 'format-view-count') return createFormatViewCountPage();
-  if (pageId === 'haversine-distance') return createHaversineDistancePage();
-  if (pageId === 'random-number') return createRandomNumberPage();
-  if (pageId === 'compress-image') return createCompressImagePage();
-  if (pageId === 'convert-file-size') return createConvertFileSizePage();
-  if (pageId === 'file-to-data-url') return createFileToDataUrlPage();
-  if (pageId === 'file-to-object-url') return createFileToObjectUrlPage();
-  if (pageId === 'get-image-size') return createGetImageSizePage();
-  if (pageId === 'load-image') return createLoadImagePage();
-  if (pageId === 'generate-random-color') return createGenerateRandomColorPage();
-  if (pageId === 'canvas') return createCanvasPage();
-  if (pageId === 'get-element-info') return createGetElementInfoPage();
-  if (pageId === 'var-css') return createVarCssPage();
-  if (pageId === 'generate-timestamp') return createGenerateTimestampPage();
-  if (pageId === 'range-date') return createRangeDatePage();
+type LazyPageFactory = () => Promise<HTMLElement>;
 
-  if (pageId === 'audio-context') {
-    return createAudioContextPage();
+const lazyPageFactories: Record<string, LazyPageFactory> = {
+  ai: async () => (await import('./browser/ai-page')).createAiPage(),
+  'audio-context': async () =>
+    (await import('./browser/audio-context-page')).createAudioContextPage(),
+  battery: async () => (await import('./browser/battery-page')).createBatteryPage(),
+  bluetooth: async () => (await import('./browser/bluetooth-page')).createBluetoothPage(),
+  camera: async () => (await import('./browser/camera-page')).createCameraPage(),
+  canvas: async () => (await import('./dom/canvas-page')).createCanvasPage(),
+  capitalize: async () => (await import('./string/capitalize-page')).createCapitalizePage(),
+  cookie: async () => (await import('./browser/cookie-page')).createCookiePage(),
+  'clean-obj': async () => (await import('./object/clean-object-page')).createCleanObjectPage(),
+  'compress-image': async () =>
+    (await import('./file/compress-image-page')).createCompressImagePage(),
+  'convert-file-size': async () =>
+    (await import('./file/convert-file-size-page')).createConvertFileSizePage(),
+  debounce: async () => (await import('./rate-limit/debounce-page')).createDebouncePage(),
+  environment: async () => (await import('./browser/environment-page')).createEnvironmentPage(),
+  'file-system': async () => (await import('./browser/file-system-page')).createFileSystemPage(),
+  'file-to-data-url': async () =>
+    (await import('./file/file-to-data-url-page')).createFileToDataUrlPage(),
+  'file-to-object-url': async () =>
+    (await import('./file/file-to-object-url-page')).createFileToObjectUrlPage(),
+  'format-view-count': async () =>
+    (await import('./number/format-view-count-page')).createFormatViewCountPage(),
+  'generate-hash': async () =>
+    (await import('./string/generate-hash-page')).createGenerateHashPage(),
+  'generate-id': async () => (await import('./string/generate-id-page')).createGenerateIdPage(),
+  'generate-random-color': async () =>
+    (await import('./dom/generate-random-color-page')).createGenerateRandomColorPage(),
+  'generate-random-string': async () =>
+    (await import('./string/generate-random-string-page')).createGenerateRandomStringPage(),
+  'generate-sort-order-key': async () =>
+    (await import('./string/generate-sort-order-key-page')).createGenerateSortOrderKeyPage(),
+  'generate-timestamp': async () => (await import('./date-pages')).createGenerateTimestampPage(),
+  'get-element-info': async () =>
+    (await import('./dom/get-element-info-page')).createGetElementInfoPage(),
+  'get-image-size': async () =>
+    (await import('./file/get-image-size-page')).createGetImageSizePage(),
+  'haversine-distance': async () =>
+    (await import('./number/haversine-distance-page')).createHaversineDistancePage(),
+  'indexed-db': async () => (await import('./browser/indexed-db-page')).createIndexedDbPage(),
+  'load-image': async () => (await import('./file/load-image-page')).createLoadImagePage(),
+  location: async () => (await import('./browser/location-page')).createLocationPage(),
+  'local-storage': async () => (await import('./browser/storage-page')).createStoragePage('local'),
+  microphone: async () => (await import('./browser/microphone-page')).createMicrophonePage(),
+  network: async () => (await import('./browser/network-page')).createNetworkPage(),
+  nfc: async () => (await import('./browser/nfc-page')).createNfcPage(),
+  notification: async () => (await import('./browser/notification-page')).createNotificationPage(),
+  'peer-connection': async () =>
+    (await import('./browser/peer-connection-page')).createPeerConnectionPage(),
+  performance: async () => (await import('./browser/performance-page')).createPerformancePage(),
+  permission: async () => (await import('./browser/permission-page')).createPermissionPage(),
+  presentation: async () => (await import('./browser/presentation-page')).createPresentationPage(),
+  'random-number': async () =>
+    (await import('./number/random-number-page')).createRandomNumberPage(),
+  'range-date': async () => (await import('./date-pages')).createRangeDatePage(),
+  'remove-tones': async () => (await import('./string/remove-tones-page')).createRemoveTonesPage(),
+  'remove-duplicate-objects': async () =>
+    (await import('./object/remove-duplicate-objects-page')).createRemoveDuplicateObjectsPage(),
+  resource: async () => (await import('./browser/resource-page')).createResourcePage(),
+  screen: async () => (await import('./browser/screen-page')).createScreenPage(),
+  'search-key': async () => (await import('./string/search-key-page')).createSearchKeyPage(),
+  'session-storage': async () =>
+    (await import('./browser/storage-page')).createStoragePage('session'),
+  share: async () => (await import('./browser/share-page')).createSharePage(),
+  'speech-to-text': async () =>
+    (await import('./browser/speech-to-text-page')).createSpeechToTextPage(),
+  'tab-activity': async () => (await import('./browser/tab-activity-page')).createTabActivityPage(),
+  throttle: async () => (await import('./rate-limit/throttle-page')).createThrottlePage(),
+  'text-to-speech': async () =>
+    (await import('./browser/text-to-speech-page')).createTextToSpeechPage(),
+  'var-css': async () => (await import('./dom/var-css-page')).createVarCssPage(),
+  vibration: async () => (await import('./browser/vibration-page')).createVibrationPage(),
+  viewport: async () => (await import('./browser/viewport-page')).createViewportPage(),
+  'wake-lock': async () => (await import('./browser/wake-lock-page')).createWakeLockPage(),
+  wait: async () => (await import('./rate-limit/wait-page')).createWaitPage(),
+  window: async () => (await import('./browser/window-page')).createWindowPage(),
+  'window-manager': async () =>
+    (await import('./browser/window-manager-page')).createWindowManagerPage(),
+  worker: async () => (await import('./browser/worker-page')).createWorkerPage(),
+};
+
+export const createBrowserPage = async (pageId: string): Promise<HTMLElement | null> => {
+  if (groupPages[pageId]) {
+    return createGroupPage(groupPages[pageId]);
   }
 
-  if (pageId === 'ai') {
-    return createAiPage();
-  }
-
-  if (pageId === 'bluetooth') {
-    return createBluetoothPage();
-  }
-
-  if (pageId === 'environment') {
-    return createEnvironmentPage();
-  }
-
-  if (pageId === 'file-system') {
-    return createFileSystemPage();
-  }
-
-  if (pageId === 'indexed-db') {
-    return createIndexedDbPage();
-  }
-
-  if (pageId === 'location') return createLocationPage();
-  if (pageId === 'network') return createNetworkPage();
-  if (pageId === 'notification') return createNotificationPage();
-  if (pageId === 'nfc') return createNfcPage();
-  if (pageId === 'permission') return createPermissionPage();
-  if (pageId === 'presentation') return createPresentationPage();
-  if (pageId === 'resource') return createResourcePage();
-  if (pageId === 'share') return createSharePage();
-  if (pageId === 'text-to-speech') return createTextToSpeechPage();
-  if (pageId === 'speech-to-text') return createSpeechToTextPage();
-  if (pageId === 'tab-activity') return createTabActivityPage();
-  if (pageId === 'vibration') return createVibrationPage();
-  if (pageId === 'wake-lock') return createWakeLockPage();
-  if (pageId === 'viewport') return createViewportPage();
-  if (pageId === 'battery') return createBatteryPage();
-  if (pageId === 'peer-connection') return createPeerConnectionPage();
-  if (pageId === 'window') return createWindowPage();
-  if (pageId === 'window-manager') return createWindowManagerPage();
-  if (pageId === 'worker') return createWorkerPage();
-
-  if (pageId === 'local-storage') {
-    return createStoragePage('local');
-  }
-
-  if (pageId === 'session-storage') {
-    return createStoragePage('session');
-  }
-
-  if (pageId === 'camera') {
-    return createCameraPage();
-  }
-
-  if (pageId === 'cookie') {
-    return createCookiePage();
-  }
-
-  if (pageId === 'microphone') {
-    return createMicrophonePage();
-  }
-
-  if (pageId === 'screen') {
-    return createScreenPage();
+  const factory = lazyPageFactories[pageId];
+  if (factory) {
+    return factory();
   }
 
   const config = pages[pageId];

@@ -1,4 +1,4 @@
-import { BrowserVibration } from '@trt-web/core';
+import { BrowserVibration } from '@trt-web/browser';
 export const createVibrationPage = (): HTMLElement => {
   const page = document.createElement('main');
   page.className = 'content';

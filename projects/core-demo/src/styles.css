@@ -580,6 +580,15 @@ h1 {
   background: var(--app-bg-surface);
 }
 
+.fullscreen-target:fullscreen {
+  box-sizing: border-box;
+  width: 100dvw;
+  height: 100dvh;
+  max-width: 100dvw;
+  max-height: 100dvh;
+  overflow: auto;
+}
+
 .color-preview {
   width: 100%;
   height: 88px;
@@ -751,6 +760,20 @@ h1 {
 .demo-actions button:disabled {
   cursor: wait;
   opacity: 0.6;
+}
+
+.fullscreen-toggle {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  padding: 6px;
+}
+
+.fullscreen-toggle svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
 }
 
 .media-preview {
