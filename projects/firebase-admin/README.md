@@ -34,6 +34,7 @@ Provides Express middleware and in-memory cache helpers for HTTP responses.
 - Basic usage
 
 ```ts
+import { CacheService } from '@trt-web/firebase-admin';
 const cache = CacheService.getInstance(); // singleton pattern
 cache.set('profile:42', { id: 42 }, 60);
 const profile = cache.get<{ id: number }>('profile:42');
@@ -42,6 +43,7 @@ const profile = cache.get<{ id: number }>('profile:42');
 - Advance usage
 
 ```ts
+import { CacheService } from '@trt-web/firebase-admin';
 const cache = CacheService.getInstance();
 cache.set('profile:42', { id: 42 }, 60);
 const profile = cache.get<{ id: number }>('profile:42');
@@ -50,6 +52,7 @@ const profile = cache.get<{ id: number }>('profile:42');
 - Expert usage
 
 ```ts
+import { CacheService } from '@trt-web/firebase-admin';
 const cache = CacheService.getInstance();
 cache.set('profile:42', { id: 42 }, 60);
 const profile = cache.get<{ id: number }>('profile:42');
@@ -70,6 +73,7 @@ Provides versioned cache helpers for Firestore repositories.
 #### Examples
 
 ```ts
+import { FirestoreCacheService } from '@trt-web/firebase-admin';
 const cache = FirestoreCacheService.getInstance();
 cache.bumpRepositoryVersion('users');
 ```
@@ -91,6 +95,7 @@ Creates scoped cache keys and invalidates cached network responses.
 #### Examples
 
 ```ts
+import { NetworkCacheService } from '@trt-web/firebase-admin';
 const cache = NetworkCacheService.getInstance();
 const key = cache.getNetworkKey({ userId: 'user-42', url: '/profile' });
 cache.set(key, { name: 'Alice' }, 60);
@@ -118,6 +123,7 @@ Provides Firebase Admin authentication and user-account helpers.
 #### Examples
 
 ```ts
+import { FireAuthService } from '@trt-web/firebase-admin';
 const auth = FireAuthService.getInstance();
 const user = await auth.verifyIdToken(idToken);
 ```
@@ -144,6 +150,7 @@ Provides a reusable base repository for Firestore queries, paging, mutations, an
 #### Examples
 
 ```ts
+import { FireStoreRepository } from '@trt-web/firebase-admin';
 class UserRepository extends FireStoreRepository<User> {
   constructor() {
     super('users');
@@ -169,6 +176,7 @@ Provides Firebase Storage upload, download URL, metadata, and multipart form hel
 #### Examples
 
 ```ts
+import { FireStorageService } from '@trt-web/firebase-admin';
 const storage = new FireStorageService();
 const url = storage.getPublicDownloadUrl('images/avatar.png');
 ```
@@ -190,6 +198,7 @@ Provides Firebase Cloud Messaging delivery, topic, and token helpers.
 #### Examples
 
 ```ts
+import { FirebaseMessagingService } from '@trt-web/firebase-admin';
 const messaging = FirebaseMessagingService.getInstance();
 await messaging.sendToTopic('news', { notification: { title: 'Update' } });
 ```

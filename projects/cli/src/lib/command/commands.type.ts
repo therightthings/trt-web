@@ -2,6 +2,7 @@ export type BrowserCliUtility = {
   name: string;
   description: string;
   methods: BrowserCliMethod[];
+  examples: Array<{ title?: string; code: string; language?: string }>;
   example?: string;
   language?: string;
 };

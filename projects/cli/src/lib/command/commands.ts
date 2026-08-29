@@ -229,6 +229,15 @@ export class TrtCommand {
           description: method[2],
         },
       ],
+      examples:
+        examplesNode?.codeBlocks.map((codeBlock, exampleIndex) => ({
+          title: examplesNode.content
+            .split(/\r?\n/)
+            .map((line) => line.match(/^\s*-\s+(.+?)\s*$/)?.[1])
+            .filter((title): title is string => Boolean(title))[exampleIndex],
+          code: codeBlock.code,
+          language: codeBlock.language,
+        })) ?? [],
       example: examplesNode?.codeBlocks[index]?.code,
       language: examplesNode?.codeBlocks[index]?.language,
     }));
@@ -255,11 +264,23 @@ export class TrtCommand {
           }))
       : [];
     const example = examplesNode?.codeBlocks[0];
+    const exampleTitles =
+      examplesNode?.content
+        .split(/\r?\n/)
+        .map((line) => line.match(/^\s*-\s+(.+?)\s*$/)?.[1])
+        .filter((title): title is string => Boolean(title)) ?? [];
+    const examples =
+      examplesNode?.codeBlocks.map((codeBlock, index) => ({
+        title: exampleTitles[index],
+        code: codeBlock.code,
+        language: codeBlock.language,
+      })) ?? [];
 
     return {
       name: node.title,
       description: node.content,
       methods,
+      examples,
       example: example?.code,
       language: example?.language,
     };

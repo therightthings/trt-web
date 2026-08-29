@@ -54,9 +54,23 @@ export class CliFormatter {
   ): void {
     console.log(`${color(96, utility.name)}\n${utility.description}`);
 
-    if (utility.example) {
+    const examples = utility.examples.length
+      ? utility.examples
+      : utility.example
+        ? [{ code: utility.example, language: utility.language }]
+        : [];
+
+    if (examples.length > 0) {
       console.log(`\n${color(93, 'Example:')}\n`);
-      this.printCodeBlock(utility.example, utility.language, utilities, theme);
+      for (const [index, example] of examples.entries()) {
+        if (index > 0) {
+          console.log('');
+        }
+        if (example.title) {
+          console.log(color(90, example.title));
+        }
+        this.printCodeBlock(example.code, example.language, utilities, theme);
+      }
     }
 
     if (utility.methods.length > 0) {

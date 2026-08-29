@@ -17,6 +17,7 @@ Built-in browser AI helpers
 ### Examples
 
 ```ts
+import { BrowserAI } from '@trt-web/browser';
 onProgress: ({ phase, progress }) => {
   console.log(phase, `${Math.round(progress * 100)}%`);
 };
@@ -80,6 +81,7 @@ Web Audio API helpers
 ### Examples
 
 ```ts
+import { BrowserAudioContext } from '@trt-web/browser';
 if (!BrowserAudioContext.isSupported()) {
   throw new Error('Web Audio API is not supported.');
 }
@@ -200,6 +202,7 @@ Web Bluetooth helpers
 ### Examples
 
 ```ts
+import { BrowserBluetooth } from '@trt-web/browser';
 const device = await BrowserBluetooth.requestDevice({
   filters: [{ services: ['heart_rate'] }],
 });
@@ -229,6 +232,7 @@ Camera capture and recording
 ### Examples
 
 ```ts
+import { BrowserCamera } from '@trt-web/browser';
 const video = document.querySelector<HTMLVideoElement>('#camera-preview')!;
 const result = await BrowserCamera.turnOn({ facingMode: 'front' });
 if (result.success) {
@@ -258,6 +262,7 @@ Clipboard read and write helpers
 ### Examples
 
 ```ts
+import { BrowserClipboard } from '@trt-web/browser';
 const copied = await BrowserClipboard.copy('Copied from the browser');
 const text = await BrowserClipboard.read();
 console.log(copied); // { permission: 'granted', data: 'Copied from the browser', success: true }
@@ -386,7 +391,7 @@ Browser environment information
 ### Examples
 
 ```ts
-import { BrowserEnvironment } from '@trt-web/core';
+import { BrowserEnvironment } from '@trt-web/browser';
 
 const locale = BrowserEnvironment.getLocale();
 const hardware = await BrowserEnvironment.getInformation({ scope: 'hardware' });
@@ -427,6 +432,7 @@ File System Access API helpers
 ### Examples
 
 ```ts
+import { BrowserFileSystem } from '@trt-web/browser';
 const file = await BrowserFileSystem.readFile();
 if (file) {
   console.log(file.file.name, file.file.size);
@@ -500,6 +506,7 @@ Geolocation helpers
 ### Examples
 
 ```ts
+import { BrowserLocation } from '@trt-web/browser';
 const location = await BrowserLocation.getLocation({ speed: 'fast' });
 console.log(location); // { permission: 'granted', data: { coords: { latitude: 5, longitude: 6 } }, success: true }
 console.log(await BrowserLocation.getLocation({ speed: 'accurate' })); // { permission: 'granted', data: { coords: { latitude: 3, longitude: 4 } }, success: true }
@@ -521,6 +528,7 @@ Microphone capture and recording
 ### Examples
 
 ```ts
+import { BrowserMicrophone } from '@trt-web/browser';
 const audio = document.querySelector<HTMLAudioElement>('#microphone-preview')!;
 const result = await BrowserMicrophone.turnOn();
 
@@ -553,6 +561,7 @@ Network status and connection information
 ### Examples
 
 ```ts
+import { BrowserNetwork } from '@trt-web/browser';
 const subscription = BrowserNetwork.subscribe((state) => {
   console.log(state.status, state.effectiveType);
 });
@@ -576,6 +585,7 @@ Web NFC helpers
 ### Examples
 
 ```ts
+import { BrowserNfc } from '@trt-web/browser';
 await BrowserNfc.startScan({
   onReading: (event) => console.log(event.message),
 });
@@ -598,6 +608,7 @@ Web Notifications API helpers
 ### Examples
 
 ```ts
+import { BrowserNotification } from '@trt-web/browser';
 if (BrowserNotification.isSupported()) {
   const permission = await BrowserNotification.getPermission();
   const nextPermission =
@@ -676,6 +687,7 @@ WebRTC peer connection helpers
 ### Examples
 
 ```ts
+import { BrowserPeerConnection } from '@trt-web/browser';
 BrowserPeerConnection.createPeerConnection({
   config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] },
   handlers: { onIceCandidate: (event) => console.log(event.candidate) },
@@ -724,6 +736,7 @@ Performance API helpers
 ### Examples
 
 ```ts
+import { BrowserPerformance } from '@trt-web/browser';
 const result = await BrowserPerformance.measureAsync('load-users', async () => {
   return await loadUsers();
 });
@@ -751,6 +764,7 @@ Browser permission helpers
 ### Examples
 
 ```ts
+import { BrowserPermission } from '@trt-web/browser';
 const current = await BrowserPermission.getState('geolocation');
 console.log(BrowserPermission.supportedPermissions()); // ['geolocation', 'notifications', ...]
 const requested = current === 'prompt' ? await BrowserPermission.request('geolocation') : current;
@@ -774,6 +788,7 @@ Fullscreen and picture-in-picture helpers
 ### Examples
 
 ```ts
+import { BrowserPresentation } from '@trt-web/browser';
 const entered = await BrowserPresentation.enterFullscreen(element);
 const exited = await BrowserPresentation.exitFullscreen();
 console.log({ entered, exited }); // { entered: true, exited: true }
@@ -797,7 +812,7 @@ Browser resource loading and download helpers
 ### Examples
 
 ```ts
-import { BrowserResource } from '@trt-web/core';
+import { BrowserResource } from '@trt-web/browser';
 
 await BrowserResource.loadScript('/assets/analytics.js');
 await BrowserResource.loadLink('/assets/theme.css');
@@ -842,6 +857,7 @@ Screen sharing and recording
 ### Examples
 
 ```ts
+import { BrowserScreen } from '@trt-web/browser';
 const screenshot = await BrowserScreen.screenshot({
   image: { type: 'image/png' },
 });
@@ -876,6 +892,7 @@ Speech recognition helpers
 ### Examples
 
 ```ts
+import { BrowserSpeechToText } from '@trt-web/browser';
 const text = await BrowserSpeechToText.recognize({
   lang: 'en-US',
   interimResults: true,
@@ -901,6 +918,7 @@ Speech synthesis helpers
 ### Examples
 
 ```ts
+import { BrowserTextToSpeech } from '@trt-web/browser';
 await BrowserTextToSpeech.speak('Hello from the browser', { lang: 'en-US' });
 console.log(BrowserTextToSpeech.isSpeaking());
 ```
@@ -919,6 +937,7 @@ Tab visibility and focus helpers
 ### Examples
 
 ```ts
+import { BrowserTabActivity } from '@trt-web/browser';
 const subscription = BrowserTabActivity.subscribe((state) => {
   console.log(state);
 });
@@ -939,6 +958,7 @@ System theme observation
 ### Examples
 
 ```ts
+import { BrowserTheme } from '@trt-web/browser';
 const applyTheme = (theme: 'dark' | 'light') => {
   document.documentElement.dataset['theme'] = theme;
 };
@@ -964,6 +984,7 @@ Vibration API helpers
 ### Examples
 
 ```ts
+import { BrowserVibration } from '@trt-web/browser';
 BrowserVibration.vibrate([200, 100, 200]);
 BrowserVibration.cancel();
 ```
@@ -982,7 +1003,7 @@ Responsive viewport state helpers
 ### Examples
 
 ```ts
-import { BrowserViewport } from '@trt-web/core';
+import { BrowserViewport } from '@trt-web/browser';
 
 BrowserViewport.register({
   phone: { max: 599 },
@@ -1032,6 +1053,7 @@ Screen wake lock helpers
 ### Examples
 
 ```ts
+import { BrowserWakeLock } from '@trt-web/browser';
 await BrowserWakeLock.enable();
 console.log(BrowserWakeLock.isActive());
 await BrowserWakeLock.disable();
@@ -1060,6 +1082,7 @@ Current window helpers
 ### Examples
 
 ```ts
+import { BrowserWindow } from '@trt-web/browser';
 BrowserWindow.preload('/assets/app.js');
 BrowserWindow.pushState({ section: 'settings' }, '', '/settings');
 BrowserWindow.replaceState({ section: 'profile' }, '', '/profile');
@@ -1083,6 +1106,7 @@ Child window lifecycle helpers
 ### Examples
 
 ```ts
+import { BrowserWindowManager } from '@trt-web/browser';
 const child = BrowserWindowManager.open({
   url: '/preview',
   target: 'preview-window',
@@ -1143,6 +1167,7 @@ Cookie storage helpers
 ### Examples
 
 ```ts
+import { Cookie } from '@trt-web/core';
 Cookie.set('preferences', { theme: 'dark' }, { expiresIn: 7 });
 const preferences = Cookie.get<{ theme: string }>('preferences');
 console.log(preferences, Cookie.exists('preferences')); // { theme: 'dark' } true
@@ -1169,6 +1194,7 @@ Local storage helpers
 ### Examples
 
 ```ts
+import { LocalStorage } from '@trt-web/core';
 LocalStorage.set('profile', { id: 1, name: 'Alice' });
 const profile = LocalStorage.get<{ id: number; name: string }>('profile');
 console.log(profile, LocalStorage.exists('profile')); // { id: 1, name: 'Alice' } true
@@ -1193,6 +1219,7 @@ Session storage helpers
 ### Examples
 
 ```ts
+import { SessionStorage } from '@trt-web/core';
 SessionStorage.set('draft', { title: 'Untitled' });
 console.log(SessionStorage.get('draft')); // { title: 'Untitled' }
 console.log(SessionStorage.exists('draft')); // true

@@ -271,6 +271,8 @@ Configure and manage cached HTTP responses.
 #### Examples
 
 ```ts
+import { provideHttpCache } from '@trt-web/angular';
+
 provideHttpCache();
 ```
 
@@ -291,6 +293,8 @@ Observable request-state and lifecycle helpers.
 #### Examples
 
 ```ts
+import { toRequestState } from '@trt-web/angular';
+
 const state$ = source$.pipe(toRequestState());
 ```
 
@@ -330,6 +334,8 @@ Utilities for inspecting and logging form errors.
 #### Examples
 
 ```ts
+import { vnPhoneNumberValidator } from '@trt-web/angular';
+
 control.addValidators(vnPhoneNumberValidator());
 ```
 
@@ -349,6 +355,8 @@ Signal-based state store with optional persistence helpers.
 #### Examples
 
 ```ts
+import { SignalStore } from '@trt-web/angular';
+
 await store.configure({
   storage: {
     type: 'indexed-db',
