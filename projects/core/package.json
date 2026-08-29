@@ -6,6 +6,9 @@
   "module": "./src/public-api.js",
   "types": "./src/public-api.d.ts",
   "sideEffects": false,
+  "bin": {
+    "trt-core": "./src/cli.js"
+  },
   "exports": {
     ".": {
       "types": "./src/public-api.d.ts",
@@ -46,6 +49,7 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
+    "@trt-web/cli": "^1.0.0",
     "tslib": "^2.3.0"
   }
 }

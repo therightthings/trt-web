@@ -136,7 +136,9 @@ export class TrtCommand {
     const roots = parseReadme(readme);
     const groups: BrowserCliGroup[] = [];
     for (const root of roots) {
-      const directUtilities = root.children.filter((node) => this.isUtilityNode(node));
+      const directUtilities = root.children.filter((node) => {
+        return this.isUtilityNode(node) && !this.isContainerNode(node);
+      });
       if (directUtilities.length > 0) {
         groups.push({
           name: root.title,
@@ -147,17 +149,95 @@ export class TrtCommand {
       }
 
       for (const groupNode of root.children) {
-        const utilityNodes = groupNode.children.filter((node) => this.isUtilityNode(node));
+        const namespaceGroups = groupNode.children
+          .filter((node) => node.title.startsWith('trt.'))
+          .map((namespace) => {
+            const utilities = namespace.children
+              .filter((node) => this.isUtilityNode(node))
+              .map((node) => this.mapUtility(node));
+            if (utilities.length === 0) {
+              return undefined;
+            }
+            return {
+              name: namespace.title,
+              description: namespace.content,
+              utilities,
+            };
+          })
+          .filter((group): group is BrowserCliGroup => group !== undefined);
+
+        if (namespaceGroups.length > 0) {
+          groups.push(...namespaceGroups);
+          continue;
+        }
+
+        const utilityNodes = groupNode.children.filter((node) => {
+          return this.isUtilityNode(node) && !this.isSectionNode(node);
+        });
         if (utilityNodes.length > 0) {
           groups.push({
             name: groupNode.title,
             description: groupNode.content,
             utilities: utilityNodes.map((node) => this.mapUtility(node)),
           });
+          continue;
         }
+
+        const legacyNamespaceGroups = groupNode.children
+          .map((namespace, index, children) => {
+            if (!namespace.title.startsWith('trt.')) {
+              return undefined;
+            }
+
+            const methodsNode = children[index + 1];
+            const examplesNode = children[index + 2];
+            return this.mapLegacyNamespace(namespace, methodsNode, examplesNode);
+          })
+          .filter((group): group is BrowserCliGroup => group !== undefined);
+
+        groups.push(...legacyNamespaceGroups);
       }
     }
     return groups;
+  }
+
+  private static mapLegacyNamespace(
+    node: ParsedReadmeNode,
+    methodsNode: ParsedReadmeNode | undefined,
+    examplesNode: ParsedReadmeNode | undefined,
+  ): BrowserCliGroup | undefined {
+    if (node.level !== 3 || methodsNode?.title.toLowerCase() !== 'methods') {
+      return undefined;
+    }
+
+    const methods = `${methodsNode.content}\n${examplesNode?.content ?? ''}`
+      .split(/\r?\n/)
+      .map((line) => line.match(/^\s*- `([^`]+)`: (.+)$/))
+      .filter((match): match is RegExpMatchArray => match !== null);
+
+    if (methods.length === 0) {
+      return undefined;
+    }
+
+    const utilities = methods.map((method, index) => ({
+      name: method[1].replace(/\(.*$/, ''),
+      description: method[2],
+      methods: [
+        {
+          name: method[1].replace(/\(.*$/, ''),
+          signature: method[1],
+          description: method[2],
+        },
+      ],
+      example: examplesNode?.codeBlocks[index]?.code,
+      language: examplesNode?.codeBlocks[index]?.language,
+    }));
+
+    return {
+      name: node.title,
+      description: node.content.split(/\r?\n/)[0] ?? '',
+      utilities,
+    };
   }
 
   private static mapUtility(node: ParsedReadmeNode): BrowserCliUtility {
@@ -189,6 +269,16 @@ export class TrtCommand {
     return node.children.some((child) => {
       return child.title.toLowerCase() === 'methods' || child.title.toLowerCase() === 'examples';
     });
+  }
+
+  private static isSectionNode(node: ParsedReadmeNode): boolean {
+    const title = node.title.toLowerCase();
+    return title === 'methods' || title === 'examples';
+  }
+
+  private static isContainerNode(node: ParsedReadmeNode): boolean {
+    const title = node.title.toLowerCase();
+    return title === 'installation' || title === 'public api';
   }
 
   private static async selectUtility(

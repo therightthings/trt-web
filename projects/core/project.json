@@ -16,6 +16,17 @@
         "assets": ["projects/core/*.md"]
       }
     },
+    "cli": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/core-cli",
+        "main": "projects/core/src/cli.ts",
+        "tsConfig": "projects/core/tsconfig.cli.json",
+        "assets": ["projects/core/README.md", "projects/core/package.json"]
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },

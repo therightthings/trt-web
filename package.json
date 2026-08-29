@@ -8,6 +8,7 @@
     "build": "node --experimental-strip-types scripts/cli.ts build",
     "build:cli": "node --experimental-strip-types scripts/cli.ts build:cli",
     "cli:browser": "node dist/browser-cli/src/cli.js",
+    "cli:core": "node dist/core-cli/src/cli.js",
     "cli:angular": "node dist/angular-cli/src/cli.js",
     "cli:firebase-admin": "node dist/firebase-admin-cli/src/cli.js",
     "lint": "node --experimental-strip-types scripts/cli.ts lint",
